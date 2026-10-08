@@ -1,0 +1,201 @@
+/* DeepaFeatured Styles */
+.deepa-featured-section {
+  width: 100%;
+  background-color: #faf9f6;
+  padding: 50px 36px 60px;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.deepa-featured-container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.deepa-featured-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.deepa-feat-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.deepa-feat-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #b88648;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.deepa-feat-title {
+  font-family: 'Outfit', -apple-system, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #171717;
+  letter-spacing: -0.02em;
+}
+
+/* Products Grid */
+.deepa-featured-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.deepa-product-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.deepa-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.08);
+  border-color: rgba(195, 139, 85, 0.35);
+}
+
+.deepa-product-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: #b91c1c;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  z-index: 2;
+  letter-spacing: 0.02em;
+}
+
+.deepa-product-img-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: #f7f6f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deepa-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.deepa-product-card:hover .deepa-product-img {
+  transform: scale(1.06);
+}
+
+.deepa-product-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.deepa-product-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.deepa-product-cat {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.deepa-product-rating {
+  font-size: 12px;
+  font-weight: 700;
+  color: #d97706;
+}
+
+.deepa-product-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #18181b;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.deepa-product-pieces {
+  font-size: 12.5px;
+  color: #71717a;
+  margin-bottom: 16px;
+}
+
+.deepa-product-pricing {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.deepa-product-prices {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.deepa-price-current {
+  font-size: 18px;
+  font-weight: 800;
+  color: #18181b;
+}
+
+.deepa-price-original {
+  font-size: 13px;
+  color: #a1a1aa;
+  text-decoration: line-through;
+}
+
+.deepa-add-cart-btn {
+  background-color: #18181b;
+  color: #ffffff;
+  border: none;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deepa-add-cart-btn:hover {
+  background-color: #c38b55;
+}
+
+@media (max-width: 1024px) {
+  .deepa-featured-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .deepa-featured-grid {
+    grid-template-columns: 1fr;
+  }
+  .deepa-featured-section {
+    padding: 36px 20px 40px;
+  }
+}

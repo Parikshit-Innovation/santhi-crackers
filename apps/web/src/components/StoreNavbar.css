@@ -1,0 +1,249 @@
+/* Your Next Store Navbar Styles */
+.store-nav-header {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 20px 48px;
+  box-sizing: border-box;
+  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.store-nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* Brand */
+.store-brand {
+  cursor: pointer;
+}
+
+.store-brand-text {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 21px;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+/* Nav Menu */
+.store-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.store-nav-item {
+  background: none;
+  border: none;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14.5px;
+  font-weight: 450;
+  color: #475569;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s ease;
+  outline: none;
+}
+
+.store-nav-item:hover,
+.store-nav-item.active {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Actions */
+.store-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Search Input Pill */
+.store-search-wrap {
+  position: relative;
+  width: 240px;
+}
+
+.store-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.store-search-input {
+  width: 100%;
+  padding: 9px 16px 9px 38px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  font-size: 13.5px;
+  font-family: 'Geist', 'Inter', sans-serif;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.store-search-input::placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.store-search-input:focus {
+  border-color: #cbd5e1;
+}
+
+/* Icon Buttons */
+.store-icon-btn {
+  background: none;
+  border: none;
+  color: #0f172a;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+.store-icon-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.store-cart-btn {
+  position: relative;
+}
+
+.store-cart-badge {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  background-color: #0f172a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  font-family: -apple-system, sans-serif;
+}
+
+/* =========================================================
+   Amazon-Style Mobile Bottom Navigation Bar (Icons Alone)
+   ========================================================= */
+.store-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 840px) {
+  body {
+    padding-bottom: 64px;
+  }
+
+  .store-nav-header {
+    padding: 16px 20px;
+  }
+
+  .store-nav-menu {
+    display: none;
+  }
+
+  .store-search-wrap {
+    display: none;
+  }
+
+  /* Fixed Bottom Nav Bar matching Amazon Mobile Site */
+  .store-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 52px;
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    z-index: 1000;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    box-shadow: 0 -2px 14px rgba(0, 0, 0, 0.06);
+  }
+
+  .store-bottom-btn {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: #64748b;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s ease, background-color 0.15s ease;
+    outline: none;
+    padding: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .store-bottom-btn:active {
+    background-color: #f8fafc;
+  }
+
+  .store-bottom-btn.active,
+  .store-bottom-btn:hover {
+    color: #0f172a;
+  }
+
+  /* Active line indicator on top of active icon button */
+  .store-bottom-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 26%;
+    right: 26%;
+    height: 2.5px;
+    background-color: #0f172a;
+  }
+
+  .store-bottom-icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .store-bottom-cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: #0f172a;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 17px;
+    height: 17px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    font-family: -apple-system, sans-serif;
+  }
+}
+

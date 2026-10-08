@@ -1,0 +1,443 @@
+/* =========================================================
+   StoreCartDrawer - Slide Over Cart Drawer (Right to Left)
+   ========================================================= */
+
+/* Backdrop overlay */
+.store-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 1099;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.store-drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Drawer panel sliding from right to left */
+.store-drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 440px;
+  max-width: 100vw;
+  background-color: #ffffff;
+  z-index: 1100;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.14);
+  display: flex;
+  flex-direction: column;
+  transform: translate3d(100%, 0, 0);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+}
+
+.store-drawer-panel.open {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Header */
+.store-drawer-header {
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.store-drawer-title {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+.store-drawer-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  outline: none;
+  border-radius: 9999px;
+}
+
+.store-drawer-close:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+/* =========================================================
+   Empty State (Matching Screenshot 1)
+   ========================================================= */
+.store-drawer-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 28px;
+  text-align: center;
+}
+
+.store-empty-icon-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  margin-bottom: 22px;
+}
+
+.store-empty-title {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 6px;
+}
+
+.store-empty-desc {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 24px;
+}
+
+.store-empty-action-btn {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  padding: 10px 24px;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #111827;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+}
+
+.store-empty-action-btn:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* =========================================================
+   Populated State (Matching Screenshot 2)
+   ========================================================= */
+.store-drawer-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Scrollable Item List */
+.store-drawer-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.store-drawer-item-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.store-drawer-item-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.store-drawer-item-img {
+  width: 68px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.store-drawer-item-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.store-drawer-item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.store-drawer-item-title {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.store-drawer-trash-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 9999px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.store-drawer-trash-btn:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.store-drawer-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Stepper (- 3 +) - Neat Professional Oval Shape */
+.store-drawer-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  padding: 2px 4px;
+}
+
+.store-drawer-stepper-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  border-radius: 9999px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.store-drawer-stepper-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.store-drawer-stepper-val {
+  min-width: 26px;
+  text-align: center;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.store-drawer-item-price {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* =========================================================
+   Drawer Footer (Pinned to Bottom)
+   ========================================================= */
+.store-drawer-footer {
+  padding: 20px 24px 24px;
+  border-top: 1px solid #f1f5f9;
+  background-color: #ffffff;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Discount code form */
+.store-discount-group {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.store-discount-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: #111827;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.store-discount-input:focus {
+  border-color: #9ca3af;
+}
+
+.store-discount-input::placeholder {
+  color: #9ca3af;
+}
+
+.store-discount-btn {
+  padding: 10px 20px;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #111827;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+  white-space: nowrap;
+}
+
+.store-discount-btn:hover:not(:disabled) {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.store-discount-error {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: -6px;
+}
+
+.store-discount-success {
+  font-size: 12px;
+  color: #16a34a;
+  margin-top: -6px;
+}
+
+/* Subtotal row */
+.store-subtotal-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.store-subtotal-label {
+  font-size: 14.5px;
+  color: #111827;
+  font-weight: 500;
+}
+
+.store-subtotal-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.store-shipping-note {
+  font-size: 12.5px;
+  color: #6b7280;
+  margin: -4px 0 4px;
+}
+
+/* Checkout CTA - Professional Oval Shape */
+.store-checkout-btn {
+  width: 100%;
+  height: 46px;
+  background-color: #111827;
+  color: #ffffff;
+  border: 1px solid #111827;
+  border-radius: 9999px;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  outline: none;
+}
+
+.store-checkout-btn:hover:not(:disabled) {
+  background-color: #1f2937;
+}
+
+.store-continue-shopping-link {
+  background: transparent;
+  border: none;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 13px;
+  color: #6b7280;
+  cursor: pointer;
+  align-self: center;
+  margin-top: 2px;
+  transition: color 0.15s ease;
+  outline: none;
+}
+
+.store-continue-shopping-link:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+/* =========================================================
+   Responsive Breakpoints (Mobile & Laptop)
+   ========================================================= */
+@media (max-width: 640px) {
+  .store-drawer-panel {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .store-drawer-header {
+    padding: 18px 20px;
+  }
+
+  .store-drawer-items {
+    padding: 16px 20px;
+  }
+
+  .store-drawer-footer {
+    padding: 16px 20px 20px;
+  }
+}

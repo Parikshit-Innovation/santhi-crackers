@@ -1,0 +1,571 @@
+/* Contact Page Styling */
+
+.contact-page-wrapper {
+  min-height: calc(100vh - 72px);
+  background-color: #ffffff;
+  padding: 40px 24px 80px 24px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  color: #18181b;
+}
+
+.contact-page-container {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Breadcrumbs */
+.contact-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.contact-breadcrumb-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #71717a;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  font-family: inherit;
+}
+
+.contact-breadcrumb-link:hover {
+  color: #18181b;
+  text-decoration: underline;
+}
+
+.contact-breadcrumb-separator {
+  color: #a1a1aa;
+  user-select: none;
+  font-size: 13px;
+}
+
+.contact-breadcrumb-current {
+  color: #18181b;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Heading & Subtitle */
+.contact-heading {
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #09090b;
+  margin: 0 0 16px 0;
+  line-height: 1.15;
+}
+
+.contact-subtitle {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #52525b;
+  margin: 0 0 40px 0;
+  max-width: 720px;
+}
+
+/* Form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 56px;
+}
+
+.contact-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #18181b;
+  letter-spacing: -0.01em;
+}
+
+.contact-input {
+  width: 100%;
+  padding: 13px 16px;
+  font-size: 15px;
+  color: #18181b;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.contact-input::placeholder {
+  color: #a1a1aa;
+  font-size: 15px;
+}
+
+.contact-input:focus {
+  border-color: #18181b;
+  box-shadow: 0 0 0 1px #18181b;
+}
+
+.contact-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #18181b;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 190px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.contact-textarea::placeholder {
+  color: #a1a1aa;
+  font-size: 15px;
+}
+
+.contact-textarea:focus {
+  border-color: #18181b;
+  box-shadow: 0 0 0 1px #18181b;
+}
+
+/* Action button */
+.contact-action-wrap {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.contact-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #09090b;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 13px 26px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+  font-family: inherit;
+}
+
+.contact-submit-btn:hover {
+  background-color: #27272a;
+  transform: translateY(-1px);
+}
+
+.contact-submit-btn:active {
+  transform: translateY(0);
+}
+
+.contact-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.contact-arrow-icon {
+  transition: transform 0.18s ease;
+}
+
+.contact-submit-btn:hover .contact-arrow-icon {
+  transform: translateX(3px);
+}
+
+/* Success notice */
+.contact-success-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  color: #166534;
+  font-size: 14px;
+  font-weight: 500;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Store Information Section */
+.contact-details-section {
+  border-top: 1px solid #e4e4e7;
+  padding-top: 48px;
+  margin-bottom: 48px;
+}
+
+.contact-details-header {
+  margin-bottom: 28px;
+}
+
+.contact-details-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #52525b;
+  background-color: #f4f4f5;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  margin-bottom: 10px;
+}
+
+.contact-store-name {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #09090b;
+  margin: 0 0 8px 0;
+}
+
+.contact-store-desc {
+  font-size: 15px;
+  color: #71717a;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Contact Info Grid */
+.contact-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.contact-info-card {
+  background-color: #fafafa;
+  border: 1px solid #e4e4e7;
+  border-radius: 14px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-info-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #09090b;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.contact-info-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.contact-info-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #09090b;
+  margin: 0 0 8px 0;
+}
+
+.contact-info-address {
+  font-style: normal;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #52525b;
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+.contact-info-sub {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #52525b;
+  margin: 0 0 14px 0;
+}
+
+.contact-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #09090b;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  width: fit-content;
+  margin-top: auto;
+  transition: opacity 0.15s ease;
+}
+
+.contact-map-link:hover,
+.contact-map-link:focus,
+.contact-map-link:active,
+.contact-map-link:visited {
+  background-color: #ffffff;
+  color: #09090b;
+  border-color: #e4e4e7;
+  opacity: 0.85;
+}
+
+/* Phone list */
+.contact-phone-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-phone-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #09090b;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.contact-phone-pill:hover,
+.contact-phone-pill:active,
+.contact-phone-pill:focus {
+  background-color: #ffffff;
+  color: #09090b;
+  border-color: #e4e4e7;
+  opacity: 0.85;
+}
+
+.contact-whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 13px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #25D366;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-top: 4px;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 1px 3px rgba(37, 211, 102, 0.25);
+}
+
+.contact-whatsapp-btn:hover {
+  background-color: #20bd5a;
+}
+
+.contact-whatsapp-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-whatsapp-icon {
+  flex-shrink: 0;
+  fill: #ffffff;
+}
+
+/* Email badge */
+.contact-email-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #09090b;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+  margin-top: auto;
+}
+
+.contact-email-badge:hover,
+.contact-email-badge:active,
+.contact-email-badge:focus {
+  background-color: #ffffff;
+  color: #09090b;
+  border-color: #e4e4e7;
+  opacity: 0.85;
+}
+
+.contact-email-icon {
+  flex-shrink: 0;
+  color: #09090b;
+}
+
+.contact-email-text {
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+/* FAQ Note */
+.contact-faq-note {
+  font-size: 14px;
+  color: #71717a;
+  margin-top: 16px;
+  line-height: 1.5;
+}
+
+.contact-faq-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: #18181b;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-family: inherit;
+}
+
+.contact-faq-link:hover {
+  color: #000000;
+}
+
+/* Expandable FAQ accordion */
+.contact-faq-accordion {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #fafafa;
+  border: 1px solid #f4f4f5;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.contact-faq-item {
+  border-bottom: 1px solid #e4e4e7;
+  padding-bottom: 12px;
+}
+
+.contact-faq-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.contact-faq-q {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #18181b;
+  margin: 0 0 6px 0;
+}
+
+.contact-faq-a {
+  font-size: 13.5px;
+  color: #52525b;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .contact-page-wrapper {
+    padding: 24px 16px 120px 16px; /* 120px to prevent overlap with bottom nav */
+  }
+
+  .contact-heading {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .contact-subtitle {
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+
+  .contact-form {
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .contact-textarea {
+    min-height: 160px;
+  }
+
+  .contact-action-wrap {
+    width: 100%;
+  }
+
+  .contact-submit-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 24px;
+  }
+
+  /* Store Details on Mobile */
+  .contact-details-section {
+    padding-top: 36px;
+    margin-bottom: 36px;
+  }
+
+  .contact-store-name {
+    font-size: 21px;
+  }
+
+  .contact-info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .contact-info-card {
+    padding: 18px 16px;
+  }
+
+  .contact-map-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contact-email-badge {
+    justify-content: center;
+  }
+}

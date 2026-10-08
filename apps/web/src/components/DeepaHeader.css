@@ -1,0 +1,257 @@
+/* DeepaKart Header Styles */
+.deepa-header {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+}
+
+.deepa-header-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 14px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* Brand Logo */
+.deepa-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.deepa-spark-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.deepa-brand-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+/* Nav Links */
+.deepa-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.deepa-nav-link {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  padding: 6px 0;
+  position: relative;
+  transition: color 0.15s ease;
+  outline: none;
+}
+
+.deepa-nav-link:hover {
+  color: #111827;
+}
+
+.deepa-nav-link.active {
+  color: #111827;
+  font-weight: 600;
+}
+
+.deepa-nav-indicator {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #c38b55;
+  border-radius: 2px;
+}
+
+/* Header Actions */
+.deepa-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Search Pill */
+.deepa-search-pill {
+  position: relative;
+  width: 290px;
+}
+
+.deepa-search-input {
+  width: 100%;
+  padding: 9px 38px 9px 18px;
+  background-color: #f3f4f6;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: #1f2937;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.deepa-search-input::placeholder {
+  color: #9ca3af;
+}
+
+.deepa-search-input:focus {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.deepa-search-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+}
+
+/* Location Selector */
+.deepa-location-picker {
+  position: relative;
+}
+
+.deepa-location-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.deepa-location-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.deepa-location-text {
+  font-weight: 600;
+}
+
+.deepa-chevron {
+  color: #6b7280;
+  margin-top: 1px;
+}
+
+.deepa-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 6px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  min-width: 140px;
+  z-index: 50;
+}
+
+.deepa-dropdown-item {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #374151;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.deepa-dropdown-item:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.deepa-dropdown-item.selected {
+  background-color: #fef7ee;
+  color: #c38b55;
+  font-weight: 600;
+}
+
+/* Icon Buttons */
+.deepa-icon-btn {
+  background: none;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.deepa-icon-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.deepa-cart-btn {
+  position: relative;
+}
+
+.deepa-cart-badge {
+  position: absolute;
+  top: 1px;
+  right: 0px;
+  background-color: #c38b55;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+@media (max-width: 1100px) {
+  .deepa-header-inner {
+    padding: 12px 20px;
+    gap: 16px;
+  }
+  .deepa-nav-links {
+    gap: 18px;
+  }
+  .deepa-search-pill {
+    width: 220px;
+  }
+}
+
+@media (max-width: 860px) {
+  .deepa-nav-links {
+    display: none;
+  }
+}

@@ -1,0 +1,309 @@
+/* StoreFooter Component Styling */
+
+.store-footer {
+  width: 100%;
+  background-color: #fafafa;
+  border-top: 1px solid #e4e4e7;
+  color: #18181b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  box-sizing: border-box;
+}
+
+/* Main Footer */
+.store-footer-main {
+  padding: 56px 24px 44px 24px;
+}
+
+.store-footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.store-footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.2fr 1.8fr;
+  gap: 48px;
+}
+
+.store-footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.store-footer-brand-col {
+  padding-right: 24px;
+}
+
+.store-footer-brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #09090b;
+  margin: 0 0 12px 0;
+}
+
+.store-footer-brand-desc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #52525b;
+  margin: 0 0 18px 0;
+  max-width: 380px;
+}
+
+.store-footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #09090b;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  width: fit-content;
+}
+
+.store-footer-badge svg {
+  color: #f59e0b;
+}
+
+/* Titles & Links */
+.store-footer-col-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #09090b;
+  margin: 0 0 20px 0;
+}
+
+.store-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.store-footer-links button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13.5px;
+  color: #52525b;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: color 0.15s ease;
+}
+
+.store-footer-links button:hover {
+  color: #09090b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Contact Column */
+.store-footer-address {
+  font-style: normal;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #52525b;
+  margin: 0 0 18px 0;
+}
+
+.store-footer-contact-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.store-footer-phones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.store-footer-phone-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #09090b;
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.store-footer-phone-pill:hover {
+  opacity: 0.8;
+}
+
+.store-footer-whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #25D366;
+  border-radius: 8px;
+  text-decoration: none;
+  width: fit-content;
+  transition: background-color 0.15s ease;
+}
+
+.store-footer-whatsapp-btn:hover {
+  background-color: #20bd5a;
+}
+
+.store-footer-email-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #52525b;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  width: fit-content;
+}
+
+.store-footer-email-link:hover {
+  color: #09090b;
+  text-decoration: underline;
+}
+
+/* 3. Bottom Legal Bar */
+.store-footer-bottom {
+  border-top: 1px solid #e4e4e7;
+  padding: 20px 24px;
+  background-color: #ffffff;
+}
+
+.store-footer-bottom-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+  color: #71717a;
+}
+
+.store-footer-copy {
+  color: #71717a;
+}
+
+.store-footer-notice {
+  font-weight: 500;
+  color: #52525b;
+}
+
+.store-footer-back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: #09090b;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s ease;
+}
+
+.store-footer-back-to-top:hover {
+  opacity: 0.7;
+}
+
+/* Mobile & Tablet Responsiveness */
+@media (max-width: 1024px) {
+  .store-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+
+  .store-footer-brand-col {
+    grid-column: span 2;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .store-footer {
+    padding-bottom: 70px; /* Safe distance above fixed bottom nav */
+  }
+
+  .store-footer-moving-bar {
+    padding: 12px 0 14px 0;
+  }
+
+  .store-footer-moving-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 0 12px;
+    margin-bottom: 10px;
+  }
+
+  .store-footer-ticker-item {
+    gap: 10px;
+    padding: 0 18px;
+  }
+
+  .store-footer-ticker-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .store-footer-ticker-title {
+    font-size: 12.5px;
+  }
+
+  .store-footer-ticker-sub {
+    font-size: 11px;
+  }
+
+  .store-footer-main {
+    padding: 36px 16px 28px 16px;
+  }
+
+  .store-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .store-footer-brand-col {
+    grid-column: span 1;
+  }
+
+  .store-footer-brand-desc {
+    max-width: 100%;
+  }
+
+  .store-footer-whatsapp-btn {
+    width: 100%;
+  }
+
+  .store-footer-bottom-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .store-footer-back-to-top {
+    align-self: flex-start;
+    margin-top: 6px;
+  }
+}

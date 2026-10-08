@@ -1,0 +1,77 @@
+/* DeepaTrustBar Styles */
+.deepa-trust-bar {
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 24px 36px;
+  box-sizing: border-box;
+}
+
+.deepa-trust-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.deepa-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 12px;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.deepa-trust-item:last-child {
+  border-right: none;
+}
+
+.deepa-trust-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #fef7ee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.deepa-trust-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.deepa-trust-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #171717;
+  margin-bottom: 2px;
+  letter-spacing: -0.01em;
+}
+
+.deepa-trust-desc {
+  font-size: 12.5px;
+  color: #71717a;
+  line-height: 1.35;
+}
+
+@media (max-width: 1024px) {
+  .deepa-trust-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .deepa-trust-item {
+    border-right: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .deepa-trust-container {
+    grid-template-columns: 1fr;
+  }
+  .deepa-trust-bar {
+    padding: 20px 20px;
+  }
+}

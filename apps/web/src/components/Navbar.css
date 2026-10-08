@@ -1,0 +1,359 @@
+/* ===================================================================
+   S.R. TRADERS / SIVAKASI CRACKERS - PIXEL-PERFECT NAVIGATION BAR
+   =================================================================== */
+
+.sr-navbar {
+  width: 100%;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.09);
+  position: relative;
+  z-index: 100;
+}
+
+/* ---------------- 1. TOP PURPLE STRIP ---------------- */
+.sr-top-strip {
+  background-color: #63175f; /* Rich deep purple matching the image */
+  color: #ffffff;
+  padding: 14px 32px; /* Increased height */
+  font-size: 14.5px;
+  line-height: 1.5;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sr-top-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.sr-top-address {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sr-top-address-text {
+  font-weight: 500;
+  letter-spacing: 0.015em;
+}
+
+/* ---------------- 2. MIDDLE WHITE HEADER ---------------- */
+.sr-middle-header {
+  background-color: #ffffff;
+  padding: 34px 40px 26px; /* Substantially increased height & vertical room */
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sr-middle-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+}
+
+/* Location Left Box */
+.sr-location-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 440px;
+}
+
+.sr-maps-pin {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.sr-location-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.sr-location-title {
+  font-size: 17.5px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.sr-location-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sr-address-line {
+  font-size: 13.5px;
+  color: #374151;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+/* Center Brand Mascot Logo */
+.sr-brand-logo-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+}
+
+.sr-brand-name-top {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  color: #e59819; /* Golden amber text */
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.sr-shield-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.sr-stars-arc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: -6px;
+  z-index: 2;
+}
+
+.sr-star-icon {
+  filter: drop-shadow(0 1px 2px rgba(245, 158, 11, 0.45));
+}
+
+.sr-shield-crest {
+  width: 90px;
+  height: 104px; /* Grand, prominent mascot shield */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sr-shield-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.sr-brand-tagline-bottom {
+  font-size: 15.5px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #e59819; /* Golden amber text */
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* Right Follow On */
+.sr-follow-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 160px;
+}
+
+.sr-follow-title {
+  font-size: 17.5px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.sr-social-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sr-social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  text-decoration: none;
+}
+
+.sr-social-btn:hover {
+  transform: translateY(-2px) scale(1.08);
+  opacity: 0.92;
+}
+
+/* Mobile Toggle Hamburger */
+.sr-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sr-hamburger-bar {
+  width: 26px;
+  height: 3px;
+  background-color: #111827;
+  border-radius: 2px;
+  transition: all 0.25s ease;
+}
+
+/* ---------------- 3. BOTTOM RED NAVIGATION BAR ---------------- */
+.sr-bottom-nav-track {
+  width: 100%;
+  background-color: #f7f9fa; /* Light background on the right side of the slant */
+  position: relative;
+  overflow: hidden;
+  height: 76px; /* Substantially increased height */
+}
+
+.sr-bottom-nav-slant {
+  height: 100%;
+  width: 75%; /* Extends over past the middle */
+  min-width: 620px;
+  background-color: #cb1928; /* Vibrant crimson red matching the reference */
+  /* Diagonal slant cut on right edge: top reaches 100%, bottom is indented ~76px */
+  clip-path: polygon(0 0, 100% 0, calc(100% - 76px) 100%, 0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Links positioned towards center */
+  padding-right: 110px;
+  box-sizing: border-box;
+}
+
+.sr-nav-links-wrap {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+}
+
+.sr-nav-link-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 18px; /* Taller, prominent nav links */
+  font-weight: 700;
+  cursor: pointer;
+  padding: 14px 8px;
+  font-family: inherit;
+  transition: color 0.15s ease, transform 0.1s ease;
+  position: relative;
+  outline: none;
+  letter-spacing: 0.03em;
+}
+
+.sr-nav-link-btn:hover {
+  color: #ffde59;
+}
+
+.sr-nav-link-btn.active {
+  color: #ffd000; /* Gold/Yellow active state matching 'Home' */
+}
+
+/* ---------------- RESPONSIVE BREAKPOINTS ---------------- */
+@media (max-width: 1024px) {
+  .sr-bottom-nav-slant {
+    width: 88%;
+    padding-right: 70px;
+  }
+
+  .sr-nav-links-wrap {
+    gap: 32px;
+  }
+}
+
+@media (max-width: 860px) {
+  .sr-top-strip {
+    font-size: 13px;
+    padding: 10px 18px;
+  }
+
+  .sr-middle-header {
+    padding: 22px 20px 18px;
+  }
+
+  .sr-middle-container {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .sr-location-box {
+    max-width: 320px;
+  }
+
+  .sr-mobile-toggle {
+    display: flex;
+  }
+
+  .sr-bottom-nav-track {
+    height: auto;
+  }
+
+  .sr-bottom-nav-slant {
+    width: 100%;
+    clip-path: none;
+    padding: 0;
+    justify-content: center;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .sr-bottom-nav-slant.mobile-expanded {
+    max-height: 320px;
+    padding: 18px 20px;
+  }
+
+  .sr-nav-links-wrap {
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .sr-nav-link-btn {
+    font-size: 17px;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .sr-middle-container {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .sr-location-box {
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  .sr-follow-box {
+    margin-top: 6px;
+  }
+
+  .sr-bottom-nav-slant {
+    min-width: 100%;
+  }
+}

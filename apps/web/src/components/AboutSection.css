@@ -1,0 +1,677 @@
+/* =========================================================
+   AboutSection.css - Clean, Modern, Warm Festive Editorial
+   ========================================================= */
+
+.about-page-wrapper {
+  width: 100%;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Common Typography & Accents */
+.about-eyebrow {
+  display: inline-block;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a06941;
+  margin-bottom: 14px;
+  font-family: 'Geist', 'Inter', sans-serif;
+}
+
+.about-section-heading {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: clamp(28px, 3.4vw, 44px);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+  margin: 0 0 18px;
+}
+
+/* Oval CTA Buttons with Subtle Non-Neon Hover */
+.about-btn-copper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #9e6b45;
+  color: #ffffff;
+  border: 1px solid #9e6b45;
+  border-radius: 9999px;
+  padding: 13px 30px;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+  user-select: none;
+}
+
+.about-btn-copper:hover {
+  background-color: #8c5d3a;
+  border-color: #8c5d3a;
+}
+
+.about-btn-copper:active {
+  background-color: #7b5030;
+}
+
+.about-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #d1d5db;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+  user-select: none;
+}
+
+.about-btn-outline:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.about-btn-outline:active {
+  background-color: #f1f5f9;
+}
+
+.about-rounded-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+  display: block;
+}
+
+/* =========================================================
+   1. HERO SECTION: ABOUT US
+   ========================================================= */
+.about-hero-section {
+  width: 100%;
+  padding: 56px 48px 48px;
+  box-sizing: border-box;
+}
+
+.about-hero-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  align-items: center;
+  gap: 64px;
+}
+
+.about-hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.about-hero-title {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: clamp(34px, 4vw, 52px);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.14;
+  letter-spacing: -0.03em;
+  margin: 0 0 20px;
+}
+
+.about-hero-desc {
+  font-size: 16px;
+  color: #475569;
+  line-height: 1.65;
+  margin: 0 0 32px;
+  max-width: 520px;
+}
+
+.about-hero-image-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================================================
+   2. VALUE PROPS / TRUST HIGHLIGHTS BAR
+   ========================================================= */
+.about-trust-bar-section {
+  width: 100%;
+  padding: 24px 48px 56px;
+  box-sizing: border-box;
+}
+
+.about-trust-bar-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.about-trust-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.about-trust-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.about-trust-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #faf2ea;
+  color: #a06941;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.about-trust-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.about-trust-title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.about-trust-sub {
+  margin: 0;
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+/* =========================================================
+   3. OUR STORY SECTION (Reverse 2-Column)
+   ========================================================= */
+.about-story-section {
+  width: 100%;
+  padding: 32px 48px 72px;
+  box-sizing: border-box;
+}
+
+.about-story-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  gap: 64px;
+}
+
+.about-story-image-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+.about-story-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.about-story-p {
+  font-size: 15.5px;
+  color: #475569;
+  line-height: 1.7;
+  margin: 0 0 16px;
+  max-width: 520px;
+}
+
+.about-story-text .about-btn-outline {
+  margin-top: 12px;
+}
+
+/* =========================================================
+   4. WHY CHOOSE US SECTION (Warm Cream Card)
+   ========================================================= */
+.about-why-section {
+  width: 100%;
+  padding: 0 48px 72px;
+  box-sizing: border-box;
+}
+
+.about-why-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  background-color: #fcf9f5;
+  border-radius: 20px;
+  padding: 56px 52px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  align-items: center;
+  gap: 48px;
+  box-sizing: border-box;
+}
+
+.about-why-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.about-why-title {
+  font-family: 'Geist', 'Inter', sans-serif;
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.about-why-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  text-align: center;
+}
+
+.about-why-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.about-why-icon-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background-color: #f2e7db;
+  color: #9e6b45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.about-why-card:hover .about-why-icon-circle {
+  transform: scale(1.05);
+}
+
+.about-why-name {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.about-why-desc {
+  margin: 0;
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.4;
+  max-width: 160px;
+}
+
+/* =========================================================
+   5. OUR MISSION SECTION (Split 2-Column)
+   ========================================================= */
+.about-mission-section {
+  width: 100%;
+  padding: 0 48px 84px;
+  box-sizing: border-box;
+}
+
+.about-mission-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  align-items: center;
+  gap: 64px;
+}
+
+.about-mission-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.about-mission-desc {
+  font-size: 16px;
+  color: #475569;
+  line-height: 1.65;
+  margin: 0 0 32px;
+  max-width: 520px;
+}
+
+.about-mission-image-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================================================
+   6. DOS AND DON'TS SAFETY GUIDE
+   ========================================================= */
+.about-safety-section {
+  width: 100%;
+  padding: 40px 48px 96px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.about-safety-container {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.about-safety-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 44px;
+}
+
+.about-safety-subtitle {
+  font-size: 15.5px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 12px auto 0;
+}
+
+.about-safety-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.about-safety-card {
+  border-radius: 20px;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-safety-card-dos {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.about-safety-card-donts {
+  background-color: #fff1f2;
+  border: 1px solid #fecdd3;
+}
+
+.about-safety-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.about-safety-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.about-badge-dos {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.about-badge-donts {
+  background-color: #ffe4e6;
+  color: #be123c;
+  border: 1px solid #fda4af;
+}
+
+.about-safety-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.about-safety-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.about-safety-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.about-safety-icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.about-icon-do {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.about-icon-dont {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.about-safety-item-text {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #334155;
+}
+
+.about-safety-item-text strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN (Mobile & Tablet)
+   ========================================================= */
+@media (max-width: 1024px) {
+  .about-hero-section,
+  .about-trust-bar-section,
+  .about-story-section,
+  .about-why-section,
+  .about-mission-section,
+  .about-safety-section {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .about-trust-bar-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-why-container {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 40px 32px;
+  }
+
+  .about-why-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (max-width: 840px) {
+  .about-hero-section {
+    padding: 24px 20px 36px;
+  }
+
+  .about-hero-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Image first or text first on mobile */
+  .about-hero-text {
+    order: 1;
+  }
+
+  .about-hero-image-wrap {
+    order: 2;
+    aspect-ratio: 16 / 11;
+  }
+
+  .about-trust-bar-section {
+    padding: 12px 20px 40px;
+  }
+
+  .about-trust-bar-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .about-trust-card {
+    padding: 14px 16px;
+  }
+
+  .about-story-section {
+    padding: 16px 20px 44px;
+  }
+
+  .about-story-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .about-story-image-wrap {
+    order: 1;
+    aspect-ratio: 16 / 11;
+  }
+
+  .about-story-text {
+    order: 2;
+  }
+
+  .about-why-section {
+    padding: 0 16px 44px;
+  }
+
+  .about-why-container {
+    padding: 36px 20px;
+    border-radius: 16px;
+  }
+
+  .about-why-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 16px;
+  }
+
+  .about-mission-section {
+    padding: 16px 20px 64px;
+  }
+
+  .about-mission-container {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .about-mission-text {
+    order: 1;
+  }
+
+  .about-mission-image-wrap {
+    order: 2;
+    aspect-ratio: 16 / 11;
+  }
+
+  /* Safety Dos & Don'ts on Mobile */
+  .about-safety-section {
+    padding: 24px 16px 110px;
+  }
+
+  .about-safety-header {
+    margin-bottom: 32px;
+  }
+
+  .about-safety-subtitle {
+    font-size: 14.5px;
+  }
+
+  .about-safety-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .about-safety-card {
+    padding: 24px 18px;
+    border-radius: 16px;
+  }
+
+  .about-safety-card-header {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .about-safety-card-title {
+    font-size: 16px;
+  }
+
+  .about-safety-list {
+    gap: 16px;
+  }
+
+  .about-safety-item-text {
+    font-size: 13.5px;
+  }
+}

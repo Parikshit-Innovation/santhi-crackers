@@ -1,0 +1,157 @@
+/* DeepaCategories Styles */
+.deepa-categories-section {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 48px 36px 40px;
+  box-sizing: border-box;
+}
+
+.deepa-categories-container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.deepa-categories-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.deepa-cat-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.deepa-cat-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #b88648;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.deepa-cat-title {
+  font-family: 'Outfit', -apple-system, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #171717;
+  letter-spacing: -0.02em;
+}
+
+.deepa-view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #b88648;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: all 0.2s ease;
+}
+
+.deepa-view-all-btn:hover {
+  color: #926430;
+  transform: translateX(2px);
+}
+
+/* 6-column Grid */
+.deepa-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+}
+
+.deepa-cat-card {
+  background-color: #f7f6f4;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.deepa-cat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.08);
+  border-color: rgba(195, 139, 85, 0.3);
+}
+
+.deepa-cat-img-box {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f7f6f3;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.deepa-cat-svg {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  transition: transform 0.35s ease;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.06));
+}
+
+.deepa-cat-card:hover .deepa-cat-svg {
+  transform: scale(1.08) translateY(-2px);
+}
+
+.deepa-cat-footer {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.deepa-cat-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #18181b;
+  letter-spacing: -0.01em;
+}
+
+.deepa-cat-arrow {
+  color: #71717a;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.deepa-cat-card:hover .deepa-cat-arrow {
+  color: #c38b55;
+  transform: translateX(3px);
+}
+
+@media (max-width: 1200px) {
+  .deepa-categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .deepa-categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .deepa-categories-section {
+    padding: 36px 20px 30px;
+  }
+  .deepa-cat-title {
+    font-size: 26px;
+  }
+}

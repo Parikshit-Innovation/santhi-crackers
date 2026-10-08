@@ -1,0 +1,91 @@
+/* Marquee Moving Text Ticker - Infinite Smooth Scroll */
+.marquee-bar {
+  width: 100%;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+/* Track container moving continuously from right to left */
+.marquee-track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  width: max-content;
+  will-change: transform;
+  animation: marqueeScroll 38s linear infinite;
+}
+
+.marquee-bar:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Individual announcement item */
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 28px;
+  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13.5px;
+  line-height: 1;
+}
+
+/* Bold prefix title matching reference */
+.marquee-title {
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+/* Smiley icon matching reference screenshot */
+.marquee-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.marquee-icon svg {
+  display: block;
+}
+
+/* Descriptive slogan / detail text */
+.marquee-text {
+  font-weight: 400;
+  color: #4b5563;
+  letter-spacing: -0.005em;
+}
+
+/* Continuous animation keyframe */
+@keyframes marqueeScroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-33.333%, 0, 0);
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .marquee-bar {
+    padding: 9px 0;
+  }
+  .marquee-item {
+    padding: 0 20px;
+    gap: 8px;
+    font-size: 12.5px;
+  }
+  .marquee-track {
+    animation-duration: 28s;
+  }
+}

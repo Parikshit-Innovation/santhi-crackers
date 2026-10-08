@@ -1,0 +1,148 @@
+/* DeepaFooter Styles */
+.deepa-footer {
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 60px 36px 30px;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.deepa-footer-container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.deepa-footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.deepa-footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.deepa-footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.deepa-footer-about {
+  font-size: 13.5px;
+  color: #6b7280;
+  line-height: 1.6;
+  max-width: 360px;
+}
+
+.deepa-footer-col h4 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.deepa-footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deepa-footer-col a {
+  text-decoration: none;
+  font-size: 13.5px;
+  color: #6b7280;
+  transition: color 0.15s ease;
+}
+
+.deepa-footer-col a:hover {
+  color: #c38b55;
+}
+
+.deepa-newsletter-text {
+  font-size: 13.5px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.deepa-newsletter-input-wrap {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  border-radius: 9999px;
+  padding: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.deepa-newsletter-input-wrap input {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  color: #111827;
+}
+
+.deepa-newsletter-input-wrap button {
+  background-color: #18181b;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.deepa-newsletter-input-wrap button:hover {
+  background-color: #c38b55;
+}
+
+.deepa-footer-bottom {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.deepa-footer-trust-marks {
+  display: flex;
+  gap: 16px;
+  font-size: 12.5px;
+  color: #6b7280;
+}
+
+@media (max-width: 1024px) {
+  .deepa-footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .deepa-footer-top {
+    grid-template-columns: 1fr;
+  }
+  .deepa-footer {
+    padding: 40px 20px 24px;
+  }
+}
