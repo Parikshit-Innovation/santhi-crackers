@@ -14,6 +14,7 @@ app.use("/api", apiRoute);
 app.get("/health", (_request, response) => {
   response.json({ status: "ok" });
 });
+
 app.listen(port, () => {
   console.log(`API server listening on http://localhost:${port}`);
 });
