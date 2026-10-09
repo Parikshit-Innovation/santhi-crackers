@@ -7,35 +7,35 @@ Diwali crackers e-commerce platform.
 
 The frontend should manage:
 
--   Products
--   Categories
--   Inventory
--   Orders
--   Product images through Cloudinary
--   Dashboard statistics
--   Admin account/session
--   Product activation/featured state
+- Products
+- Categories
+- Inventory
+- Orders
+- Product images through Cloudinary
+- Dashboard statistics
+- Admin account/session
+- Product activation/featured state
 
 The visual style should match the customer website:
 
--   Minimal
--   White background
--   Warm beige / subtle gold accents
--   Dark navy/black text
--   Thin borders
--   Soft shadows
--   Rounded cards
--   No excessive gradients
--   No colorful dashboard widgets
--   Professional SaaS/e-commerce administration interface
+- Minimal
+- White background
+- Warm beige / subtle gold accents
+- Dark navy/black text
+- Thin borders
+- Soft shadows
+- Rounded cards
+- No excessive gradients
+- No colorful dashboard widgets
+- Professional SaaS/e-commerce administration interface
 
-------------------------------------------------------------------------
+---
 
 # 2. Recommended Frontend Stack
 
 Use:
 
-``` text
+```text
 React
 TypeScript
 Vite
@@ -49,7 +49,7 @@ Zod
 
 Optional:
 
-``` text
+```text
 TanStack Query
 Sonner
 Recharts
@@ -57,16 +57,16 @@ Recharts
 
 Recommended:
 
--   TanStack Query for API/server state
--   React Hook Form + Zod for forms
--   Lucide for icons
--   Recharts only for simple sales/order charts
+- TanStack Query for API/server state
+- React Hook Form + Zod for forms
+- Lucide for icons
+- Recharts only for simple sales/order charts
 
-------------------------------------------------------------------------
+---
 
 # 3. Admin URL Structure
 
-``` text
+```text
 /admin/login
 
 /admin
@@ -84,15 +84,15 @@ Recommended:
 /admin/settings
 ```
 
-------------------------------------------------------------------------
+---
 
 # 4. Admin Layout
 
 Use a persistent dashboard layout.
 
-``` text
+```text
 ┌─────────────────────────────────────────────────────────────┐
-│ Logo / Store Name                         Admin  ●           │
+│ Logo / Store Name                         Admin  ●          │
 ├───────────────┬─────────────────────────────────────────────┤
 │               │                                             │
 │ Dashboard     │                                             │
@@ -110,23 +110,23 @@ Use a persistent dashboard layout.
 
 Desktop:
 
-``` text
+```text
 Sidebar width: 240px
 ```
 
 Mobile:
 
-``` text
+```text
 Sidebar → collapsible drawer
 ```
 
-------------------------------------------------------------------------
+---
 
 # 5. Sidebar
 
 Sidebar items:
 
-``` text
+```text
 Dashboard
 Products
 Categories
@@ -139,7 +139,7 @@ Logout
 
 Each item should have:
 
-``` text
+```text
 Icon
 Label
 Active state
@@ -147,7 +147,7 @@ Active state
 
 Example:
 
-``` text
+```text
 ▣ Dashboard
 
 ▦ Products
@@ -161,7 +161,7 @@ Example:
 
 Active navigation:
 
-``` text
+```text
 background: warm beige
 text: dark
 left border/accent: gold
@@ -169,13 +169,13 @@ left border/accent: gold
 
 Do not use highly saturated colors.
 
-------------------------------------------------------------------------
+---
 
 # 6. Header
 
 Header contains:
 
-``` text
+```text
 Page title
 Breadcrumb
 Search
@@ -185,7 +185,7 @@ Admin profile
 
 Example:
 
-``` text
+```text
 Products
 
 Home / Products
@@ -197,23 +197,23 @@ Home / Products
 
 On smaller screens:
 
-``` text
+```text
 ☰   Products                  Admin
 ```
 
-------------------------------------------------------------------------
+---
 
 # 7. Login Page
 
 Route:
 
-``` text
+```text
 /admin/login
 ```
 
 Minimal centered layout:
 
-``` text
+```text
 ┌─────────────────────────────────────┐
 │                                     │
 │          DeepaKart Admin            │
@@ -232,7 +232,7 @@ Minimal centered layout:
 
 Include:
 
-``` text
+```text
 Email
 Password
 Show/hide password
@@ -243,26 +243,26 @@ Forgot password
 
 Do not implement forgot-password UI unless the backend supports it.
 
-------------------------------------------------------------------------
+---
 
 # 8. Dashboard
 
 Route:
 
-``` text
+```text
 /admin
 ```
 
 Page heading:
 
-``` text
+```text
 Dashboard
 Good morning, Admin
 ```
 
 Statistics cards:
 
-``` text
+```text
 Total Products
 128
 
@@ -286,7 +286,7 @@ Cards should be simple.
 
 Example:
 
-``` text
+```text
 ┌──────────────────────────────┐
 │ Total Products               │
 │                              │
@@ -295,13 +295,13 @@ Example:
 └──────────────────────────────┘
 ```
 
-------------------------------------------------------------------------
+---
 
 # 9. Dashboard Order Section
 
 Show recent orders.
 
-``` text
+```text
 Recent Orders
 
 Order       Customer       Total       Status       Date
@@ -313,23 +313,23 @@ Order       Customer       Total       Status       Date
 
 Button:
 
-``` text
+```text
 View All Orders →
 ```
 
-------------------------------------------------------------------------
+---
 
 # 10. Dashboard Low Stock Section
 
 Display:
 
-``` text
+```text
 Low Stock Products
 ```
 
 Example:
 
-``` text
+```text
 Product                     Stock
 
 3000 Combo Pack              8
@@ -339,17 +339,17 @@ Flower Pot Deluxe             2
 
 Button:
 
-``` text
+```text
 Manage Inventory →
 ```
 
-------------------------------------------------------------------------
+---
 
 # 11. Dashboard Sales Chart
 
 Optional simple chart:
 
-``` text
+```text
 Sales Overview
 
 ₹
@@ -363,7 +363,7 @@ Sales Overview
 
 Filters:
 
-``` text
+```text
 7 Days
 30 Days
 This Month
@@ -371,19 +371,19 @@ This Month
 
 Do not make the dashboard overly analytical in the MVP.
 
-------------------------------------------------------------------------
+---
 
 # 12. Products Page
 
 Route:
 
-``` text
+```text
 /admin/products
 ```
 
 Header:
 
-``` text
+```text
 Products
 
 Manage your crackers and combo packs
@@ -393,7 +393,7 @@ Manage your crackers and combo packs
 
 Toolbar:
 
-``` text
+```text
 Search products...
 
 Category ▼
@@ -403,13 +403,13 @@ Status ▼
 Sort ▼
 ```
 
-------------------------------------------------------------------------
+---
 
 # 13. Product Table
 
 Columns:
 
-``` text
+```text
 Image
 Code
 Product Name
@@ -424,7 +424,7 @@ Actions
 
 Example:
 
-``` text
+```text
 ┌────┬──────┬──────────────────────┬────────────┬────────┬───────┬───────┬────────┐
 │Img │ Code │ Product              │ Category   │ Actual │ Price │ Stock │ Status │
 ├────┼──────┼──────────────────────┼────────────┼────────┼───────┼───────┼────────┤
@@ -435,7 +435,7 @@ Example:
 
 Actions:
 
-``` text
+```text
 Edit
 Deactivate
 Delete
@@ -444,19 +444,19 @@ Mark Featured
 
 Prefer deactivation over permanent deletion.
 
-------------------------------------------------------------------------
+---
 
 # 14. Add Product Page
 
 Route:
 
-``` text
+```text
 /admin/products/new
 ```
 
 Layout:
 
-``` text
+```text
 Add Product
 
 ┌─────────────────────────────┬────────────────────────────┐
@@ -479,11 +479,11 @@ Add Product
 └─────────────────────────────┴────────────────────────────┘
 ```
 
-------------------------------------------------------------------------
+---
 
 # 15. Pricing Section
 
-``` text
+```text
 Pricing
 
 Actual Price
@@ -500,19 +500,18 @@ Discount should preferably be calculated automatically.
 
 Example:
 
-``` ts
-discount =
-  ((actualPrice - price) / actualPrice) * 100;
+```ts
+discount = ((actualPrice - price) / actualPrice) * 100;
 ```
 
 Do not require the admin to manually enter the discount if it can be
 calculated.
 
-------------------------------------------------------------------------
+---
 
 # 16. Inventory Section
 
-``` text
+```text
 Inventory
 
 Stock
@@ -527,7 +526,7 @@ Maximum Order Quantity
 
 Show:
 
-``` text
+```text
 In Stock
 Low Stock
 Out of Stock
@@ -535,17 +534,17 @@ Out of Stock
 
 Example:
 
-``` text
+```text
 100 → In Stock
 8   → Low Stock
 0   → Out of Stock
 ```
 
-------------------------------------------------------------------------
+---
 
 # 17. Product Settings
 
-``` text
+```text
 Product Settings
 
 [✓] Active Product
@@ -555,29 +554,29 @@ Product Settings
 
 Active:
 
-``` text
+```text
 Product visible in customer shop
 ```
 
 Inactive:
 
-``` text
+```text
 Product hidden from customer shop
 ```
 
 Featured:
 
-``` text
+```text
 Product appears in featured sections
 ```
 
-------------------------------------------------------------------------
+---
 
 # 18. Product Image Upload UX
 
 Use a drag-and-drop upload box:
 
-``` text
+```text
 ┌──────────────────────────────────────┐
 │                                      │
 │              ↑                       │
@@ -592,7 +591,7 @@ Use a drag-and-drop upload box:
 
 After upload:
 
-``` text
+```text
 ┌───────────────┐
 │               │
 │ Product Image │
@@ -604,7 +603,7 @@ After upload:
 
 Upload flow:
 
-``` text
+```text
 Select Image
      ↓
 Frontend validates type/size
@@ -618,13 +617,13 @@ Store imageUrl in product form
 Submit Product
 ```
 
-------------------------------------------------------------------------
+---
 
 # 19. Product Form Validation
 
 Frontend validation:
 
-``` text
+```text
 Code       → required
 Name       → required
 Content    → required
@@ -638,7 +637,7 @@ Errors should appear directly below fields.
 
 Example:
 
-``` text
+```text
 Selling Price
 
 [ -100 ]
@@ -648,19 +647,19 @@ Selling price cannot be negative.
 
 Use Zod for validation.
 
-------------------------------------------------------------------------
+---
 
 # 20. Categories Page
 
 Route:
 
-``` text
+```text
 /admin/categories
 ```
 
 Header:
 
-``` text
+```text
 Categories
 
                          + Add Category
@@ -668,7 +667,7 @@ Categories
 
 Table:
 
-``` text
+```text
 Category
 Slug
 Products
@@ -679,7 +678,7 @@ Actions
 
 Example:
 
-``` text
+```text
 Combo Packs
 combo-packs
 24 products
@@ -689,7 +688,7 @@ Active
 
 Categories:
 
-``` text
+```text
 Combo Packs
 Sparklers
 Flower Pots
@@ -700,13 +699,13 @@ Fancy Crackers
 Gift Packs
 ```
 
-------------------------------------------------------------------------
+---
 
 # 21. Add Category Modal
 
 Use a modal rather than a separate page.
 
-``` text
+```text
 Add Category
 
 Category Name
@@ -726,25 +725,25 @@ Sort Order
 
 Slug can be automatically generated:
 
-``` text
+```text
 Combo Packs
 ↓
 combo-packs
 ```
 
-------------------------------------------------------------------------
+---
 
 # 22. Inventory Page
 
 Route:
 
-``` text
+```text
 /admin/inventory
 ```
 
 Top statistics:
 
-``` text
+```text
 Total Stock
 Low Stock
 Out of Stock
@@ -752,7 +751,7 @@ Out of Stock
 
 Table:
 
-``` text
+```text
 Product
 Code
 Current Stock
@@ -762,7 +761,7 @@ Update Stock
 
 Example:
 
-``` text
+```text
 3000 Combo Pack
 251
 50
@@ -772,7 +771,7 @@ In Stock
 
 Update stock modal:
 
-``` text
+```text
 Update Inventory
 
 Current Stock: 50
@@ -783,19 +782,19 @@ New Stock
 [Cancel] [Update]
 ```
 
-------------------------------------------------------------------------
+---
 
 # 23. Orders Page
 
 Route:
 
-``` text
+```text
 /admin/orders
 ```
 
 Header:
 
-``` text
+```text
 Orders
 
 View and manage customer purchases
@@ -803,7 +802,7 @@ View and manage customer purchases
 
 Toolbar:
 
-``` text
+```text
 Search order...
 
 Status ▼
@@ -813,13 +812,13 @@ Payment ▼
 Date ▼
 ```
 
-------------------------------------------------------------------------
+---
 
 # 24. Orders Table
 
 Columns:
 
-``` text
+```text
 Order
 Customer
 Items
@@ -832,7 +831,7 @@ Actions
 
 Example:
 
-``` text
+```text
 ┌─────────┬─────────┬───────┬────────┬─────────┬────────────┐
 │ Order   │ Customer│ Items │ Total  │ Payment │ Status     │
 ├─────────┼─────────┼───────┼────────┼─────────┼────────────┤
@@ -842,13 +841,13 @@ Example:
 └─────────┴─────────┴───────┴────────┴─────────┴────────────┘
 ```
 
-------------------------------------------------------------------------
+---
 
 # 25. Order Status Badges
 
 Use subtle badges.
 
-``` text
+```text
 Pending
 background: light beige
 
@@ -870,19 +869,19 @@ background: light red
 
 Keep colors muted.
 
-------------------------------------------------------------------------
+---
 
 # 26. Order Details Page
 
 Route:
 
-``` text
+```text
 /admin/orders/:id
 ```
 
 Header:
 
-``` text
+```text
 Order #ORD1001
 
 Processing
@@ -892,7 +891,7 @@ Processing
 
 Customer card:
 
-``` text
+```text
 Customer
 
 Sunil Kumar
@@ -902,7 +901,7 @@ sunil@example.com
 
 Delivery card:
 
-``` text
+```text
 Delivery Address
 
 Address Line
@@ -911,11 +910,11 @@ Tamil Nadu
 636xxx
 ```
 
-------------------------------------------------------------------------
+---
 
 # 27. Order Items
 
-``` text
+```text
 Order Items
 
 Image   Product             Price    Qty    Total
@@ -925,11 +924,11 @@ img     Flower Pot         ₹150     3      ₹450
 img     Rocket Pack        ₹500     1      ₹500
 ```
 
-------------------------------------------------------------------------
+---
 
 # 28. Order Summary
 
-``` text
+```text
 Subtotal
 ₹1550
 
@@ -947,18 +946,18 @@ Total
 
 Payment:
 
-``` text
+```text
 Payment Status: PAID
 Payment ID: pay_xxxxx
 ```
 
-------------------------------------------------------------------------
+---
 
 # 29. Update Order Status
 
 Use a dropdown or status stepper:
 
-``` text
+```text
 Pending
    ↓
 Confirmed
@@ -972,7 +971,7 @@ Delivered
 
 Example:
 
-``` text
+```text
 Status
 
 [ Processing ▼ ]
@@ -982,19 +981,19 @@ Status
 
 For cancellation:
 
-``` text
+```text
 [Cancel Order]
 ```
 
 Require confirmation before cancellation.
 
-------------------------------------------------------------------------
+---
 
 # 30. Confirmation Dialogs
 
 For destructive actions:
 
-``` text
+```text
 Deactivate Product?
 
 This product will no longer appear
@@ -1005,7 +1004,7 @@ in the customer store.
 
 For cancellation:
 
-``` text
+```text
 Cancel Order?
 
 Are you sure you want to cancel
@@ -1014,7 +1013,7 @@ order #ORD1001?
 [Keep Order] [Cancel Order]
 ```
 
-------------------------------------------------------------------------
+---
 
 # 31. API Integration
 
@@ -1022,7 +1021,7 @@ Create a central API client.
 
 Example:
 
-``` text
+```text
 src/
 ├── api/
 │   ├── client.ts
@@ -1035,38 +1034,38 @@ src/
 
 Example:
 
-``` ts
+```ts
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true
+  withCredentials: true,
 });
 ```
 
 Environment:
 
-``` env
+```env
 VITE_API_URL=http://localhost:4000
 ```
 
-------------------------------------------------------------------------
+---
 
 # 32. Product API Functions
 
 Frontend service:
 
-``` ts
-getProducts()
-getProduct(id)
-createProduct(data)
-updateProduct(id, data)
-deactivateProduct(id)
-toggleFeatured(id)
-updateStock(id, stock)
+```ts
+getProducts();
+getProduct(id);
+createProduct(data);
+updateProduct(id, data);
+deactivateProduct(id);
+toggleFeatured(id);
+updateStock(id, stock);
 ```
 
 Endpoints:
 
-``` text
+```text
 GET    /admin/products
 GET    /admin/products/:id
 POST   /admin/products
@@ -1076,44 +1075,44 @@ PATCH  /admin/products/:id/featured
 PATCH  /admin/products/:id/stock
 ```
 
-------------------------------------------------------------------------
+---
 
 # 33. Category API Functions
 
-``` ts
-getCategories()
-createCategory(data)
-updateCategory(id, data)
-deactivateCategory(id)
+```ts
+getCategories();
+createCategory(data);
+updateCategory(id, data);
+deactivateCategory(id);
 ```
 
-------------------------------------------------------------------------
+---
 
 # 34. Order API Functions
 
-``` ts
-getOrders(params)
-getOrder(id)
-updateOrderStatus(id, status)
-updatePaymentStatus(id, status)
+```ts
+getOrders(params);
+getOrder(id);
+updateOrderStatus(id, status);
+updatePaymentStatus(id, status);
 ```
 
 Endpoints:
 
-``` text
+```text
 GET   /admin/orders
 GET   /admin/orders/:id
 PATCH /admin/orders/:id/status
 PATCH /admin/orders/:id/payment-status
 ```
 
-------------------------------------------------------------------------
+---
 
 # 35. TanStack Query
 
 Recommended query structure:
 
-``` text
+```text
 products
 product
 categories
@@ -1125,22 +1124,22 @@ dashboard
 
 Example:
 
-``` ts
+```ts
 useQuery({
   queryKey: ["products", filters],
-  queryFn: () => getProducts(filters)
+  queryFn: () => getProducts(filters),
 });
 ```
 
 After creating a product:
 
-``` ts
+```ts
 queryClient.invalidateQueries({
-  queryKey: ["products"]
+  queryKey: ["products"],
 });
 ```
 
-------------------------------------------------------------------------
+---
 
 # 36. Loading States
 
@@ -1148,13 +1147,13 @@ Every page should have proper loading UI.
 
 For tables:
 
-``` text
+```text
 Skeleton rows
 ```
 
 For forms:
 
-``` text
+```text
 Creating...
 Uploading...
 Saving...
@@ -1162,7 +1161,7 @@ Saving...
 
 Never leave the interface blank during API calls.
 
-------------------------------------------------------------------------
+---
 
 # 37. Error Handling
 
@@ -1170,7 +1169,7 @@ API errors should be displayed using a toast.
 
 Example:
 
-``` text
+```text
 ✓ Product created successfully
 
 ✕ Failed to create product
@@ -1182,13 +1181,13 @@ Example:
 
 Do not expose raw backend errors to the admin.
 
-------------------------------------------------------------------------
+---
 
 # 38. Empty States
 
 Products:
 
-``` text
+```text
 No products found.
 
 Add your first product to start selling.
@@ -1198,7 +1197,7 @@ Add your first product to start selling.
 
 Orders:
 
-``` text
+```text
 No orders yet.
 
 Orders will appear here after customers
@@ -1207,13 +1206,13 @@ complete their purchases.
 
 Categories:
 
-``` text
+```text
 No categories created.
 
 [+ Add Category]
 ```
 
-------------------------------------------------------------------------
+---
 
 # 39. Pagination
 
@@ -1221,7 +1220,7 @@ Products and orders should use pagination.
 
 Example:
 
-``` text
+```text
 Showing 1–20 of 128
 
 ← Previous
@@ -1233,19 +1232,19 @@ Next →
 
 Do not load hundreds/thousands of records at once.
 
-------------------------------------------------------------------------
+---
 
 # 40. Search
 
 Product search:
 
-``` text
+```text
 Search by product name or code
 ```
 
 Orders:
 
-``` text
+```text
 Search by order number,
 customer name or phone
 ```
@@ -1254,29 +1253,29 @@ Use debouncing for search requests.
 
 Recommended:
 
-``` text
+```text
 300–500ms debounce
 ```
 
-------------------------------------------------------------------------
+---
 
 # 41. Responsive Design
 
 Desktop:
 
-``` text
+```text
 Sidebar + content
 ```
 
 Tablet:
 
-``` text
+```text
 Collapsible sidebar
 ```
 
 Mobile:
 
-``` text
+```text
 Top navigation
 Drawer sidebar
 Stacked cards
@@ -1285,7 +1284,7 @@ Horizontal-scroll tables
 
 Product forms should become:
 
-``` text
+```text
 Desktop:
 2 columns
 
@@ -1293,11 +1292,11 @@ Mobile:
 1 column
 ```
 
-------------------------------------------------------------------------
+---
 
 # 42. Recommended Component Structure
 
-``` text
+```text
 src/
 ├── components/
 │   ├── layout/
@@ -1351,7 +1350,7 @@ src/
 └── utils/
 ```
 
-------------------------------------------------------------------------
+---
 
 # 43. Route Protection
 
@@ -1359,13 +1358,13 @@ Customer users must not access admin pages.
 
 Use:
 
-``` text
+```text
 AdminRoute
 ```
 
 Flow:
 
-``` text
+```text
 /admin/products
        ↓
 Is authenticated?
@@ -1383,13 +1382,13 @@ Yes
 Render page
 ```
 
-------------------------------------------------------------------------
+---
 
 # 44. Product Form Type
 
 Frontend type:
 
-``` ts
+```ts
 export interface ProductFormData {
   code: string;
   name: string;
@@ -1407,7 +1406,7 @@ export interface ProductFormData {
 }
 ```
 
-------------------------------------------------------------------------
+---
 
 # 45. UI Design Rules
 
@@ -1415,7 +1414,7 @@ Follow these rules throughout the admin dashboard.
 
 ### Colors
 
-``` text
+```text
 Background: #FFFFFF
 Secondary background: #FAF8F4
 Border: #E8E5DF
@@ -1426,7 +1425,7 @@ Accent: warm gold / beige
 
 Avoid:
 
-``` text
+```text
 Neon colors
 Heavy gradients
 Dark dashboard themes
@@ -1438,7 +1437,7 @@ Overly rounded UI
 
 Use a clean modern font:
 
-``` text
+```text
 Inter
 Manrope
 Plus Jakarta Sans
@@ -1446,13 +1445,13 @@ Plus Jakarta Sans
 
 Headings should be strong but not oversized.
 
-------------------------------------------------------------------------
+---
 
 # 46. Buttons
 
 Primary:
 
-``` text
+```text
 + Add Product
 Create Product
 Save Changes
@@ -1461,7 +1460,7 @@ Update Stock
 
 Secondary:
 
-``` text
+```text
 Cancel
 View
 Edit
@@ -1469,7 +1468,7 @@ Edit
 
 Destructive:
 
-``` text
+```text
 Delete
 Deactivate
 Cancel Order
@@ -1477,13 +1476,13 @@ Cancel Order
 
 Keep buttons compact and professional.
 
-------------------------------------------------------------------------
+---
 
 # 47. Product Creation UX
 
 Ideal flow:
 
-``` text
+```text
 Products
    ↓
 + Add Product
@@ -1509,17 +1508,17 @@ Redirect to Products
 
 After creation:
 
-``` text
+```text
 Product created successfully
 ```
 
 Then redirect:
 
-``` text
+```text
 /admin/products
 ```
 
-------------------------------------------------------------------------
+---
 
 # 48. MVP Implementation Order
 
@@ -1527,7 +1526,7 @@ Build the frontend in this order:
 
 ## Phase 1
 
-``` text
+```text
 Admin Login
 Admin Layout
 Sidebar
@@ -1537,7 +1536,7 @@ Protected Routes
 
 ## Phase 2
 
-``` text
+```text
 Dashboard
 Statistics
 Recent Orders
@@ -1546,7 +1545,7 @@ Low Stock
 
 ## Phase 3
 
-``` text
+```text
 Products List
 Search
 Filter
@@ -1555,7 +1554,7 @@ Pagination
 
 ## Phase 4
 
-``` text
+```text
 Add Product
 Edit Product
 Product Validation
@@ -1564,14 +1563,14 @@ Cloudinary Upload
 
 ## Phase 5
 
-``` text
+```text
 Categories
 Inventory
 ```
 
 ## Phase 6
 
-``` text
+```text
 Orders List
 Order Details
 Order Status
@@ -1580,7 +1579,7 @@ Payment Status
 
 ## Phase 7
 
-``` text
+```text
 Responsive Design
 Loading States
 Error States
@@ -1588,34 +1587,34 @@ Empty States
 Polish
 ```
 
-------------------------------------------------------------------------
+---
 
 # 49. Final Admin Frontend Goal
 
 The final admin experience should feel like a professional modern
 commerce dashboard:
 
-``` text
+```text
                     DEEPAKART ADMIN
 
 ┌──────────────┐ ┌──────────────────────────────────────────┐
 │ Dashboard    │ │ Dashboard                                │
 │              │ │                                          │
-│ Products     │ │  Products   Orders   Sales   Low Stock  │
+│ Products     │ │  Products   Orders   Sales   Low Stock   │
 │              │ │                                          │
-│ Categories   │ │  128        342      ₹4.8L     8       │
+│ Categories   │ │  128        342      ₹4.8L     8         │
 │              │ │                                          │
 │ Inventory    │ │ ┌──────────────────────────────────────┐ │
 │              │ │ │ Recent Orders                        │ │
 │ Orders       │ │ │                                      │ │
 │              │ │ │ ORD1001   Sunil   ₹2300   Processing │ │
-│              │ │ │ ORD1002   Priya    ₹4500   Shipped    │ │
+│              │ │ │ ORD1002   Priya    ₹4500   Shipped   │ │
 │              │ │ └──────────────────────────────────────┘ │
 │              │ │                                          │
 │ Settings     │ │ ┌──────────────────────────────────────┐ │
 │              │ │ │ Low Stock Products                   │ │
-│ Logout       │ │ │ 3000 Combo Pack              8        │ │
-└──────────────┘ │ │ Kids Special                  4       │ │
+│ Logout       │ │ │ 3000 Combo Pack              8       │ │
+└──────────────┘ │ │ Kids Special                  4      │ │
                  │ └──────────────────────────────────────┘ │
                  └──────────────────────────────────────────┘
 ```

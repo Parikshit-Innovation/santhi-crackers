@@ -6,7 +6,7 @@
   width: 100%;
   background-color: #ffffff;
   color: #0f172a;
-  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   overflow-x: hidden;
 }
 
@@ -15,49 +15,52 @@
   display: inline-block;
   font-size: 12.5px;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #a06941;
+  color: var(--primary-blue, #1d4ed8);
   margin-bottom: 14px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
 }
 
 .about-section-heading {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: clamp(28px, 3.4vw, 44px);
+  font-family: var(--font-heading);
+  font-size: clamp(32px, 3.8vw, 48px);
   font-weight: 700;
   color: #0f172a;
-  line-height: 1.18;
-  letter-spacing: -0.025em;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   margin: 0 0 18px;
 }
 
-/* Oval CTA Buttons with Subtle Non-Neon Hover */
+/* Oval CTA Buttons with Primary Blue Palette */
 .about-btn-copper {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: #9e6b45;
+  background-color: var(--primary-blue, #1d4ed8);
   color: #ffffff;
-  border: 1px solid #9e6b45;
+  border: 1px solid var(--primary-blue, #1d4ed8);
   border-radius: 9999px;
   padding: 13px 30px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   outline: none;
   user-select: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .about-btn-copper:hover {
-  background-color: #8c5d3a;
-  border-color: #8c5d3a;
+  background-color: var(--primary-blue-hover, #1e40af);
+  border-color: var(--primary-blue-hover, #1e40af);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
 }
 
 .about-btn-copper:active {
-  background-color: #7b5030;
+  background-color: #1e3a8a;
 }
 
 .about-btn-outline {
@@ -69,7 +72,7 @@
   border: 1px solid #d1d5db;
   border-radius: 9999px;
   padding: 12px 28px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -120,12 +123,13 @@
 }
 
 .about-hero-title {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: clamp(34px, 4vw, 52px);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: clamp(48px, 6vw, 76px);
+  font-weight: 400;
   color: #0f172a;
-  line-height: 1.14;
-  letter-spacing: -0.03em;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   margin: 0 0 20px;
 }
 
@@ -269,7 +273,8 @@
 .about-why-container {
   max-width: 1320px;
   margin: 0 auto;
-  background-color: #fcf9f5;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
   padding: 56px 52px;
   display: grid;
@@ -286,12 +291,13 @@
 }
 
 .about-why-title {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: clamp(28px, 3.2vw, 40px);
+  font-family: var(--font-heading);
+  font-size: clamp(30px, 3.5vw, 44px);
   font-weight: 700;
   color: #0f172a;
   line-height: 1.15;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   margin: 0;
 }
 
@@ -409,114 +415,130 @@
   margin: 12px auto 0;
 }
 
-.about-safety-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+/* Safety Matrix (Clean Pure White Comparative Table) */
+.about-safety-matrix {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
 }
 
-.about-safety-card {
-  border-radius: 20px;
-  padding: 36px 32px;
+.about-safety-matrix-header {
+  display: grid;
+  grid-template-columns: 240px 1fr 1fr;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 28px;
+  gap: 24px;
+}
+
+.about-matrix-col-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #475569;
+  text-transform: uppercase;
+}
+
+.about-matrix-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.tag-do {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.tag-dont {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid #0f172a;
+}
+
+.about-safety-matrix-body {
   display: flex;
   flex-direction: column;
 }
 
-.about-safety-card-dos {
-  background-color: #f0fdf4;
-  border: 1px solid #bbf7d0;
+.about-safety-row {
+  display: grid;
+  grid-template-columns: 240px 1fr 1fr;
+  gap: 24px;
+  padding: 24px 28px;
+  border-bottom: 1px solid #f1f5f9;
+  align-items: flex-start;
+  transition: background-color 0.2s ease;
 }
 
-.about-safety-card-donts {
-  background-color: #fff1f2;
-  border: 1px solid #fecdd3;
+.about-safety-row:last-child {
+  border-bottom: none;
 }
 
-.about-safety-card-header {
+.about-safety-row:hover {
+  background-color: #fafbfd;
+}
+
+.about-safety-row-topic {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  gap: 12px;
 }
 
-.about-safety-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  flex-shrink: 0;
+.about-topic-num {
+  font-family: 'Anton', sans-serif;
+  font-size: 20px;
+  color: #94a3b8;
+  letter-spacing: 0.02em;
 }
 
-.about-badge-dos {
-  background-color: #dcfce7;
-  color: #15803d;
-  border: 1px solid #86efac;
-}
-
-.about-badge-donts {
-  background-color: #ffe4e6;
-  color: #be123c;
-  border: 1px solid #fda4af;
-}
-
-.about-safety-card-title {
-  font-size: 18px;
+.about-topic-name {
+  font-size: 15px;
   font-weight: 700;
   color: #0f172a;
-  margin: 0;
-  letter-spacing: -0.01em;
+  line-height: 1.3;
 }
 
-.about-safety-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.about-safety-cell {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 6px;
 }
 
-.about-safety-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.about-safety-icon-wrap {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
+.about-cell-label {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
 }
 
-.about-icon-do {
-  background-color: #dcfce7;
-  color: #16a34a;
+.label-do {
+  color: #0f172a;
 }
 
-.about-icon-dont {
-  background-color: #fee2e2;
-  color: #dc2626;
+.label-dont {
+  color: #475569;
 }
 
-.about-safety-item-text {
+.about-safety-cell p {
+  margin: 0;
   font-size: 14.5px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: #334155;
 }
 
-.about-safety-item-text strong {
+.about-safety-cell p strong {
   color: #0f172a;
   font-weight: 600;
 }
@@ -634,44 +656,57 @@
     aspect-ratio: 16 / 11;
   }
 
-  /* Safety Dos & Don'ts on Mobile */
+  /* Safety Matrix on Mobile */
   .about-safety-section {
     padding: 24px 16px 110px;
   }
 
   .about-safety-header {
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .about-safety-subtitle {
     font-size: 14.5px;
   }
 
-  .about-safety-grid {
+  .about-safety-matrix-header {
+    display: none;
+  }
+
+  .about-safety-matrix {
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .about-safety-row {
     grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .about-safety-card {
-    padding: 24px 18px;
-    border-radius: 16px;
-  }
-
-  .about-safety-card-header {
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-
-  .about-safety-card-title {
-    font-size: 16px;
-  }
-
-  .about-safety-list {
     gap: 16px;
+    padding: 20px 16px;
+    border-bottom: 1px solid #e2e8f0;
   }
 
-  .about-safety-item-text {
+  .about-safety-row-topic {
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .about-topic-num {
+    font-size: 18px;
+  }
+
+  .about-topic-name {
+    font-size: 15.5px;
+  }
+
+  .about-safety-cell {
+    padding: 14px 16px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #f1f5f9;
+  }
+
+  .about-safety-cell p {
     font-size: 13.5px;
+    line-height: 1.55;
   }
 }

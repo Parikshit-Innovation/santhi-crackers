@@ -8,9 +8,7 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 3000,
 
-    allowedHosts: [
-      "untolerative-len-rumblingly.ngrok-free.dev",
-    ],
+    allowedHosts: ["untolerative-len-rumblingly.ngrok-free.dev"],
 
     hmr: {
       protocol: "wss",

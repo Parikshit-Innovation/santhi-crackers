@@ -5,15 +5,12 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "secondary" | "destructive" | "outline";
 }
 
-export function Badge({
-  className,
-  variant = "default",
-  ...props
-}: BadgeProps) {
+export function Badge({ className, variant = "default", ...props }: BadgeProps) {
   const variantStyles = {
     default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
     secondary: "border-transparent bg-zinc-800 text-zinc-100 hover:bg-zinc-700",
-    destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+    destructive:
+      "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
     outline: "text-foreground border border-white/20",
   }[variant];
 
@@ -22,7 +19,7 @@ export function Badge({
       className={cn(
         "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
         variantStyles,
-        className
+        className,
       )}
       {...props}
     />

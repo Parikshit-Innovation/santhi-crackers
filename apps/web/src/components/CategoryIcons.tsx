@@ -1,8 +1,6 @@
 import React from "react";
 
-export const SparklersIcon: React.FC<{ className?: string }> = ({
-  className,
-}) => (
+export const SparklersIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 120 120" className={className} fill="none">
     {/* Tilted bundle of sparkler rods */}
     <g transform="translate(10, 10) rotate(-35 50 50)">
@@ -102,22 +100,8 @@ export const SparklersIcon: React.FC<{ className?: string }> = ({
 
       {/* Jute string wrap */}
       <rect x="26" y="58" width="32" height="10" rx="3" fill="#d97706" />
-      <line
-        x1="26"
-        y1="61"
-        x2="58"
-        y2="61"
-        stroke="#b45309"
-        strokeWidth="1.5"
-      />
-      <line
-        x1="26"
-        y1="65"
-        x2="58"
-        y2="65"
-        stroke="#b45309"
-        strokeWidth="1.5"
-      />
+      <line x1="26" y1="61" x2="58" y2="61" stroke="#b45309" strokeWidth="1.5" />
+      <line x1="26" y1="65" x2="58" y2="65" stroke="#b45309" strokeWidth="1.5" />
 
       {/* Sparks */}
       <circle cx="42" cy="6" r="2.5" fill="#f59e0b" />
@@ -127,9 +111,7 @@ export const SparklersIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const FlowerPotsIcon: React.FC<{ className?: string }> = ({
-  className,
-}) => (
+export const FlowerPotsIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 120 120" className={className} fill="none">
     {/* Pot 1 - Left */}
     <g transform="translate(15, 20)">
@@ -171,9 +153,7 @@ export const FlowerPotsIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const CrackersIcon: React.FC<{ className?: string }> = ({
-  className,
-}) => (
+export const CrackersIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 120 120" className={className} fill="none">
     <g transform="translate(15, 25)">
       {/* Central Thread */}
@@ -201,14 +181,7 @@ export const CrackersIcon: React.FC<{ className?: string }> = ({
             stroke="#b91c1c"
             strokeWidth="1"
           />
-          <line
-            x1="-4"
-            y1="-22"
-            x2="4"
-            y2="-22"
-            stroke="#fef08a"
-            strokeWidth="1.5"
-          />
+          <line x1="-4" y1="-22" x2="4" y2="-22" stroke="#fef08a" strokeWidth="1.5" />
           {/* Bottom Tube */}
           <rect
             x="-4"
@@ -220,14 +193,7 @@ export const CrackersIcon: React.FC<{ className?: string }> = ({
             stroke="#991b1b"
             strokeWidth="1"
           />
-          <line
-            x1="-4"
-            y1="12"
-            x2="4"
-            y2="12"
-            stroke="#fef08a"
-            strokeWidth="1.5"
-          />
+          <line x1="-4" y1="12" x2="4" y2="12" stroke="#fef08a" strokeWidth="1.5" />
         </g>
       ))}
 
@@ -238,20 +204,11 @@ export const CrackersIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const GroundChakkarIcon: React.FC<{ className?: string }> = ({
-  className,
-}) => (
+export const GroundChakkarIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 120 120" className={className} fill="none">
     <g transform="translate(60, 60)">
       {/* Outer Ring */}
-      <circle
-        cx="0"
-        cy="0"
-        r="42"
-        fill="#fef08a"
-        stroke="#d97706"
-        strokeWidth="2.5"
-      />
+      <circle cx="0" cy="0" r="42" fill="#fef08a" stroke="#d97706" strokeWidth="2.5" />
       <circle cx="0" cy="0" r="38" fill="#ef4444" />
       <circle cx="0" cy="0" r="30" fill="#3b82f6" />
       <circle cx="0" cy="0" r="22" fill="#eab308" />
@@ -273,21 +230,12 @@ export const GroundChakkarIcon: React.FC<{ className?: string }> = ({
       ))}
 
       {/* Center Fuse Point */}
-      <circle
-        cx="0"
-        cy="0"
-        r="4"
-        fill="#ffffff"
-        stroke="#b91c1c"
-        strokeWidth="2"
-      />
+      <circle cx="0" cy="0" r="4" fill="#ffffff" stroke="#b91c1c" strokeWidth="2" />
     </g>
   </svg>
 );
 
-export const RocketsIcon: React.FC<{ className?: string }> = ({
-  className,
-}) => (
+export const RocketsIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 120 120" className={className} fill="none">
     {/* Rocket 1 (Red) */}
     <g transform="translate(35, 25) rotate(-30)">
@@ -312,14 +260,7 @@ export const RocketsIcon: React.FC<{ className?: string }> = ({
         strokeWidth="2"
         strokeLinecap="round"
       />
-      <line
-        x1="10"
-        y1="54"
-        x2="10"
-        y2="60"
-        stroke="#f59e0b"
-        strokeWidth="1.5"
-      />
+      <line x1="10" y1="54" x2="10" y2="60" stroke="#f59e0b" strokeWidth="1.5" />
     </g>
 
     {/* Rocket 2 (Blue) */}
@@ -345,21 +286,12 @@ export const RocketsIcon: React.FC<{ className?: string }> = ({
         strokeWidth="2"
         strokeLinecap="round"
       />
-      <line
-        x1="10"
-        y1="54"
-        x2="10"
-        y2="60"
-        stroke="#f59e0b"
-        strokeWidth="1.5"
-      />
+      <line x1="10" y1="54" x2="10" y2="60" stroke="#f59e0b" strokeWidth="1.5" />
     </g>
   </svg>
 );
 
-export const SkyShotsIcon: React.FC<{ className?: string }> = ({
-  className,
-}) => (
+export const SkyShotsIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg viewBox="0 0 120 120" className={className} fill="none">
     {/* Cylinder 1 (Gold/Red) */}
     <g transform="translate(26, 26)">
@@ -375,15 +307,7 @@ export const SkyShotsIcon: React.FC<{ className?: string }> = ({
       />
       <rect x="0" y="22" width="28" height="34" fill="#dc2626" />
       <circle cx="14" cy="39" r="6" fill="#fef08a" />
-      <ellipse
-        cx="14"
-        cy="8"
-        rx="14"
-        ry="4"
-        fill="#fbbf24"
-        stroke="#b45309"
-        strokeWidth="1"
-      />
+      <ellipse cx="14" cy="8" rx="14" ry="4" fill="#fbbf24" stroke="#b45309" strokeWidth="1" />
       {/* Fuse */}
       <path
         d="M 14 4 Q 18 -4 20 -8"
@@ -408,15 +332,7 @@ export const SkyShotsIcon: React.FC<{ className?: string }> = ({
       />
       <rect x="0" y="22" width="28" height="34" fill="#16a34a" />
       <circle cx="14" cy="39" r="6" fill="#fef08a" />
-      <ellipse
-        cx="14"
-        cy="8"
-        rx="14"
-        ry="4"
-        fill="#60a5fa"
-        stroke="#1d4ed8"
-        strokeWidth="1"
-      />
+      <ellipse cx="14" cy="8" rx="14" ry="4" fill="#60a5fa" stroke="#1d4ed8" strokeWidth="1" />
       {/* Fuse */}
       <path
         d="M 14 4 Q 10 -4 12 -8"

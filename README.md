@@ -1,4 +1,3 @@
-
 # Diwali Product Catalog
 
 Software requirements specification and backend development guide for the Diwali
@@ -11,12 +10,12 @@ The backend provides product, category, and guest-cart data to the frontend.
 
 ### In scope
 
-- Product listing and pagination
-- Product details
-- Category listing
-- Products grouped by category
-- Guest cart retrieval using an HTTP-only cookie
-- PostgreSQL persistence through Prisma
+- [ ]  Product listing and pagination
+- [ ]  Product details
+- [ ]  Category listing
+- [ ]  Products grouped by category
+- [ ]  Guest cart retrieval using an HTTP-only cookie
+- [ ]  PostgreSQL persistence through Prisma
 
 ### Out of scope for this version
 
@@ -61,14 +60,15 @@ located in [`packages/db`](./packages/db).
 
 The API is served from `http://localhost:3007` during local development.
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/health` | Check API availability |
-| `GET` | `/api/products` | List active products |
-| `GET` | `/api/products/:id` | Get one active product |
-| `GET` | `/api/categories` | List active categories |
-| `GET` | `/api/categories/:slug` | Get a category and its products |
-| `GET` | `/api/cart` | Get the current guest cart |
+
+| Method | Endpoint                | Purpose                         |
+| ------ | ----------------------- | ------------------------------- |
+| `GET`  | `/health`               | Check API availability          |
+| `GET`  | `/api/products`         | List active products            |
+| `GET`  | `/api/products/:id`     | Get one active product          |
+| `GET`  | `/api/categories`       | List active categories          |
+| `GET`  | `/api/categories/:slug` | Get a category and its products |
+| `GET`  | `/api/cart`             | Get the current guest cart      |
 
 ### 4.1 List products
 
@@ -78,13 +78,14 @@ GET /api/products?page=1&limit=10&category=rockets&sort=price_asc
 
 Supported query parameters:
 
-| Parameter | Type | Required | Description |
-|---|---|---:|---|
-| `page` | integer | No | Page number; defaults to `1` |
-| `limit` | integer | No | Number of records; maximum is `10` |
-| `search` | string | No | Search by product name or code |
-| `category` | string | No | Filter by category slug |
-| `sort` | string | No | `newest`, `price_asc`, `price_desc`, `name_asc`, or `name_desc` |
+
+| Parameter  | Type    | Required | Description                                                     |
+| ---------- | ------- | -------: | --------------------------------------------------------------- |
+| `page`     | integer |       No | Page number; defaults to`1`                                     |
+| `limit`    | integer |       No | Number of records; maximum is`10`                               |
+| `search`   | string  |       No | Search by product name or code                                  |
+| `category` | string  |       No | Filter by category slug                                         |
+| `sort`     | string  |       No | `newest`, `price_asc`, `price_desc`, `name_asc`, or `name_desc` |
 
 Response:
 
@@ -231,7 +232,7 @@ must include credentials:
 
 ```ts
 fetch("http://localhost:3007/api/cart", {
-  credentials: "include"
+  credentials: "include",
 });
 ```
 
@@ -326,12 +327,13 @@ Error response:
 
 Required status codes:
 
-| Status | Usage |
-|---:|---|
-| `200` | Successful request |
-| `400` | Invalid query or request parameter |
-| `404` | Product or category not found |
-| `500` | Unexpected server error |
+
+| Status | Usage                              |
+| -----: | ---------------------------------- |
+|  `200` | Successful request                 |
+|  `400` | Invalid query or request parameter |
+|  `404` | Product or category not found      |
+|  `500` | Unexpected server error            |
 
 Invalid values such as `page=0`, `page=-1`, `page=abc`, `limit=0`, or
 `limit=100` must return `400`.

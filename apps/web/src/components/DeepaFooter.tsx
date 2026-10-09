@@ -86,9 +86,8 @@ export const DeepaFooter: React.FC = () => {
               <span>DeepaKart</span>
             </div>
             <p className="deepa-footer-about">
-              Crafting sparkling memories and bright family festivities with
-              certified, premium-quality green crackers direct from master
-              artisans.
+              Crafting sparkling memories and bright family festivities with certified,
+              premium-quality green crackers direct from master artisans.
             </p>
           </div>
 
@@ -142,8 +141,8 @@ export const DeepaFooter: React.FC = () => {
 
         <div className="deepa-footer-bottom">
           <p>
-            © {new Date().getFullYear()} DeepaKart. All rights reserved. Safe
-            celebrations & eco-friendly green crackers.
+            © {new Date().getFullYear()} DeepaKart. All rights reserved. Safe celebrations &
+            eco-friendly green crackers.
           </p>
           <div className="deepa-footer-trust-marks">
             <span>🌿 CSIR-NEERI Certified</span>

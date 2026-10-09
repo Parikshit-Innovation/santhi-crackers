@@ -20,15 +20,12 @@ export default function App() {
       const existing = prev.find((entry) => entry.item.id === item.id);
       if (existing) {
         return prev.map((entry) =>
-          entry.item.id === item.id
-            ? { ...entry, quantity: entry.quantity + qty }
-            : entry
+          entry.item.id === item.id ? { ...entry, quantity: entry.quantity + qty } : entry,
         );
       }
       return [...prev, { item, quantity: qty }];
     });
-    // Trigger slide-over cart drawer from right to left
-    setIsCartOpen(true);
+    // Item added smoothly to cart state without opening drawer automatically
   };
 
   const handleUpdateQuantity = (id: string, newQty: number) => {
@@ -36,9 +33,7 @@ export default function App() {
       if (newQty <= 0) {
         return prev.filter((entry) => entry.item.id !== id);
       }
-      return prev.map((entry) =>
-        entry.item.id === id ? { ...entry, quantity: newQty } : entry
-      );
+      return prev.map((entry) => (entry.item.id === id ? { ...entry, quantity: newQty } : entry));
     });
   };
 
@@ -73,7 +68,9 @@ export default function App() {
             <StoreHero />
             <MarqueeBanner />
             <ComboPackTable onAddToCart={handleAddToCart} />
-            <StoreFooter onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")} />
+            <StoreFooter
+              onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
+            />
           </>
         )}
       </main>
@@ -89,4 +86,3 @@ export default function App() {
     </div>
   );
 }
-

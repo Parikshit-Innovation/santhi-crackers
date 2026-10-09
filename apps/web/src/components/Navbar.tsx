@@ -66,10 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   d="M12 2C10.5 2 9.1 2.5 8 3.35l7.5 9.15c2.1-3.28 3.5-6.37 3.5-8.75 0-3.87-3.13-7-7-7z"
                   fill="#FBBC05"
                 />
-                <path
-                  d="M8.5 12.5L5 9c0 5.25 7 13 7 13l-3.5-9.5z"
-                  fill="#34A853"
-                />
+                <path d="M8.5 12.5L5 9c0 5.25 7 13 7 13l-3.5-9.5z" fill="#34A853" />
                 <circle cx="12" cy="9" r="3" fill="#ffffff" />
               </svg>
             </div>
@@ -93,13 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="sr-shield-wrapper">
               <div className="sr-stars-arc">
                 {[0, 1, 2, 3, 4].map((i) => (
-                  <svg
-                    key={i}
-                    className="sr-star-icon"
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                  >
+                  <svg key={i} className="sr-star-icon" viewBox="0 0 24 24" width="20" height="20">
                     <polygon
                       points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"
                       fill="#f59e0b"
@@ -112,23 +103,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="sr-shield-crest">
                 <svg viewBox="0 0 100 115" className="sr-shield-svg">
                   <defs>
-                    <linearGradient
-                      id="shieldBg"
-                      x1="0%"
-                      y1="0%"
-                      x2="100%"
-                      y2="100%"
-                    >
+                    <linearGradient id="shieldBg" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stopColor="#1e293b" />
                       <stop offset="100%" stopColor="#0f172a" />
                     </linearGradient>
-                    <linearGradient
-                      id="shieldBorder"
-                      x1="0%"
-                      y1="0%"
-                      x2="0%"
-                      y2="100%"
-                    >
+                    <linearGradient id="shieldBorder" x1="0%" y1="0%" x2="0%" y2="100%">
                       <stop offset="0%" stopColor="#f59e0b" />
                       <stop offset="50%" stopColor="#ea580c" />
                       <stop offset="100%" stopColor="#b91c1c" />
@@ -158,13 +137,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       stroke="#ea580c"
                       strokeWidth="3"
                     />
-                    <circle
-                      cx="15"
-                      cy="40"
-                      r="14"
-                      fill="#f43f5e"
-                      opacity="0.5"
-                    />
+                    <circle cx="15" cy="40" r="14" fill="#f43f5e" opacity="0.5" />
                     <circle
                       cx="85"
                       cy="40"
@@ -173,13 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       stroke="#ea580c"
                       strokeWidth="3"
                     />
-                    <circle
-                      cx="85"
-                      cy="40"
-                      r="14"
-                      fill="#f43f5e"
-                      opacity="0.5"
-                    />
+                    <circle cx="85" cy="40" r="14" fill="#f43f5e" opacity="0.5" />
 
                     {/* Head */}
                     <circle
@@ -207,22 +174,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <circle cx="62" cy="38" r="2" fill="#ffffff" />
 
                     {/* Rosy Cheeks */}
-                    <ellipse
-                      cx="32"
-                      cy="50"
-                      rx="5"
-                      ry="3"
-                      fill="#f43f5e"
-                      opacity="0.4"
-                    />
-                    <ellipse
-                      cx="68"
-                      cy="50"
-                      rx="5"
-                      ry="3"
-                      fill="#f43f5e"
-                      opacity="0.4"
-                    />
+                    <ellipse cx="32" cy="50" rx="5" ry="3" fill="#f43f5e" opacity="0.4" />
+                    <ellipse cx="68" cy="50" rx="5" ry="3" fill="#f43f5e" opacity="0.4" />
 
                     {/* Trunk */}
                     <path
@@ -317,10 +270,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     d="M11.4 6.5C9.3 8.1 8 10.4 8 13c0 2.4 1.4 5.5 3.5 8.8l4.5-5.3-4.6-10z"
                     fill="#4285F4"
                   />
-                  <path
-                    d="M12.5 18.5L8 13c0 6 8 15 8 15l-3.5-9.5z"
-                    fill="#34A853"
-                  />
+                  <path d="M12.5 18.5L8 13c0 6 8 15 8 15l-3.5-9.5z" fill="#34A853" />
                   <circle cx="16" cy="13" r="3.2" fill="#ffffff" />
                 </svg>
               </a>
@@ -347,24 +297,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
           >
-            <span
-              className={`sr-hamburger-bar ${mobileMenuOpen ? "open" : ""}`}
-            />
-            <span
-              className={`sr-hamburger-bar ${mobileMenuOpen ? "open" : ""}`}
-            />
-            <span
-              className={`sr-hamburger-bar ${mobileMenuOpen ? "open" : ""}`}
-            />
+            <span className={`sr-hamburger-bar ${mobileMenuOpen ? "open" : ""}`} />
+            <span className={`sr-hamburger-bar ${mobileMenuOpen ? "open" : ""}`} />
+            <span className={`sr-hamburger-bar ${mobileMenuOpen ? "open" : ""}`} />
           </button>
         </div>
       </div>
 
       {/* 3. BOTTOM RED NAVIGATION BAR (With diagonal slant cut) */}
       <div className="sr-bottom-nav-track">
-        <div
-          className={`sr-bottom-nav-slant ${mobileMenuOpen ? "mobile-expanded" : ""}`}
-        >
+        <div className={`sr-bottom-nav-slant ${mobileMenuOpen ? "mobile-expanded" : ""}`}>
           <div className="sr-nav-links-wrap">
             {navItems.map((item) => {
               const isActive = currentTab === item;

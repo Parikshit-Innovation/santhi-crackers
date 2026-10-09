@@ -170,9 +170,7 @@ export default function App() {
               />
 
               <div className="space-y-3 pt-2 text-xs leading-5 text-black/45 dark:text-white/40 sm:text-[13px]">
-                <CheckboxLine>
-                  Remember this administrator session
-                </CheckboxLine>
+                <CheckboxLine>Remember this administrator session</CheckboxLine>
                 <CheckboxLine>{termsText}</CheckboxLine>
               </div>
 
@@ -227,8 +225,7 @@ export default function App() {
                 }}
                 className="text-2xl font-light leading-tight tracking-[-0.035em] text-white/90 sm:text-3xl lg:text-[34px]"
               >
-                “Every block had the restraint and polish we usually spend weeks
-                refining.”
+                “Every block had the restraint and polish we usually spend weeks refining.”
               </motion.blockquote>
             </div>
 
@@ -283,14 +280,10 @@ function InputField({
 
   return (
     <div className="space-y-1.5 text-left w-full">
-      <label className="text-xs font-semibold text-black/60 dark:text-white/60">
-        {label}
-      </label>
+      <label className="text-xs font-semibold text-black/60 dark:text-white/60">{label}</label>
       <div className="relative flex h-11 items-center rounded-lg border border-black/15 bg-white px-3.5 dark:border-white/10 dark:bg-white/5 transition-all focus-within:border-black/40 dark:focus-within:border-white/40">
         <input
-          type={
-            type === "password" ? (showPassword ? "text" : "password") : type
-          }
+          type={type === "password" ? (showPassword ? "text" : "password") : type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
@@ -302,11 +295,7 @@ function InputField({
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3.5 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white cursor-pointer"
           >
-            {showPassword ? (
-              <EyeOff className="size-4" />
-            ) : (
-              <Eye className="size-4" />
-            )}
+            {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </button>
         )}
       </div>

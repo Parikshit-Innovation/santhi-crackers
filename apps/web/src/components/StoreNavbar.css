@@ -1,11 +1,11 @@
-/* Your Next Store Navbar Styles */
+/* Santhi Sivakasi Crackers Navbar Styles */
 .store-nav-header {
   width: 100%;
   background-color: #ffffff;
   padding: 20px 48px;
   box-sizing: border-box;
-  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-family: var(--font-body);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .store-nav-container {
@@ -20,14 +20,35 @@
 /* Brand */
 .store-brand {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  user-select: none;
+  outline: none;
+}
+
+.store-brand-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+  background-color: #ffffff;
+}
+
+.store-brand:hover .store-brand-logo {
+  transform: scale(1.05);
 }
 
 .store-brand-text {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 21px;
-  font-weight: 600;
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 700;
   color: #0f172a;
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
 /* Nav Menu */
@@ -40,9 +61,9 @@
 .store-nav-item {
   background: none;
   border: none;
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 14.5px;
-  font-weight: 450;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
   color: #475569;
   cursor: pointer;
   padding: 4px 0;
@@ -52,7 +73,7 @@
 
 .store-nav-item:hover,
 .store-nav-item.active {
-  color: #0f172a;
+  color: var(--primary-blue, #1d4ed8);
   font-weight: 600;
 }
 
@@ -85,10 +106,10 @@
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
   font-size: 13.5px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   color: #0f172a;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   box-sizing: border-box;
 }
 
@@ -98,7 +119,8 @@
 }
 
 .store-search-input:focus {
-  border-color: #cbd5e1;
+  border-color: var(--primary-blue, #1d4ed8);
+  box-shadow: 0 0 0 3px var(--primary-blue-light, rgba(29, 78, 216, 0.1));
 }
 
 /* Icon Buttons */
@@ -112,11 +134,51 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .store-icon-btn:hover {
-  background-color: #f1f5f9;
+  background-color: var(--primary-blue-light, rgba(29, 78, 216, 0.08));
+  color: var(--primary-blue, #1d4ed8);
+}
+
+/* Language Switch Button */
+.store-lang-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.9);
+  transition: all 0.15s ease;
+}
+
+.store-lang-btn:hover {
+  border-color: var(--primary-blue, #1d4ed8);
+  background-color: var(--primary-blue-light, rgba(29, 78, 216, 0.08));
+  color: var(--primary-blue, #1d4ed8);
+}
+
+.store-lang-icon {
+  flex-shrink: 0;
+}
+
+.store-lang-badge {
+  font-family: var(--font-tamil), var(--font-body), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: 0.02em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.store-lang-btn:hover .store-lang-badge {
+  color: var(--primary-blue, #1d4ed8);
 }
 
 .store-cart-btn {
@@ -127,7 +189,7 @@
   position: absolute;
   top: 0;
   right: -2px;
-  background-color: #0f172a;
+  background-color: var(--alert-red, #dc2626);
   color: #ffffff;
   font-size: 11px;
   font-weight: 700;
@@ -138,7 +200,8 @@
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  font-family: -apple-system, sans-serif;
+  font-family: var(--font-body);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 /* =========================================================
@@ -154,7 +217,16 @@
   }
 
   .store-nav-header {
-    padding: 16px 20px;
+    padding: 14px 20px;
+  }
+
+  .store-brand-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .store-brand-text {
+    font-size: 17px;
   }
 
   .store-nav-menu {
@@ -207,7 +279,7 @@
 
   .store-bottom-btn.active,
   .store-bottom-btn:hover {
-    color: #0f172a;
+    color: var(--primary-blue, #1d4ed8);
   }
 
   /* Active line indicator on top of active icon button */
@@ -218,7 +290,7 @@
     left: 26%;
     right: 26%;
     height: 2.5px;
-    background-color: #0f172a;
+    background-color: var(--primary-blue, #1d4ed8);
   }
 
   .store-bottom-icon-wrap {
@@ -232,7 +304,7 @@
     position: absolute;
     top: -5px;
     right: -10px;
-    background-color: #0f172a;
+    background-color: var(--alert-red, #dc2626);
     color: #ffffff;
     font-size: 10px;
     font-weight: 700;
@@ -243,7 +315,82 @@
     align-items: center;
     justify-content: center;
     padding: 0 4px;
-    font-family: -apple-system, sans-serif;
+    font-family: var(--font-body);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   }
+}
+
+/* Subtle Cart Icon Bump Animation (Clean, No Glow) */
+@keyframes cartBounceScale {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes badgeScalePop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cart-bump-animation {
+  animation: cartBounceScale 0.4s ease !important;
+}
+
+.cart-bump-animation .store-bottom-cart-badge,
+.cart-bump-animation .store-cart-badge {
+  animation: badgeScalePop 0.4s ease !important;
+}
+
+/* Floating Product Flyer that travels to cart */
+.cart-flyer-node {
+  position: fixed;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 2px solid var(--primary-blue, #1d4ed8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.cart-flyer-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 9999px;
+  display: block;
+}
+
+.cart-flyer-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--alert-red, #dc2626);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  font-family: -apple-system, sans-serif;
+  line-height: 1;
 }
 

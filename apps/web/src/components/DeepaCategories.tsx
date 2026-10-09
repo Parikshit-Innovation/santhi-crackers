@@ -77,11 +77,7 @@ export const DeepaCategories: React.FC<DeepaCategoriesProps> = ({
               strokeWidth="2.5"
             >
               <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
-              <polyline
-                points="12 5 19 12 12 19"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <polyline points="12 5 19 12 12 19" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>
@@ -89,11 +85,7 @@ export const DeepaCategories: React.FC<DeepaCategoriesProps> = ({
         {/* Categories Grid (6 Cards, 100% Pure React SVGs) */}
         <div className="deepa-categories-grid">
           {CATEGORIES.map((cat) => (
-            <div
-              key={cat.id}
-              className="deepa-cat-card"
-              onClick={() => onSelectCategory?.(cat.id)}
-            >
+            <div key={cat.id} className="deepa-cat-card" onClick={() => onSelectCategory?.(cat.id)}>
               <div className="deepa-cat-img-box">{cat.icon}</div>
               <div className="deepa-cat-footer">
                 <span className="deepa-cat-name">{cat.name}</span>
@@ -106,13 +98,7 @@ export const DeepaCategories: React.FC<DeepaCategoriesProps> = ({
                     stroke="currentColor"
                     strokeWidth="2.5"
                   >
-                    <line
-                      x1="5"
-                      y1="12"
-                      x2="19"
-                      y2="12"
-                      strokeLinecap="round"
-                    />
+                    <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
                     <polyline
                       points="12 5 19 12 12 19"
                       strokeLinecap="round"

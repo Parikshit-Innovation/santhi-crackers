@@ -1,14 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  CheckCircle,
-  Clock,
-  CreditCard,
-  Download,
-  FileText,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle, Clock, CreditCard, Download, FileText, XCircle } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -29,13 +22,7 @@ const Link = ({
   className,
   ...props
 }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    className={className}
-    {...props}
-  >
+  <a href={href} target="_blank" rel="noopener noreferrer" className={className} {...props}>
     {children}
   </a>
 );
@@ -208,9 +195,7 @@ export function Settings64({
                 {heading}
               </h2>
             )}
-            {description && (
-              <p className="text-white/60 text-sm">{description}</p>
-            )}
+            {description && <p className="text-white/60 text-sm">{description}</p>}
           </div>
 
           {safeInvoices.length === 0 ? (
@@ -226,9 +211,7 @@ export function Settings64({
                     <TableHead className="px-4 text-white/50">{dateLabel}</TableHead>
                     <TableHead className="px-4 text-white/50">{descLabel}</TableHead>
                     <TableHead className="px-4 text-white/50">{amountLabel}</TableHead>
-                    <TableHead className="px-4 text-center text-white/50">
-                      {statusLabel}
-                    </TableHead>
+                    <TableHead className="px-4 text-center text-white/50">{statusLabel}</TableHead>
                     <TableHead className="px-4 w-12 text-right text-white/50">
                       {downloadLabel}
                     </TableHead>
@@ -239,13 +222,9 @@ export function Settings64({
                     <TableRow key={index} className="hover:bg-white/[0.02]">
                       <TableCell className="px-4">
                         <div className="font-medium text-white">{invoice.date}</div>
-                        <div className="text-xs text-white/50">
-                          {invoice.invoiceNumber}
-                        </div>
+                        <div className="text-xs text-white/50">{invoice.invoiceNumber}</div>
                       </TableCell>
-                      <TableCell className="px-4 text-white/80">
-                        {invoice.description}
-                      </TableCell>
+                      <TableCell className="px-4 text-white/80">{invoice.description}</TableCell>
                       <TableCell className="px-4 font-medium text-white">
                         {invoice.amount}
                       </TableCell>

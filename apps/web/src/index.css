@@ -2,17 +2,68 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body);
+}
+
+:root {
+  /* =========================================================
+     Centralized Typography System
+     ========================================================= */
+  --font-display: 'Bebas Neue', cursive, sans-serif;
+  --font-promo: 'Anton', sans-serif;
+  --font-heading: 'Barlow Condensed', sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-tamil: 'Noto Sans Tamil', sans-serif;
+  --font-premium: 'Cinzel', Georgia, serif;
+
+  /* Site-wide Brand Color Palette - Formal, Smooth & Premium */
+  --primary-blue: #1d4ed8;
+  --alert-red: #dc2626;
+  --warning-yellow: #fbbf24;
+  --success-green: #15803d;
+
+  /* Pure White Design System */
+  --bg-canvas: #ffffff;            /* Pure white base canvas */
+  --bg-surface: #ffffff;           /* Elevated pure white */
+  --bg-cream-card: #ffffff;        /* Pure white cards */
+  --bg-cream-tint: #ffffff;        /* Pure white headers & banners */
+  --bg-cream-subtle: #f8fafc;      /* Subtle clean alternate rows */
+  --bg-cream-deep: #f1f5f9;        /* Clean neutral dividers & badges */
+  --border-cream: #e2e8f0;         /* Modern clean border */
+  --border-cream-light: #f1f5f9;   /* Light clean divider */
+  --text-main: #0f172a;            /* Clean dark slate primary text */
+  --text-muted: #475569;           /* Clean slate-600 secondary text */
+  --text-light: #64748b;           /* Clean slate-500 caption text */
+
+  /* Harmonized helper shades */
+  --primary-blue-hover: #1e40af;
+  --primary-blue-light: rgba(29, 78, 216, 0.08);
+  --primary-blue-glow: rgba(29, 78, 216, 0.15);
+
+  --alert-red-hover: #b91c1c;
+  --alert-red-light: rgba(220, 38, 38, 0.08);
+
+  --warning-yellow-hover: #f59e0b;
+  --warning-yellow-light: rgba(251, 191, 36, 0.15);
+
+  --success-green-hover: #166534;
+  --success-green-light: rgba(21, 128, 61, 0.1);
+}
+
+::selection {
+  background-color: var(--primary-blue);
+  color: #ffffff;
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: #ffffff;
 }
 
 body {
-  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body);
   background-color: #ffffff;
-  color: #18181b;
+  color: var(--text-main, #0f172a);
   min-height: 100vh;
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -20,7 +71,36 @@ body {
 }
 
 button, input, select, textarea {
-  font-family: inherit;
+  font-family: var(--font-body);
+}
+
+/* Typography Utility Classes */
+.font-display {
+  font-family: var(--font-display) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.font-promo {
+  font-family: var(--font-promo) !important;
+  letter-spacing: 0.02em;
+}
+
+.font-heading {
+  font-family: var(--font-heading) !important;
+}
+
+.font-body {
+  font-family: var(--font-body) !important;
+}
+
+.font-tamil {
+  font-family: var(--font-tamil) !important;
+}
+
+.font-premium {
+  font-family: var(--font-premium) !important;
+  letter-spacing: 0.06em;
 }
 
 .deepa-root {

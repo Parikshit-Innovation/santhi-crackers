@@ -7,7 +7,7 @@
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-family: var(--font-body);
   color: #18181b;
 }
 
@@ -57,15 +57,18 @@
 
 /* Heading & Subtitle */
 .contact-heading {
-  font-size: 38px;
+  font-family: var(--font-heading);
+  font-size: clamp(34px, 4.2vw, 46px);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   color: #09090b;
   margin: 0 0 16px 0;
   line-height: 1.15;
 }
 
 .contact-subtitle {
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.6;
   color: #52525b;
@@ -368,9 +371,9 @@
 .contact-phone-pill:active,
 .contact-phone-pill:focus {
   background-color: #ffffff;
-  color: #09090b;
-  border-color: #e4e4e7;
-  opacity: 0.85;
+  color: var(--primary-blue, #1d4ed8);
+  border-color: var(--primary-blue, #1d4ed8);
+  opacity: 1;
 }
 
 .contact-whatsapp-btn {
@@ -381,16 +384,17 @@
   font-size: 13.5px;
   font-weight: 600;
   color: #ffffff;
-  background-color: #25D366;
+  background-color: var(--success-green, #15803d);
   border-radius: 8px;
   text-decoration: none;
   margin-top: 4px;
-  transition: background-color 0.15s ease, transform 0.15s ease;
-  box-shadow: 0 1px 3px rgba(37, 211, 102, 0.25);
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 126, 0, 0.3);
 }
 
 .contact-whatsapp-btn:hover {
-  background-color: #20bd5a;
+  background-color: var(--success-green-hover, #006600);
+  box-shadow: 0 2px 8px rgba(0, 126, 0, 0.4);
 }
 
 .contact-whatsapp-btn-left {
@@ -420,7 +424,7 @@
   width: 100%;
   box-sizing: border-box;
   white-space: nowrap;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   margin-top: auto;
 }
 
@@ -428,9 +432,9 @@
 .contact-email-badge:active,
 .contact-email-badge:focus {
   background-color: #ffffff;
-  color: #09090b;
-  border-color: #e4e4e7;
-  opacity: 0.85;
+  color: var(--primary-blue, #1d4ed8);
+  border-color: var(--primary-blue, #1d4ed8);
+  opacity: 1;
 }
 
 .contact-email-icon {

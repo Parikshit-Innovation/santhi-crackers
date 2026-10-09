@@ -65,10 +65,7 @@ interface DeepaFeaturedProps {
   onViewAllProducts?: () => void;
 }
 
-export const DeepaFeatured: React.FC<DeepaFeaturedProps> = ({
-  onAddToCart,
-  onViewAllProducts,
-}) => {
+export const DeepaFeatured: React.FC<DeepaFeaturedProps> = ({ onAddToCart, onViewAllProducts }) => {
   return (
     <section className="deepa-featured-section">
       <div className="deepa-featured-container">
@@ -89,11 +86,7 @@ export const DeepaFeatured: React.FC<DeepaFeaturedProps> = ({
               strokeWidth="2.5"
             >
               <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
-              <polyline
-                points="12 5 19 12 12 19"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <polyline points="12 5 19 12 12 19" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>
@@ -104,11 +97,7 @@ export const DeepaFeatured: React.FC<DeepaFeaturedProps> = ({
             <div key={prod.id} className="deepa-product-card">
               <div className="deepa-product-badge">-{prod.discount}% OFF</div>
               <div className="deepa-product-img-wrap">
-                <img
-                  src={prod.image}
-                  alt={prod.name}
-                  className="deepa-product-img"
-                />
+                <img src={prod.image} alt={prod.name} className="deepa-product-img" />
               </div>
 
               <div className="deepa-product-body">
@@ -123,9 +112,7 @@ export const DeepaFeatured: React.FC<DeepaFeaturedProps> = ({
                 <div className="deepa-product-pricing">
                   <div className="deepa-product-prices">
                     <span className="deepa-price-current">₹{prod.price}</span>
-                    <span className="deepa-price-original">
-                      ₹{prod.originalPrice}
-                    </span>
+                    <span className="deepa-price-original">₹{prod.originalPrice}</span>
                   </div>
 
                   <button

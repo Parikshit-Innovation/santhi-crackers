@@ -49,17 +49,17 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
   }, [isOpen, onClose]);
 
   const totalItemCount = cartItems.reduce((acc, entry) => acc + entry.quantity, 0);
-  const rawSubtotal = cartItems.reduce(
-    (acc, entry) => acc + entry.item.price * entry.quantity,
-    0
-  );
+  const rawSubtotal = cartItems.reduce((acc, entry) => acc + entry.item.price * entry.quantity, 0);
   const discountMultiplier = discountApplied ? 0.9 : 1; // 10% extra discount if applied
   const finalSubtotal = Math.round(rawSubtotal * discountMultiplier);
 
   const formatPrice = (val: number) => "₹" + val.toLocaleString("en-IN");
 
   const handleApplyDiscount = () => {
-    if (discountCode.trim().toUpperCase() === "DIWALI10" || discountCode.trim().toUpperCase() === "FESTIVE") {
+    if (
+      discountCode.trim().toUpperCase() === "DIWALI10" ||
+      discountCode.trim().toUpperCase() === "FESTIVE"
+    ) {
       setDiscountApplied(true);
       setDiscountError("");
     } else if (!discountCode.trim()) {
@@ -72,7 +72,9 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
   const handleCheckout = () => {
     setIsCheckingOut(true);
     setTimeout(() => {
-      alert(`Order placed successfully for ${totalItemCount} items (${formatPrice(finalSubtotal)})! Thank you for shopping with us.`);
+      alert(
+        `Order placed successfully for ${totalItemCount} items (${formatPrice(finalSubtotal)})! Thank you for shopping with us.`,
+      );
       if (onClearCart) onClearCart();
       setIsCheckingOut(false);
       onClose();
@@ -144,11 +146,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
             </div>
             <h3 className="store-empty-title">Your cart is empty</h3>
             <p className="store-empty-desc">Add some products to get started</p>
-            <button
-              type="button"
-              className="store-empty-action-btn"
-              onClick={onClose}
-            >
+            <button type="button" className="store-empty-action-btn" onClick={onClose}>
               Continue Shopping
             </button>
           </div>
@@ -161,11 +159,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                 const lineTotal = item.price * quantity;
                 return (
                   <div key={item.id} className="store-drawer-item-row">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="store-drawer-item-img"
-                    />
+                    <img src={item.image} alt={item.name} className="store-drawer-item-img" />
 
                     <div className="store-drawer-item-main">
                       <div className="store-drawer-item-top">
@@ -214,9 +208,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                           </button>
                         </div>
 
-                        <span className="store-drawer-item-price">
-                          {formatPrice(lineTotal)}
-                        </span>
+                        <span className="store-drawer-item-price">{formatPrice(lineTotal)}</span>
                       </div>
                     </div>
                   </div>
@@ -248,9 +240,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                   {discountApplied ? "Applied" : "Apply"}
                 </button>
               </div>
-              {discountError && (
-                <span className="store-discount-error">{discountError}</span>
-              )}
+              {discountError && <span className="store-discount-error">{discountError}</span>}
               {discountApplied && (
                 <span className="store-discount-success">10% festive discount applied!</span>
               )}
@@ -258,15 +248,11 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
               {/* Subtotal */}
               <div className="store-subtotal-row">
                 <span className="store-subtotal-label">Subtotal</span>
-                <span className="store-subtotal-amount">
-                  {formatPrice(finalSubtotal)}
-                </span>
+                <span className="store-subtotal-amount">{formatPrice(finalSubtotal)}</span>
               </div>
 
               {/* Note */}
-              <p className="store-shipping-note">
-                Shipping calculated at checkout
-              </p>
+              <p className="store-shipping-note">Shipping calculated at checkout</p>
 
               {/* Checkout CTA */}
               <button
@@ -279,11 +265,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
               </button>
 
               {/* Continue Shopping Link */}
-              <button
-                type="button"
-                className="store-continue-shopping-link"
-                onClick={onClose}
-              >
+              <button type="button" className="store-continue-shopping-link" onClick={onClose}>
                 Continue Shopping
               </button>
             </div>

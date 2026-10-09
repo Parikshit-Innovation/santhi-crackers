@@ -20,11 +20,7 @@ export const DeepaTrustBar: React.FC = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <path
-            d="M9 12l2 2 4-4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ),
     },
@@ -49,11 +45,7 @@ export const DeepaTrustBar: React.FC = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <path
-            d="M15 8h4l3 3v5h-7V8z"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <path d="M15 8h4l3 3v5h-7V8z" strokeLinecap="round" strokeLinejoin="round" />
           <circle cx="5.5" cy="18.5" r="2.5" />
           <circle cx="17.5" cy="18.5" r="2.5" />
         </svg>

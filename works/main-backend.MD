@@ -64,7 +64,7 @@ The API is served from `http://localhost:3007` during local development.
 | Method | Endpoint                | Purpose                         |
 | ------ | ----------------------- | ------------------------------- |
 | `GET`  | `/health`               | Check API availability          |
-| `GET`  | `/api/products`         | List active products            |
+| `GET`  | /api/products           | List active products            |
 | `GET`  | `/api/products/:id`     | Get one active product          |
 | `GET`  | `/api/categories`       | List active categories          |
 | `GET`  | `/api/categories/:slug` | Get a category and its products |
@@ -473,7 +473,7 @@ Check the API:
 curl http://localhost:3007/health
 ```
 
-* [ ]  11. Implementation sequence
+* [ ]
 
 1. Implement `/api/products` with pagination, search, sorting, and category
    filtering.

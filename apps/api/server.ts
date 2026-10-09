@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import cookieParser from "cookie-parser";
 import express from "express";
 import apiRoute from "./src/routes.js";
 
@@ -8,8 +9,10 @@ const app = express();
 const port = Number(process.env.PORT ?? 3007);
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api", apiRoute);
+
 
 app.get("/health", (_request, response) => {
   response.json({ status: "ok" });

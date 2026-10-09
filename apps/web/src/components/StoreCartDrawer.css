@@ -35,7 +35,7 @@
   flex-direction: column;
   transform: translate3d(100%, 0, 0);
   transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   box-sizing: border-box;
 }
 
@@ -54,7 +54,7 @@
 }
 
 .store-drawer-title {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 17px;
   font-weight: 600;
   color: #111827;
@@ -107,7 +107,7 @@
 }
 
 .store-empty-title {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 18px;
   font-weight: 600;
   color: #111827;
@@ -115,7 +115,7 @@
 }
 
 .store-empty-desc {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   color: #6b7280;
   margin: 0 0 24px;
@@ -126,7 +126,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 9999px;
   padding: 10px 24px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 500;
   color: #111827;
@@ -136,8 +136,9 @@
 }
 
 .store-empty-action-btn:hover {
-  background-color: #f9fafb;
-  border-color: #d1d5db;
+  background-color: var(--primary-blue-light, rgba(29, 78, 216, 0.08));
+  border-color: var(--primary-blue, #1d4ed8);
+  color: var(--primary-blue, #1d4ed8);
 }
 
 /* =========================================================
@@ -199,7 +200,7 @@
 }
 
 .store-drawer-item-title {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 500;
   color: #111827;
@@ -224,8 +225,8 @@
 }
 
 .store-drawer-trash-btn:hover {
-  background-color: #fee2e2;
-  color: #ef4444;
+  background-color: var(--alert-red-light, rgba(220, 38, 38, 0.08));
+  color: var(--alert-red, #dc2626);
 }
 
 .store-drawer-item-bottom {
@@ -263,21 +264,21 @@
 }
 
 .store-drawer-stepper-btn:hover {
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: var(--primary-blue-light, rgba(29, 78, 216, 0.08));
+  color: var(--primary-blue, #1d4ed8);
 }
 
 .store-drawer-stepper-val {
   min-width: 26px;
   text-align: center;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 600;
   color: #111827;
 }
 
 .store-drawer-item-price {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14.5px;
   font-weight: 600;
   color: #111827;
@@ -308,7 +309,7 @@
   padding: 10px 16px;
   border: 1px solid #e5e7eb;
   border-radius: 9999px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   color: #111827;
   outline: none;
@@ -317,7 +318,8 @@
 }
 
 .store-discount-input:focus {
-  border-color: #9ca3af;
+  border-color: var(--primary-blue, #1d4ed8);
+  box-shadow: 0 0 0 3px var(--primary-blue-light, rgba(29, 78, 216, 0.1));
 }
 
 .store-discount-input::placeholder {
@@ -329,30 +331,33 @@
   border: 1px solid #e5e7eb;
   background-color: #ffffff;
   color: #111827;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
   border-radius: 9999px;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   outline: none;
   white-space: nowrap;
 }
 
 .store-discount-btn:hover:not(:disabled) {
-  background-color: #f9fafb;
-  border-color: #d1d5db;
+  background-color: var(--primary-blue-light, rgba(29, 78, 216, 0.08));
+  border-color: var(--primary-blue, #1d4ed8);
+  color: var(--primary-blue, #1d4ed8);
 }
 
 .store-discount-error {
   font-size: 12px;
-  color: #ef4444;
+  color: var(--alert-red, #dc2626);
+  font-weight: 500;
   margin-top: -6px;
 }
 
 .store-discount-success {
   font-size: 12px;
-  color: #16a34a;
+  color: var(--success-green, #15803d);
+  font-weight: 500;
   margin-top: -6px;
 }
 
@@ -382,30 +387,33 @@
   margin: -4px 0 4px;
 }
 
-/* Checkout CTA - Professional Oval Shape */
+/* Checkout CTA - Formal Royal Blue */
 .store-checkout-btn {
   width: 100%;
   height: 46px;
-  background-color: #111827;
+  background-color: var(--primary-blue, #1d4ed8);
   color: #ffffff;
-  border: 1px solid #111827;
+  border: 1px solid var(--primary-blue, #1d4ed8);
   border-radius: 9999px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   outline: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .store-checkout-btn:hover:not(:disabled) {
-  background-color: #1f2937;
+  background-color: var(--primary-blue-hover, #1e40af);
+  border-color: var(--primary-blue-hover, #1e40af);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
 .store-continue-shopping-link {
   background: transparent;
   border: none;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   color: #6b7280;
   cursor: pointer;
@@ -416,7 +424,7 @@
 }
 
 .store-continue-shopping-link:hover {
-  color: #111827;
+  color: var(--primary-blue, #1d4ed8);
   text-decoration: underline;
 }
 

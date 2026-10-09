@@ -1,19 +1,19 @@
-/* Combo Packs Table - Modern Geometric Sans (Geist) */
+/* Combo Packs Table - Standardized Typography */
 .combo-table-wrapper {
   width: 100%;
-  padding: 24px 48px 80px;
+  padding: 24px 36px 64px;
   box-sizing: border-box;
-  background-color: #ffffff;
-  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: transparent;
+  font-family: var(--font-body);
 }
 
 .combo-table-container {
-  max-width: 1400px;
+  max-width: 1380px;
   margin: 0 auto;
   position: relative;
 }
 
-/* Toast feedback notice - White Oval in Bottom Middle */
+
 .combo-toast-notice {
   position: fixed !important;
   bottom: 36px !important;
@@ -23,24 +23,26 @@
   transform: translateX(-50%) !important;
   background-color: #ffffff !important;
   color: #0f172a !important;
-  border: 1px solid #e2e8f0 !important;
+  border: 1.5px solid #fde047 !important;
   border-radius: 9999px !important;
   padding: 10px 24px !important;
-  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family: var(--font-body) !important;
   font-size: 14px !important;
   font-weight: 550 !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
   z-index: 9999 !important;
   white-space: nowrap !important;
   animation: toastSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   pointer-events: none !important;
 }
 
+
 .combo-toast-notice svg {
-  color: #16a34a !important;
+  color: #ca8a04 !important;
+  stroke: #ca8a04 !important;
   flex-shrink: 0 !important;
 }
 
@@ -68,26 +70,100 @@
 .combo-title-wrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .combo-heading {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 38px;
+  font-family: var(--font-heading);
+  font-size: clamp(34px, 4.2vw, 46px);
   font-weight: 700;
   color: #0f172a;
   line-height: 1.1;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .combo-discount-badge {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #b45309;
-  letter-spacing: 0.05em;
+  font-family: var(--font-promo);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--alert-red, #dc2626);
+  background: none !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  display: inline-block;
+  box-shadow: none !important;
+}
+
+/* Category Group Header Rows & Sections */
+.combo-category-header-row {
+  background-color: #fafbfd;
+}
+
+.combo-category-header-td {
+  padding: 12px 14px !important;
+  background-color: #f8fafc !important;
+  border-top: 1.5px solid #edf2f7 !important;
+  border-bottom: 1.5px solid #edf2f7 !important;
+}
+
+.combo-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.combo-category-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.combo-category-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  background-color: var(--alert-red, #dc2626);
+  border-radius: 2px;
+}
+
+.combo-category-badge {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.combo-category-mobile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.combo-category-mobile-section:last-child {
+  margin-bottom: 0;
+}
+
+.combo-category-mobile-section .combo-category-header {
+  padding: 8px 4px 6px 4px;
+  border-bottom: 1.5px solid #edf2f7;
 }
 
 /* Right Controls */
@@ -99,7 +175,7 @@
 }
 
 .combo-product-count {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   color: #64748b;
   font-weight: 500;
@@ -127,12 +203,12 @@
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   color: #0f172a;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .combo-search-field::placeholder {
@@ -140,24 +216,32 @@
 }
 
 .combo-search-field:focus {
-  border-color: #cbd5e1;
+  border-color: var(--primary-blue, #1d4ed8);
+  box-shadow: 0 0 0 3px var(--primary-blue-light, rgba(29, 78, 216, 0.1));
 }
 
 /* Sort pill */
 .combo-sort-pill {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
-  padding: 4px 14px;
-  transition: border-color 0.15s ease;
+  padding: 8px 18px;
+  min-height: 40px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.combo-sort-pill:hover {
+  border-color: #cbd5e1;
 }
 
 .combo-sort-label {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
+  font-weight: 500;
   color: #64748b;
   white-space: nowrap;
 }
@@ -165,13 +249,14 @@
 .combo-sort-select {
   border: none;
   background: transparent;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 600;
   color: #0f172a;
   outline: none;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 2px 4px 2px 0;
+  line-height: 1.4;
 }
 
 /* Filter button */
@@ -183,7 +268,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
   padding: 8px 18px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 500;
   color: #0f172a;
@@ -217,8 +302,8 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  min-width: 980px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  min-width: 760px;
+  font-family: var(--font-body);
 }
 
 /* Table Head */
@@ -228,9 +313,9 @@
 }
 
 .combo-data-table th {
-  padding: 16px 20px;
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 13.5px;
+  padding: 8px 10px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
   font-weight: 600;
   color: #475569;
   letter-spacing: 0.01em;
@@ -238,41 +323,41 @@
 }
 
 .combo-data-table th.th-product {
-  width: 90px;
+  width: 44px;
 }
 
 .combo-data-table th.th-code {
-  width: 80px;
+  width: 56px;
 }
 
 .combo-data-table th.th-name {
-  min-width: 240px;
+  min-width: 150px;
 }
 
 .combo-data-table th.th-content {
-  width: 90px;
+  width: 64px;
 }
 
 .combo-data-table th.th-actual {
-  width: 110px;
+  width: 75px;
 }
 
 .combo-data-table th.th-price {
-  width: 110px;
+  width: 80px;
 }
 
 .combo-data-table th.th-qty {
-  width: 130px;
+  width: 96px;
 }
 
 .combo-data-table th.th-total {
-  width: 100px;
+  width: 75px;
 }
 
 .combo-data-table th.th-action {
-  width: 120px;
+  width: 85px;
   text-align: right;
-  padding-right: 28px;
+  padding-right: 12px;
 }
 
 /* Table Body */
@@ -286,19 +371,19 @@
 }
 
 .combo-data-table tbody tr:hover {
-  background-color: #faf8f5;
+  background-color: #f8fafc;
 }
 
 .combo-data-table td {
-  padding: 16px 20px;
+  padding: 7px 10px;
   vertical-align: middle;
 }
 
 /* Cells */
 .combo-thumb-box {
-  width: 58px;
-  height: 58px;
-  border-radius: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
   border: 1px solid #e2e8f0;
   overflow: hidden;
   cursor: pointer;
@@ -322,41 +407,47 @@
 }
 
 .combo-code-badge {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 14.5px;
+  font-family: var(--font-body);
+  font-size: 12px;
   color: #475569;
   font-weight: 500;
 }
 
 .combo-name-text {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 15.5px;
+  font-family: var(--font-heading), var(--font-tamil), sans-serif;
+  font-size: 16.5px;
   font-weight: 600;
   color: #0f172a;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
 }
 
 .combo-content-text {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
   color: #64748b;
   text-transform: capitalize;
 }
 
-.combo-actual-price {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 14.5px;
+.combo-actual-price,
+.combo-strike-price {
+  font-family: var(--font-body);
+  font-size: 12px;
   color: #94a3b8;
   text-decoration: line-through;
+  text-decoration-color: var(--alert-red, #dc2626);
 }
 
-.combo-current-price {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 16px;
+.combo-current-price,
+.combo-our-price {
+  font-family: var(--font-body);
+  font-size: 14px;
   font-weight: 700;
   color: #0f172a;
 }
 
 /* Stepper (Neat Professional Oval Shape) */
+.combo-qty-control,
 .combo-qty-stepper {
   display: inline-flex;
   align-items: center;
@@ -364,16 +455,16 @@
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
   overflow: hidden;
-  padding: 2px 4px;
+  padding: 1px 2px;
 }
 
 .combo-qty-btn {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border: none;
   background: transparent;
   color: #475569;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -385,8 +476,8 @@
 }
 
 .combo-qty-btn:hover:not(:disabled) {
-  background-color: #f1f5f9;
-  color: #0f172a;
+  background-color: var(--primary-blue-light, rgba(29, 78, 216, 0.08));
+  color: var(--primary-blue, #1d4ed8);
 }
 
 .combo-qty-btn:disabled {
@@ -395,62 +486,96 @@
 }
 
 .combo-qty-input {
-  width: 32px;
-  height: 28px;
+  width: 24px;
+  height: 20px;
   border: none;
   background: transparent;
   text-align: center;
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 12px;
   font-weight: 600;
   color: #0f172a;
   outline: none;
 }
 
-.combo-total-price {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 15.5px;
-  font-weight: 600;
+.combo-total-price,
+.combo-row-total {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 700;
   color: #0f172a;
 }
 
-/* Add Button matching warm cream peach style (Neat Oval Shape) */
+/* Add Button in Warning Yellow */
 .td-action {
   text-align: right;
-  padding-right: 28px !important;
+  padding-right: 12px !important;
 }
 
 .combo-add-btn {
-  background-color: #f7e6cd;
-  border: 1px solid #ebd4b5;
-  color: #5c3911;
-  padding: 8px 22px;
+  background-color: var(--warning-yellow, #fbbf24);
+  border: 1px solid #f59e0b;
+  color: #1e293b;
+  padding: 4px 12px;
   border-radius: 9999px;
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 13.5px;
+  font-family: var(--font-body);
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.02em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  gap: 4px;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
   outline: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.combo-add-btn svg {
+  color: #1e293b;
+  stroke: #1e293b;
 }
 
 .combo-add-btn:hover {
-  background-color: #f0dcbe;
-  border-color: #e0c29b;
+  background-color: #f59e0b;
+  border-color: #d97706;
+  color: #0f172a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
 .combo-add-btn:active {
-  background-color: #ebd4b5;
+  transform: scale(0.97);
+  background-color: #d97706;
+}
+
+.combo-add-btn.added {
+  background-color: #fef9c3 !important;
+  border-color: #fde047 !important;
+  color: #854d0e !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.combo-add-btn.added svg {
+  color: #854d0e !important;
+  stroke: #854d0e !important;
+}
+
+.combo-add-btn.added:hover {
+  background-color: #fef08a !important;
+  border-color: #facc15 !important;
+  color: #713f12 !important;
+}
+
+.combo-add-btn.added:hover svg {
+  color: #713f12 !important;
+  stroke: #713f12 !important;
 }
 
 .combo-empty-state {
   text-align: center;
   padding: 48px !important;
   color: #94a3b8;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 15px;
 }
 
@@ -519,15 +644,16 @@
 }
 
 .combo-lightbox-info h3 {
-  font-family: 'Geist', 'Inter', sans-serif;
-  font-size: 18px;
+  font-family: var(--font-heading), var(--font-tamil), sans-serif;
+  font-size: 20px;
   font-weight: 600;
+  letter-spacing: 0.02em;
   margin: 0 0 6px;
   color: #0f172a;
 }
 
 .combo-lightbox-info p {
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   color: #64748b;
   margin: 0;
@@ -560,8 +686,8 @@
   .combo-mobile-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 12px;
+    gap: 6px;
+    padding: 6px 4px;
     width: 100%;
     box-sizing: border-box;
   }
@@ -577,31 +703,31 @@
   .combo-mobile-card {
     background-color: #ffffff;
     border: 1px solid #edf2f7;
-    border-radius: 0;
-    padding: 12px 14px;
+    border-radius: 4px;
+    padding: 7px 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
     width: 100%;
     box-sizing: border-box;
     transition: background-color 0.15s ease;
   }
 
   .combo-mobile-card:hover {
-    background-color: #faf8f5;
+    background-color: #f8fafc;
   }
 
   .combo-m-top {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 8px;
     width: 100%;
   }
 
   .combo-m-thumb {
-    width: 56px;
-    height: 56px;
-    border-radius: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
     border: 1px solid #e2e8f0;
     overflow: hidden;
     flex-shrink: 0;
@@ -621,14 +747,15 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
   }
 
   .combo-m-meta {
+    font-family: var(--font-body);
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12.5px;
+    gap: 5px;
+    font-size: 11px;
     color: #64748b;
     font-weight: 500;
   }
@@ -642,39 +769,45 @@
   }
 
   .combo-m-name {
-    font-size: 15px;
+    font-family: var(--font-heading), var(--font-tamil), sans-serif;
+    font-size: 15.5px;
     font-weight: 600;
     color: #0f172a;
     line-height: 1.25;
     word-break: break-word;
+    letter-spacing: 0.01em;
   }
 
   .combo-m-prices {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 2px;
+    gap: 5px;
+    margin-top: 1px;
     flex-wrap: wrap;
   }
 
   .combo-m-actual {
-    font-size: 13.5px;
+    font-family: var(--font-body);
+    font-size: 11.5px;
     color: #94a3b8;
     text-decoration: line-through;
+    text-decoration-color: var(--alert-red, #dc2626);
   }
 
   .combo-m-current {
-    font-size: 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
     font-weight: 700;
     color: #0f172a;
   }
 
   .combo-m-total-badge {
+    font-family: var(--font-body);
     background-color: #f1f5f9;
     color: #0f172a;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    padding: 2px 8px;
+    padding: 2px 6px;
     border-radius: 9999px;
   }
 
@@ -682,8 +815,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding-top: 8px;
+    gap: 6px;
+    padding-top: 5px;
     border-top: 1px solid #f8fafc;
     width: 100%;
     box-sizing: border-box;
@@ -695,14 +828,16 @@
   }
 
   .combo-m-add-btn {
-    padding: 7px 20px;
-    font-size: 13px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 4px 12px;
+    font-size: 11.5px;
     border-radius: 9999px;
   }
 
   /* Header & Controls Responsive */
   .combo-heading {
-    font-size: 28px;
+    font-size: 32px;
   }
 
   .combo-header-bar {
@@ -724,14 +859,34 @@
   }
 
   .combo-sort-pill {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
+    padding: 10px 18px;
+    min-height: 44px;
     box-sizing: border-box;
+    gap: 12px;
+  }
+
+  .combo-sort-label {
+    white-space: nowrap;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #64748b;
+    flex-shrink: 0;
   }
 
   .combo-sort-select {
     flex: 1;
     text-align: right;
+    text-align-last: right;
+    direction: ltr;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #0f172a;
+    padding: 4px 0;
+    max-width: calc(100% - 60px);
   }
 
   .combo-filter-btn {
@@ -802,7 +957,7 @@
   background-color: #ffffff;
   border: 1px solid #edf2f7;
   border-top: none;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   margin-top: -1px;
   box-sizing: border-box;
 }
@@ -811,7 +966,7 @@
   font-size: 13.5px;
   color: #64748b;
   font-weight: 450;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   letter-spacing: -0.01em;
 }
 
@@ -836,7 +991,7 @@
   background-color: transparent;
   border: 1px solid transparent;
   border-radius: 9999px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 500;
   color: #475569;
@@ -874,7 +1029,7 @@
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
-  font-family: 'Geist', 'Inter', -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 550;
   font-variant-numeric: tabular-nums;
@@ -927,7 +1082,7 @@
   box-sizing: border-box;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   position: relative;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   animation: modalScaleIn 0.2s ease-out;
 }
 
@@ -1028,7 +1183,7 @@
   border: 1px solid #0f172a;
   border-radius: 9999px;
   padding: 10px 24px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -1172,7 +1327,7 @@
   padding: 10px 16px;
   border: 1px solid #e2e8f0;
   border-radius: 9999px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   color: #0f172a;
   outline: none;
@@ -1196,7 +1351,7 @@
   border: 1px solid #25d366;
   border-radius: 9999px;
   padding: 12px 18px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -1218,7 +1373,7 @@
   border: 1px solid #0f172a;
   border-radius: 9999px;
   padding: 12px 18px;
-  font-family: 'Geist', 'Inter', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

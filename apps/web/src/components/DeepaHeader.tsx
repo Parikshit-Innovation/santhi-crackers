@@ -19,14 +19,7 @@ export const DeepaHeader: React.FC<DeepaHeaderProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
 
   const navLinks = ["Home", "Shop", "About", "Locations", "Contact"];
-  const locations = [
-    "Salem",
-    "Chennai",
-    "Coimbatore",
-    "Madurai",
-    "Sivakasi",
-    "Bangalore",
-  ];
+  const locations = ["Salem", "Chennai", "Coimbatore", "Madurai", "Sivakasi", "Bangalore"];
 
   return (
     <header className="deepa-header">
@@ -249,10 +242,7 @@ export const DeepaHeader: React.FC<DeepaHeaderProps> = ({
               stroke="currentColor"
               strokeWidth="1.8"
             >
-              <path
-                d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-                strokeLinecap="round"
-              />
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeLinecap="round" />
               <circle cx="12" cy="7" r="4" strokeLinecap="round" />
             </svg>
           </button>

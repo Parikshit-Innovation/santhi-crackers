@@ -1,10 +1,10 @@
-/* Marquee Moving Text Ticker - Infinite Smooth Scroll */
+/* Marquee Moving Text Ticker - Infinite Smooth Scroll with Warning Yellow Palette */
 .marquee-bar {
   width: 100%;
   overflow: hidden;
-  background-color: #f3f4f6;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: var(--warning-yellow, #FFFF00);
+  border-top: 1px solid #e6e600;
+  border-bottom: 1px solid #e6e600;
   padding: 10px 0;
   display: flex;
   align-items: center;
@@ -33,24 +33,24 @@
   align-items: center;
   gap: 10px;
   padding: 0 28px;
-  font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   font-size: 13.5px;
   line-height: 1;
 }
 
-/* Bold prefix title matching reference */
+/* Bold prefix title */
 .marquee-title {
-  font-weight: 600;
-  color: #111827;
+  font-weight: 700;
+  color: #000000;
   letter-spacing: -0.01em;
 }
 
-/* Smiley icon matching reference screenshot */
+/* Smiley icon */
 .marquee-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: #000000;
   flex-shrink: 0;
 }
 
@@ -60,8 +60,8 @@
 
 /* Descriptive slogan / detail text */
 .marquee-text {
-  font-weight: 400;
-  color: #4b5563;
+  font-weight: 500;
+  color: #111827;
   letter-spacing: -0.005em;
 }
 

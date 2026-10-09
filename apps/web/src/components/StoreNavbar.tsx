@@ -15,9 +15,10 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
   onNavigate,
 }) => {
   const [activeTab, setActiveTab] = useState(
-    activePage === "about" ? "About" : activePage === "contact" ? "Contact us" : "Home"
+    activePage === "about" ? "About" : activePage === "contact" ? "Contact us" : "Home",
   );
   const [searchVal, setSearchVal] = useState("");
+  const [currentLang, setCurrentLang] = useState<"EN" | "தமிழ்">("EN");
 
   useEffect(() => {
     if (activePage === "about") {
@@ -86,9 +87,20 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
       {/* Top Navbar */}
       <header className="store-nav-header">
         <div className="store-nav-container">
-          {/* Brand Name */}
-          <div className="store-brand" onClick={() => handleTabClick("Home")}>
-            <span className="store-brand-text">Your Next Store</span>
+          {/* Brand Logo & Name */}
+          <div
+            className="store-brand"
+            onClick={() => handleTabClick("Home")}
+            role="button"
+            tabIndex={0}
+            aria-label="Santhi Sivakasi Crackers - Home"
+          >
+            <img
+              src="/home/logo-santhi.png"
+              alt="Santhi Sivakasi Crackers"
+              className="store-brand-logo"
+            />
+            <span className="store-brand-text">Santhi Sivakasi Crackers</span>
           </div>
 
           {/* Center: Desktop Nav Links */}
@@ -129,8 +141,36 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
               />
             </div>
 
+            {/* Language Switch Button */}
+            <button
+              type="button"
+              id="header-lang-btn"
+              className="store-icon-btn store-lang-btn"
+              aria-label="Switch Language"
+              title={`Language: ${currentLang === "EN" ? "English" : "தமிழ்"}`}
+              onClick={() => setCurrentLang((prev) => (prev === "EN" ? "தமிழ்" : "EN"))}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="19"
+                height="19"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="store-lang-icon"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+              <span className="store-lang-badge">{currentLang}</span>
+            </button>
+
             {/* Cart Icon (desktop & mobile header) */}
             <button
+              id="header-cart-btn"
               className="store-icon-btn store-cart-btn"
               aria-label="Cart"
               onClick={() => handleTabClick("cart")}
@@ -151,9 +191,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
                   strokeLinejoin="round"
                 />
               </svg>
-              {cartCount > 0 && (
-                <span className="store-cart-badge">{cartCount}</span>
-              )}
+              {cartCount > 0 && <span className="store-cart-badge">{cartCount}</span>}
             </button>
           </div>
         </div>
@@ -183,29 +221,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
           </svg>
         </button>
 
-        {/* 2. Search Icon */}
-        <button
-          type="button"
-          className={`store-bottom-btn ${activeTab === "search" ? "active" : ""}`}
-          onClick={() => handleTabClick("search")}
-          aria-label="Search"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            width="22"
-            height="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-        </button>
-
-        {/* 3. About Icon (Middle Item) */}
+        {/* 2. About Icon */}
         <button
           type="button"
           className={`store-bottom-btn ${activeTab === "about" || activeTab === "About" ? "active" : ""}`}
@@ -231,6 +247,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
         {/* 4. Cart Icon (with badge) */}
         <button
           type="button"
+          id="footer-bottom-cart-btn"
           className={`store-bottom-btn ${activeTab === "cart" ? "active" : ""}`}
           onClick={() => handleTabClick("cart")}
           aria-label="Cart"
@@ -250,9 +267,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
               <circle cx="20" cy="21" r="1" />
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
-            {cartCount > 0 && (
-              <span className="store-bottom-cart-badge">{cartCount}</span>
-            )}
+            {cartCount > 0 && <span className="store-bottom-cart-badge">{cartCount}</span>}
           </div>
         </button>
 
@@ -281,4 +296,3 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
     </>
   );
 };
-

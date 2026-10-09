@@ -64,15 +64,16 @@ model Category {
 }
 
 model Cart {
-  id        String     @id @default(cuid())
+  id         String     @id @default(cuid())
+  guestToken String?    @unique
 
   // For logged-in users
-  userId    String?    @unique
+  userId     String?    @unique
 
-  items     CartItem[]
+  items      CartItem[]
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model CartItem {

@@ -6,10 +6,7 @@ interface DeepaHeroProps {
   onViewOffers: () => void;
 }
 
-export const DeepaHero: React.FC<DeepaHeroProps> = ({
-  onShopNow,
-  onViewOffers,
-}) => {
+export const DeepaHero: React.FC<DeepaHeroProps> = ({ onShopNow, onViewOffers }) => {
   return (
     <section className="deepa-hero-section">
       <div className="deepa-hero-container">
@@ -22,8 +19,8 @@ export const DeepaHero: React.FC<DeepaHeroProps> = ({
             <span className="deepa-title-gold">Truly Special</span>
           </h1>
           <p className="deepa-hero-desc">
-            Premium quality crackers, safe celebrations and unforgettable
-            moments with your loved ones.
+            Premium quality crackers, safe celebrations and unforgettable moments with your loved
+            ones.
           </p>
 
           <div className="deepa-hero-buttons">
@@ -38,11 +35,7 @@ export const DeepaHero: React.FC<DeepaHeroProps> = ({
                 strokeWidth="2.5"
               >
                 <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
-                <polyline
-                  points="12 5 19 12 12 19"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <polyline points="12 5 19 12 12 19" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             <button className="deepa-btn-secondary" onClick={onViewOffers}>
@@ -55,11 +48,7 @@ export const DeepaHero: React.FC<DeepaHeroProps> = ({
         <div className="deepa-hero-right">
           <div className="deepa-stage-showcase">
             {/* Soft Foliage / Branch Shadows in Background */}
-            <svg
-              className="deepa-foliage-shadow"
-              viewBox="0 0 400 400"
-              fill="none"
-            >
+            <svg className="deepa-foliage-shadow" viewBox="0 0 400 400" fill="none">
               <path
                 d="M320 20 C280 80, 310 140, 240 200 C170 260, 200 320, 140 380"
                 stroke="rgba(0, 0, 0, 0.05)"
@@ -95,23 +84,15 @@ export const DeepaHero: React.FC<DeepaHeroProps> = ({
                     <svg viewBox="0 0 48 48" width="34" height="34" fill="none">
                       <circle cx="24" cy="24" r="2" fill="#c38b55" />
                       {[
-                        0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5,
-                        225, 247.5, 270, 292.5, 315, 337.5,
+                        0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270,
+                        292.5, 315, 337.5,
                       ].map((deg, i) => (
                         <line
                           key={i}
                           x1={24 + Math.cos((deg * Math.PI) / 180) * 6}
                           y1={24 + Math.sin((deg * Math.PI) / 180) * 6}
-                          x2={
-                            24 +
-                            Math.cos((deg * Math.PI) / 180) *
-                              (i % 2 === 0 ? 16 : 11)
-                          }
-                          y2={
-                            24 +
-                            Math.sin((deg * Math.PI) / 180) *
-                              (i % 2 === 0 ? 16 : 11)
-                          }
+                          x2={24 + Math.cos((deg * Math.PI) / 180) * (i % 2 === 0 ? 16 : 11)}
+                          y2={24 + Math.sin((deg * Math.PI) / 180) * (i % 2 === 0 ? 16 : 11)}
                           stroke="#c38b55"
                           strokeWidth={i % 2 === 0 ? "1.5" : "1"}
                           strokeLinecap="round"
@@ -135,23 +116,13 @@ export const DeepaHero: React.FC<DeepaHeroProps> = ({
                   <div className="deepa-box-sunburst">
                     <svg viewBox="0 0 48 48" width="30" height="30" fill="none">
                       <circle cx="24" cy="24" r="2" fill="#c38b55" />
-                      {[
-                        0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330,
-                      ].map((deg, i) => (
+                      {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg, i) => (
                         <line
                           key={i}
                           x1={24 + Math.cos((deg * Math.PI) / 180) * 6}
                           y1={24 + Math.sin((deg * Math.PI) / 180) * 6}
-                          x2={
-                            24 +
-                            Math.cos((deg * Math.PI) / 180) *
-                              (i % 2 === 0 ? 15 : 10)
-                          }
-                          y2={
-                            24 +
-                            Math.sin((deg * Math.PI) / 180) *
-                              (i % 2 === 0 ? 15 : 10)
-                          }
+                          x2={24 + Math.cos((deg * Math.PI) / 180) * (i % 2 === 0 ? 15 : 10)}
+                          y2={24 + Math.sin((deg * Math.PI) / 180) * (i % 2 === 0 ? 15 : 10)}
                           stroke="#c38b55"
                           strokeWidth="1.3"
                           strokeLinecap="round"
@@ -176,23 +147,15 @@ export const DeepaHero: React.FC<DeepaHeroProps> = ({
                     <svg viewBox="0 0 48 48" width="36" height="36" fill="none">
                       <circle cx="24" cy="24" r="2.2" fill="#c38b55" />
                       {[
-                        0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5,
-                        225, 247.5, 270, 292.5, 315, 337.5,
+                        0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270,
+                        292.5, 315, 337.5,
                       ].map((deg, i) => (
                         <line
                           key={i}
                           x1={24 + Math.cos((deg * Math.PI) / 180) * 6}
                           y1={24 + Math.sin((deg * Math.PI) / 180) * 6}
-                          x2={
-                            24 +
-                            Math.cos((deg * Math.PI) / 180) *
-                              (i % 2 === 0 ? 17 : 12)
-                          }
-                          y2={
-                            24 +
-                            Math.sin((deg * Math.PI) / 180) *
-                              (i % 2 === 0 ? 17 : 12)
-                          }
+                          x2={24 + Math.cos((deg * Math.PI) / 180) * (i % 2 === 0 ? 17 : 12)}
+                          y2={24 + Math.sin((deg * Math.PI) / 180) * (i % 2 === 0 ? 17 : 12)}
                           stroke="#c38b55"
                           strokeWidth={i % 2 === 0 ? "1.5" : "1"}
                           strokeLinecap="round"

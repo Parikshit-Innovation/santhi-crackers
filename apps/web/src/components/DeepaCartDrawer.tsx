@@ -24,10 +24,7 @@ export const DeepaCartDrawer: React.FC<DeepaCartDrawerProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const totalAmount = items.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
-    0,
-  );
+  const totalAmount = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
   const totalOriginal = items.reduce(
     (acc, item) => acc + item.product.originalPrice * item.quantity,
     0,
@@ -39,11 +36,7 @@ export const DeepaCartDrawer: React.FC<DeepaCartDrawerProps> = ({
       <div className="deepa-drawer-panel" onClick={(e) => e.stopPropagation()}>
         <div className="deepa-drawer-header">
           <h3>Your Shopping Cart</h3>
-          <button
-            className="deepa-drawer-close"
-            onClick={onClose}
-            aria-label="Close cart"
-          >
+          <button className="deepa-drawer-close" onClick={onClose} aria-label="Close cart">
             ✕
           </button>
         </div>
@@ -52,10 +45,7 @@ export const DeepaCartDrawer: React.FC<DeepaCartDrawerProps> = ({
           <div className="deepa-empty-cart">
             <span className="deepa-empty-spark">✨</span>
             <h4>Your cart is empty</h4>
-            <p>
-              Explore our popular categories and add crackers to your festive
-              cart.
-            </p>
+            <p>Explore our popular categories and add crackers to your festive cart.</p>
             <button className="deepa-btn-primary" onClick={onClose}>
               Continue Shopping
             </button>
@@ -65,32 +55,16 @@ export const DeepaCartDrawer: React.FC<DeepaCartDrawerProps> = ({
             <div className="deepa-drawer-items">
               {items.map(({ product, quantity }) => (
                 <div key={product.id} className="deepa-drawer-item">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="deepa-drawer-item-img"
-                  />
+                  <img src={product.image} alt={product.name} className="deepa-drawer-item-img" />
                   <div className="deepa-drawer-item-info">
                     <h4 className="deepa-drawer-item-title">{product.name}</h4>
-                    <span className="deepa-drawer-item-meta">
-                      {product.pieces}
-                    </span>
-                    <span className="deepa-drawer-item-price">
-                      ₹{product.price * quantity}
-                    </span>
+                    <span className="deepa-drawer-item-meta">{product.pieces}</span>
+                    <span className="deepa-drawer-item-price">₹{product.price * quantity}</span>
                   </div>
                   <div className="deepa-drawer-qty-stepper">
-                    <button
-                      onClick={() => onUpdateQty(product.id, quantity - 1)}
-                    >
-                      -
-                    </button>
+                    <button onClick={() => onUpdateQty(product.id, quantity - 1)}>-</button>
                     <span>{quantity}</span>
-                    <button
-                      onClick={() => onUpdateQty(product.id, quantity + 1)}
-                    >
-                      +
-                    </button>
+                    <button onClick={() => onUpdateQty(product.id, quantity + 1)}>+</button>
                   </div>
                 </div>
               ))}
@@ -112,9 +86,7 @@ export const DeepaCartDrawer: React.FC<DeepaCartDrawerProps> = ({
               <button
                 className="deepa-checkout-btn"
                 onClick={() => {
-                  alert(
-                    "Thank you for shopping at DeepaKart! Order ready for checkout.",
-                  );
+                  alert("Thank you for shopping at DeepaKart! Order ready for checkout.");
                   onClear();
                   onClose();
                 }}
