@@ -1,6 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import type { CookieOptions, NextFunction, Request, Response } from "express";
-import type { CartItemResponse, CartResponse } from "./types.js";
+import type { CartItemResponse, CartResponse, ProductSortOption } from "./types.js";
+
+// ── Cart ─────────────────────────────────────────────────────────────────────
 
 export const CART_COOKIE_NAME = "cart_id";
 
@@ -65,6 +67,8 @@ export const formatCart = (cart: CartWithItems): CartResponse => {
   };
 };
 
+// ── CORS ─────────────────────────────────────────────────────────────────────
+
 export const corsMiddleware = (request: Request, response: Response, next: NextFunction): void => {
   const origin = request.headers.origin;
 
@@ -86,6 +90,8 @@ export const corsMiddleware = (request: Request, response: Response, next: NextF
   next();
 };
 
+// ── Pagination ────────────────────────────────────────────────────────────────
+
 export const parsePagination = (
   pageQuery: unknown,
   limitQuery: unknown,
@@ -102,4 +108,70 @@ export const parsePagination = (
   }
 
   return { page, limit };
+};
+
+export const SUPPORTED_SORT_OPTIONS: readonly ProductSortOption[] = [
+  "newest",
+  "price_asc",
+  "price_desc",
+  "name_asc",
+  "name_desc",
+] as const;
+
+export const isValidPositiveInteger = (value: unknown): boolean => {
+  if (typeof value !== "string") {
+    return false;
+  }
+  const trimmed = value.trim();
+  return /^[1-9]\d*$/.test(trimmed);
+};
+
+export const isValidLimit = (value: unknown): boolean => {
+  if (typeof value !== "string") {
+    return false;
+  }
+  const trimmed = value.trim();
+  if (!/^[1-9]\d*$/.test(trimmed)) {
+    return false;
+  }
+  const num = Number(trimmed);
+  return num >= 1 && num <= 10;
+};
+
+export const isValidSortOption = (value: unknown): value is ProductSortOption => {
+  if (typeof value !== "string") {
+    return false;
+  }
+  return (SUPPORTED_SORT_OPTIONS as readonly string[]).includes(value.trim());
+};
+
+export type DecimalLike =
+  | {
+      toFixed: (dp?: number) => string;
+    }
+  | number
+  | string;
+
+export const formatDecimalPrice = (
+  value: DecimalLike | null | undefined,
+): string | null => {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    "toFixed" in value &&
+    typeof (value as { toFixed: unknown }).toFixed === "function"
+  ) {
+    return (value as { toFixed: (dp: number) => string }).toFixed(2);
+  }
+  if (typeof value === "number") {
+    return value.toFixed(2);
+  }
+  if (typeof value === "string") {
+    const num = Number(value);
+    return isNaN(num) ? value : num.toFixed(2);
+  }
+  return null;
 };
