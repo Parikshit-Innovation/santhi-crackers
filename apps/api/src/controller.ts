@@ -132,6 +132,20 @@ export const requireAdminSession: RequestHandler = (request, response, next) => 
   }
 
   next();
+  /*
+   * GET /api/admin/products (also exercised on admin categories, product/category
+   * creation, product update, legacy creation, and Cloudinary signature routes)
+   * Request: no session cookie.
+   * Actual response in this environment (503 Service Unavailable):
+   * {
+   *   "error": {
+   *     "code": "ADMIN_AUTH_NOT_CONFIGURED",
+   *     "message": "Admin authentication is not configured."
+   *   }
+   * }
+   * With auth configured, a missing or invalid cookie returns 401 UNAUTHORIZED
+   * (implementation-derived; not runtime-tested).
+   */
 };
 
 export const requireSameOrigin: RequestHandler = (request, response, next) => {
@@ -154,6 +168,17 @@ export const requireSameOrigin: RequestHandler = (request, response, next) => {
   }
 
   next();
+  /*
+   * POST /api/admin/session
+   * Request: JSON body {}; Origin header omitted.
+   * Actual response (403 Forbidden):
+   * {
+   *   "error": {
+   *     "code": "ORIGIN_NOT_ALLOWED",
+   *     "message": "A same-origin request is required."
+   *   }
+   * }
+   */
 };
 
 export const createAdminSession = (
@@ -195,6 +220,29 @@ export const createAdminSession = (
   response.clearCookie(adminSessionCookie, { ...clearOptions, path: "/api/admin" });
   response.setHeader("Cache-Control", "no-store");
   response.json({ status: true, expiresIn: adminSessionLifetimeSeconds });
+  /*
+   * POST /api/admin/session
+   * Request body:
+   * {
+   *   "username": "<configured-admin-username>",
+   *   "password": "<configured-admin-password>"
+   * }
+   * Expected response (200 OK; implementation-derived, not runtime-tested):
+   * {
+   *   "status": true,
+   *   "expiresIn": 28800
+   * }
+   * Also sets the HttpOnly sc_admin_session cookie (8-hour lifetime).
+   * Actual response in this environment for body {} and a same-origin Origin
+   * (503 Service Unavailable):
+   * {
+   *   "error": {
+   *     "code": "ADMIN_AUTH_NOT_CONFIGURED",
+   *     "message": "Admin authentication is not configured."
+   *   }
+   * }
+   * Other implemented failures: 400 INVALID_CREDENTIALS; 401 UNAUTHORIZED.
+   */
 };
 
 export const clearAdminSession = (_request: Request, response: Response): void => {
@@ -202,6 +250,11 @@ export const clearAdminSession = (_request: Request, response: Response): void =
   response.clearCookie(adminSessionCookie, clearOptions);
   response.clearCookie(adminSessionCookie, { ...clearOptions, path: "/api/admin" });
   response.status(204).end();
+  /*
+   * DELETE /api/admin/session
+   * Request: same-origin Origin header; no body required.
+   * Actual response (204 No Content): empty body.
+   */
 };
 
 export const getAdminCategories = async (_request: Request, response: Response): Promise<void> => {
@@ -217,6 +270,16 @@ export const getAdminCategories = async (_request: Request, response: Response):
     console.error("Failed to retrieve admin categories:", error);
     apiError(response, 500, "INTERNAL_ERROR", "Failed to retrieve categories.");
   }
+  /*
+   * GET /api/admin/categories
+   * Response shape (200 OK; implementation-derived, not runtime-tested):
+   * {
+   *   "categories": [
+   *     { "id": "<category-id>", "name": "<category-name>", "slug": "<category-slug>" }
+   *   ]
+   * }
+   * The executed request was blocked by requireAdminSession; see its auth probe.
+   */
 };
 
 const productBodyFields = new Set([
@@ -527,6 +590,16 @@ export const getAdminProducts = async (request: Request, response: Response): Pr
     console.error("Failed to retrieve admin products:", error);
     apiError(response, 500, "INTERNAL_ERROR", "Failed to retrieve products.");
   }
+  /*
+   * GET /api/admin/products?page=1&limit=20
+   * Response shape when no products match (200 OK; implementation-derived,
+   * not runtime-tested):
+   * {
+   *   "items": [],
+   *   "pagination": { "page": 1, "limit": 20, "totalItems": 0, "totalPages": 0 }
+   * }
+   * The executed request was blocked by requireAdminSession; see its auth probe.
+   */
 };
 
 export const createAdminProduct = async (
@@ -561,6 +634,25 @@ export const createAdminProduct = async (
     console.error("Failed to create admin product:", error);
     apiError(response, 500, "INTERNAL_ERROR", "Failed to create product.");
   }
+  /*
+   * POST /api/admin/products
+   * Request body example (categoryId must identify an active category):
+   * {
+   *   "code": "<unique-code>", "name": "<product-name>", "content": "Box",
+   *   "actualPrice": 100, "price": 80, "stock": 10,
+   *   "categoryId": "<active-category-id>"
+   * }
+   * Response envelope (201 Created; implementation-derived, not runtime-tested;
+   * selected product fields shown, including the selected category relation):
+   * {
+   *   "product": {
+   *     "id": "<generated-id>", "code": "<unique-code>", "name": "<product-name>",
+   *     "category": { "id": "<category-id>", "name": "<category-name>", "slug": "<category-slug>" }
+   *   }
+   * }
+   * Implemented errors: 400 INVALID_PRODUCT/INVALID_CATEGORY; 409 DUPLICATE_PRODUCT_CODE.
+   * The executed request was blocked by requireAdminSession; see its auth probe.
+   */
 };
 
 export const updateAdminProduct = async (
@@ -626,6 +718,21 @@ export const updateAdminProduct = async (
     console.error("Failed to update admin product:", error);
     apiError(response, 500, "INTERNAL_ERROR", "Failed to update product.");
   }
+  /*
+   * PATCH /api/admin/products/:id
+   * Request body example: { "stock": 0, "isActive": false }
+   * Response envelope (200 OK; implementation-derived, not runtime-tested;
+   * selected product fields shown, including the selected category relation):
+   * {
+   *   "product": {
+   *     "id": "<product-id>", "stock": 0, "isActive": false,
+   *     "category": { "id": "<category-id>", "name": "<category-name>", "slug": "<category-slug>" }
+   *   }
+   * }
+   * Implemented errors: 400 INVALID_PRODUCT/INVALID_CATEGORY; 404 PRODUCT_NOT_FOUND;
+   * 409 DUPLICATE_PRODUCT_CODE.
+   * The executed request was blocked by requireAdminSession; see its auth probe.
+   */
 };
 
 export const createCloudinaryUploadSignature = (_request: Request, response: Response): void => {
@@ -647,6 +754,17 @@ export const createCloudinaryUploadSignature = (_request: Request, response: Res
     folder: cloudinaryProductFolder,
     signature,
   });
+  /*
+   * POST /api/admin/cloudinary/signature
+   * Request body: none; requires an admin session and configured Cloudinary variables.
+   * Response shape (200 OK; implementation-derived, not runtime-tested; values shown by type):
+   * {
+   *   "cloudName": <string>, "apiKey": <string>, "timestamp": <number>,
+   *   "folder": "santhi-crackers/products", "signature": <hex-string>
+   * }
+   * Missing Cloudinary configuration returns 503 CLOUDINARY_NOT_CONFIGURED after auth.
+   * The executed request was blocked by requireAdminSession; see its auth probe.
+   */
 };
 
 type ProductWithCategory = Prisma.ProductGetPayload<{
@@ -682,10 +800,6 @@ export const getCrackersData = async (_request: Request, response: Response): Pr
     });
 
     response.json({ items: items.map(formatProduct) });
-    /*
-       
-    */
-    
   } catch (error) {
     console.error("Failed to retrieve items:", error);
     response.status(500).json({
@@ -783,6 +897,19 @@ export const createProduct = async (
     console.error("Failed to create product:", error);
     response.status(500).json({ error: "Failed to create product." });
   }
+  /*
+   * POST /api/items (protected legacy product-create route)
+   * Request body: same product fields as POST /api/admin/products; categorySlug
+   * may be used instead of categoryId.
+   * Response envelope (201 Created; implementation-derived, not runtime-tested;
+   * selected product fields shown):
+   * {
+   *   "status": true,
+   *   "message": "Product created Sucessfully",
+   *   "product": { "id": "<generated-id>", "code": "<product-code>", "categorySlug": "<category-slug>" }
+   * }
+   * The executed request was blocked by requireAdminSession; see its auth probe.
+   */
 };
 
 export const createCategory = async (
@@ -889,6 +1016,20 @@ export const createCategory = async (
     console.error("Failed to create category:", error);
     response.status(500).json({ error: "Failed to create category." });
   }
+  /*
+   * POST /api/admin/categories and protected legacy POST /api/categories
+   * Request body:
+   * { "name": "<category-name>", "slug": "<category-slug>", "sortOrder": 0, "isActive": true }
+   * Response envelope (201 Created; implementation-derived, not runtime-tested;
+   * selected category fields shown):
+   * {
+   *   "status": true,
+   *   "message": "Category Created Successfully ",
+   *   "category": { "id": "<generated-id>", "name": "<category-name>", "slug": "<category-slug>" }
+   * }
+   * Implemented errors: 400 invalid body/fields; 409 duplicate name or slug.
+   * The executed requests were blocked by requireAdminSession; see its auth probe.
+   */
 };
 
 export const getCart = async (request: Request, response: Response): Promise<void> => {
