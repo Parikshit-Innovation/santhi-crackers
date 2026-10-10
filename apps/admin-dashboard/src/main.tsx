@@ -1,9 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
 import App from "./App.tsx";
+import "./index.css";
+import english from "./locales/en.json";
 
-document.title = "Shanthi Sivakasi Crackers | Admin Portal";
+document.title = english["app.title"];
 const favicon = document.querySelector("link[rel='icon']") as HTMLLinkElement;
 if (favicon) {
   favicon.href = "/logo.jpg";
