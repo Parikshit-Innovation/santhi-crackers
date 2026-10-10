@@ -460,3 +460,322 @@ export const getProducts = async (
   }
 };
 
+export const getProductById = async (
+  request: Request<{ id: string }>,
+  response: Response,
+): Promise<void> => {
+  try {
+    const { id } = request.params;
+
+    if (!id || typeof id !== "string" || id.trim().length === 0) {
+      response.status(400).json({
+        error: {
+          code: "INVALID_ID",
+          message: "Product ID is required.",
+        },
+      });
+      return;
+    }
+
+    const product = await db.product.findUnique({
+      where: { id: id.trim() },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            isActive: true,
+          },
+        },
+      },
+    });
+
+    if (!product || !product.isActive) {
+      response.status(404).json({
+        error: {
+          code: "PRODUCT_NOT_FOUND",
+          message: "Product not found.",
+        },
+      });
+      return;
+    }
+
+    const item: CatalogProductResponse = {
+      id: product.id,
+      code: product.code,
+      name: product.name,
+      description: product.description,
+      content: product.content,
+      actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
+      price: formatDecimalPrice(product.price) ?? "0.00",
+      discount: formatDecimalPrice(product.discount),
+      stock: product.stock,
+      imageUrl: product.imageUrl,
+      category:
+        product.category && product.category.isActive
+          ? {
+              id: product.category.id,
+              name: product.category.name,
+              slug: product.category.slug,
+            }
+          : null,
+      isActive: product.isActive,
+      isFeatured: product.isFeatured,
+    };
+
+    response.status(200).json(item);
+    /*
+    GET /api/products/:id
+
+    Response (200 OK):
+    {
+      "id": "product-id",
+      "code": "ROCKET-001",
+      "name": "Deluxe Rocket",
+      "description": "Colorful sky rocket",
+      "content": "Pack of 5",
+      "actualPrice": "500.00",
+      "price": "425.00",
+      "discount": "15.00",
+      "stock": 20,
+      "imageUrl": "/images/deluxe-rocket.jpg",
+      "category": {
+        "id": "category-id",
+        "name": "Rockets",
+        "slug": "rockets"
+      },
+      "isActive": true,
+      "isFeatured": true
+    }
+    */
+  } catch (error) {
+    console.error("Failed to retrieve product by ID:", error);
+    response.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to retrieve product.",
+      },
+    });
+  }
+};
+
+export const getCategories = async (
+  _request: Request,
+  response: Response,
+): Promise<void> => {
+  try {
+    const categories = await db.category.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      include: {
+        _count: {
+          select: {
+            products: {
+              where: { isActive: true },
+            },
+          },
+        },
+      },
+    });
+
+    const result = categories.map((cat) => ({
+      id: cat.id,
+      name: cat.name,
+      slug: cat.slug,
+      description: cat.description,
+      imageUrl: cat.imageUrl,
+      sortOrder: cat.sortOrder,
+      productCount: cat._count.products,
+    }));
+
+    response.status(200).json({ categories: result });
+    /*
+    GET /api/categories
+
+    Response (200 OK):
+    {
+      "categories": [
+        {
+          "id": "category-id",
+          "name": "Rockets",
+          "slug": "rockets",
+          "description": "Colorful sky rockets",
+          "imageUrl": "/images/categories/rockets.jpg",
+          "sortOrder": 1,
+          "productCount": 12
+        }
+      ]
+    }
+    */
+  } catch (error) {
+    console.error("Failed to retrieve categories:", error);
+    response.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to retrieve categories.",
+      },
+    });
+  }
+};
+
+export const getCategoryBySlug = async (
+  request: Request<{ slug: string }>,
+  response: Response,
+): Promise<void> => {
+  try {
+    const { slug } = request.params;
+    const { page, limit } = request.query;
+
+    if (!slug || typeof slug !== "string" || slug.trim().length === 0) {
+      response.status(400).json({
+        error: {
+          code: "INVALID_SLUG",
+          message: "Category slug is required.",
+        },
+      });
+      return;
+    }
+
+    if (page !== undefined && !isValidPositiveInteger(page)) {
+      response.status(400).json({
+        error: {
+          code: "INVALID_PAGINATION",
+          message:
+            "Page must be a positive integer and limit must be between 1 and 10.",
+        },
+      });
+      return;
+    }
+
+    if (limit !== undefined && !isValidLimit(limit)) {
+      response.status(400).json({
+        error: {
+          code: "INVALID_PAGINATION",
+          message:
+            "Page must be a positive integer and limit must be between 1 and 10.",
+        },
+      });
+      return;
+    }
+
+    const pageNumber =
+      page !== undefined ? parseInt((page as string).trim(), 10) : 1;
+    const limitNumber =
+      limit !== undefined ? parseInt((limit as string).trim(), 10) : 10;
+
+    const category = await db.category.findUnique({
+      where: { slug: slug.trim() },
+    });
+
+    if (!category || !category.isActive) {
+      response.status(404).json({
+        error: {
+          code: "CATEGORY_NOT_FOUND",
+          message: "Category not found.",
+        },
+      });
+      return;
+    }
+
+    const where = {
+      categoryId: category.id,
+      isActive: true,
+    };
+
+    const skip = (pageNumber - 1) * limitNumber;
+    const take = limitNumber;
+
+    const [products, totalItems] = await Promise.all([
+      db.product.findMany({
+        where,
+        skip,
+        take,
+        orderBy: [{ createdAt: "desc" }, { id: "asc" }],
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              isActive: true,
+            },
+          },
+        },
+      }),
+      db.product.count({ where }),
+    ]);
+
+    const totalPages =
+      totalItems === 0 ? 0 : Math.ceil(totalItems / limitNumber);
+
+    const items: CatalogProductResponse[] = products.map(
+      (product: (typeof products)[number]) => ({
+        id: product.id,
+        code: product.code,
+        name: product.name,
+        description: product.description,
+        content: product.content,
+        actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
+        price: formatDecimalPrice(product.price) ?? "0.00",
+        discount: formatDecimalPrice(product.discount),
+        stock: product.stock,
+        imageUrl: product.imageUrl,
+        category:
+          product.category && product.category.isActive
+            ? {
+                id: product.category.id,
+                name: product.category.name,
+                slug: product.category.slug,
+              }
+            : null,
+        isActive: product.isActive,
+        isFeatured: product.isFeatured,
+      }),
+    );
+
+    response.status(200).json({
+      category: {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+      },
+      items,
+      pagination: {
+        page: pageNumber,
+        limit: limitNumber,
+        totalItems,
+        totalPages,
+      },
+    });
+    /*
+    GET /api/categories/:slug
+
+    Response (200 OK):
+    {
+      "category": {
+        "id": "category-id",
+        "name": "Sparklers",
+        "slug": "sparklers"
+      },
+      "items": [],
+      "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalItems": 0,
+        "totalPages": 0
+      }
+    }
+    */
+  } catch (error) {
+    console.error("Failed to retrieve category by slug:", error);
+    response.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to retrieve category.",
+      },
+    });
+  }
+};
+
+
