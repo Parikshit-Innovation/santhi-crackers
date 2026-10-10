@@ -24,3 +24,24 @@ export type CreateCategoryBody = {
   sortOrder?: number;
   isActive?: boolean;
 };
+
+export type AdminSessionBody = {
+  username?: unknown;
+  password?: unknown;
+};
+
+export type AdminProductBody = {
+  code?: unknown;
+  name?: unknown;
+  description?: unknown;
+  content?: unknown;
+  actualPrice?: unknown;
+  price?: unknown;
+  stock?: unknown;
+  minOrderQty?: unknown;
+  maxOrderQty?: unknown;
+  imageUrl?: unknown;
+  categoryId?: unknown;
+  isActive?: unknown;
+  isFeatured?: unknown;
+};

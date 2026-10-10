@@ -1,8 +1,653 @@
 import { Prisma } from "@prisma/client";
 import { db } from "@repo/db/client";
-import type { Request, Response } from "express";
-import { randomUUID } from "node:crypto";
-import type { CreateCategoryBody, CreateProductBody } from "./types.js";
+import type { Request, RequestHandler, Response } from "express";
+import { createHash, createHmac, randomUUID, timingSafeEqual } from "node:crypto";
+import type {
+    AdminProductBody,
+    AdminSessionBody,
+    CreateCategoryBody,
+    CreateProductBody,
+} from "./types.js";
+
+const adminSessionCookie = "sc_admin_session";
+const adminSessionLifetimeSeconds = 60 * 60 * 8;
+const cloudinaryProductFolder = "santhi-crackers/products";
+
+type AdminAuthSettings = {
+  username: string;
+  password: string;
+  sessionSecret: string;
+};
+
+type AdminProductData = {
+  code?: string;
+  name?: string;
+  description?: string | null;
+  content?: string;
+  actualPrice?: number;
+  price?: number;
+  stock?: number;
+  minOrderQty?: number;
+  maxOrderQty?: number | null;
+  imageUrl?: string | null;
+  categoryId?: string;
+  isActive?: boolean;
+  isFeatured?: boolean;
+};
+
+type CompleteAdminProductData = AdminProductData &
+  Required<
+    Pick<
+      AdminProductData,
+      "code" | "name" | "content" | "actualPrice" | "price" | "stock"
+    >
+  >;
+
+class InvalidAdminProductQueryError extends Error {}
+
+const apiError = (response: Response, status: number, code: string, message: string): void => {
+  response.status(status).json({ error: { code, message } });
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const getAdminAuthSettings = (): AdminAuthSettings | null => {
+  const { ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_SESSION_SECRET } = process.env;
+
+  if (
+    !ADMIN_USERNAME ||
+    !ADMIN_PASSWORD ||
+    !ADMIN_SESSION_SECRET ||
+    ADMIN_SESSION_SECRET.length < 32
+  ) {
+    return null;
+  }
+
+  return {
+    username: ADMIN_USERNAME,
+    password: ADMIN_PASSWORD,
+    sessionSecret: ADMIN_SESSION_SECRET,
+  };
+};
+
+const constantTimeStringEqual = (left: string, right: string): boolean => {
+  const leftDigest = createHash("sha256").update(left).digest();
+  const rightDigest = createHash("sha256").update(right).digest();
+  return timingSafeEqual(leftDigest, rightDigest);
+};
+
+const signAdminSession = (username: string, sessionSecret: string): string => {
+  const payload = Buffer.from(
+    JSON.stringify({
+      username,
+      expiresAt: Math.floor(Date.now() / 1000) + adminSessionLifetimeSeconds,
+    }),
+  ).toString("base64url");
+  const signature = createHmac("sha256", sessionSecret).update(payload).digest("base64url");
+  return `${payload}.${signature}`;
+};
+
+const verifyAdminSession = (token: string, settings: AdminAuthSettings): boolean => {
+  const [payload, suppliedSignature, extra] = token.split(".");
+  if (!payload || !suppliedSignature || extra !== undefined) return false;
+
+  const expectedSignature = createHmac("sha256", settings.sessionSecret)
+    .update(payload)
+    .digest("base64url");
+  if (!constantTimeStringEqual(suppliedSignature, expectedSignature)) return false;
+
+  try {
+    const claims: unknown = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    return (
+      isRecord(claims) &&
+      claims.username === settings.username &&
+      typeof claims.expiresAt === "number" &&
+      claims.expiresAt > Math.floor(Date.now() / 1000)
+    );
+  } catch {
+    return false;
+  }
+};
+
+const adminCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict" as const,
+  path: "/api",
+  maxAge: adminSessionLifetimeSeconds * 1000,
+});
+
+export const requireAdminSession: RequestHandler = (request, response, next) => {
+  const settings = getAdminAuthSettings();
+  if (!settings) {
+    apiError(response, 503, "ADMIN_AUTH_NOT_CONFIGURED", "Admin authentication is not configured.");
+    return;
+  }
+
+  const token = request.cookies?.[adminSessionCookie];
+  if (!token || !verifyAdminSession(token, settings)) {
+    apiError(response, 401, "UNAUTHORIZED", "A valid admin session is required.");
+    return;
+  }
+
+  next();
+};
+
+export const requireSameOrigin: RequestHandler = (request, response, next) => {
+  const origin = request.get("origin");
+  const host = request.get("host");
+
+  if (!origin || !host) {
+    apiError(response, 403, "ORIGIN_NOT_ALLOWED", "A same-origin request is required.");
+    return;
+  }
+
+  try {
+    if (new URL(origin).host.toLowerCase() !== host.toLowerCase()) {
+      apiError(response, 403, "ORIGIN_NOT_ALLOWED", "A same-origin request is required.");
+      return;
+    }
+  } catch {
+    apiError(response, 403, "ORIGIN_NOT_ALLOWED", "A same-origin request is required.");
+    return;
+  }
+
+  next();
+};
+
+export const createAdminSession = (
+  request: Request<Record<string, string>, unknown, AdminSessionBody>,
+  response: Response,
+): void => {
+  const settings = getAdminAuthSettings();
+  if (!settings) {
+    apiError(response, 503, "ADMIN_AUTH_NOT_CONFIGURED", "Admin authentication is not configured.");
+    return;
+  }
+
+  const { username, password } = request.body ?? {};
+  if (
+    typeof username !== "string" ||
+    typeof password !== "string" ||
+    username.length === 0 ||
+    password.length === 0 ||
+    username.length > 256 ||
+    password.length > 256
+  ) {
+    apiError(response, 400, "INVALID_CREDENTIALS", "Username and password are required.");
+    return;
+  }
+
+  const usernameMatches = constantTimeStringEqual(username, settings.username);
+  const passwordMatches = constantTimeStringEqual(password, settings.password);
+  if (!usernameMatches || !passwordMatches) {
+    apiError(response, 401, "UNAUTHORIZED", "Invalid username or password.");
+    return;
+  }
+
+  response.cookie(
+    adminSessionCookie,
+    signAdminSession(settings.username, settings.sessionSecret),
+    adminCookieOptions(),
+  );
+  const { maxAge: _maxAge, ...clearOptions } = adminCookieOptions();
+  response.clearCookie(adminSessionCookie, { ...clearOptions, path: "/api/admin" });
+  response.setHeader("Cache-Control", "no-store");
+  response.json({ status: true, expiresIn: adminSessionLifetimeSeconds });
+};
+
+export const clearAdminSession = (_request: Request, response: Response): void => {
+  const { maxAge: _maxAge, ...clearOptions } = adminCookieOptions();
+  response.clearCookie(adminSessionCookie, clearOptions);
+  response.clearCookie(adminSessionCookie, { ...clearOptions, path: "/api/admin" });
+  response.status(204).end();
+};
+
+export const getAdminCategories = async (_request: Request, response: Response): Promise<void> => {
+  try {
+    const categories = await db.category.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      select: { id: true, name: true, slug: true },
+    });
+
+    response.json({ categories });
+  } catch (error) {
+    console.error("Failed to retrieve admin categories:", error);
+    apiError(response, 500, "INTERNAL_ERROR", "Failed to retrieve categories.");
+  }
+};
+
+const productBodyFields = new Set([
+  "code",
+  "name",
+  "description",
+  "content",
+  "actualPrice",
+  "price",
+  "stock",
+  "minOrderQty",
+  "maxOrderQty",
+  "imageUrl",
+  "categoryId",
+  "isActive",
+  "isFeatured",
+]);
+const legacyProductBodyFields = new Set([...productBodyFields, "categorySlug", "discount"]);
+
+const parseAdminProductBody = (
+  body: unknown,
+  partial: boolean,
+  requireCategory = true,
+): { data?: AdminProductData; error?: string } => {
+  if (!isRecord(body)) return { error: "Request body must be a JSON object." };
+
+  const unknownField = Object.keys(body).find((key) => !productBodyFields.has(key));
+  if (unknownField) return { error: `Unknown product field: ${unknownField}.` };
+
+  const requiredFields = ["code", "name", "content", "actualPrice", "price", "stock"];
+  if (requireCategory) requiredFields.push("categoryId");
+  if (!partial) {
+    const missingField = requiredFields.find((field) => body[field] === undefined);
+    if (missingField) return { error: `${missingField} is required.` };
+  }
+
+  const data: AdminProductData = {};
+  for (const field of ["code", "name", "content"] as const) {
+    const value = body[field];
+    if (value === undefined && partial) continue;
+    if (typeof value !== "string" || value.trim().length === 0 || value.trim().length > 500) {
+      return { error: `${field} must be a non-empty string of at most 500 characters.` };
+    }
+    data[field] = value.trim();
+  }
+
+  if (body.description !== undefined) {
+    if (body.description !== null && typeof body.description !== "string") {
+      return { error: "description must be a string or null." };
+    }
+    data.description = typeof body.description === "string" ? body.description.trim() || null : null;
+  }
+
+  if (body.categoryId !== undefined) {
+    if (typeof body.categoryId !== "string" || body.categoryId.trim().length === 0) {
+      return { error: "categoryId must be a non-empty category ID." };
+    }
+    data.categoryId = body.categoryId.trim();
+  }
+
+  for (const field of ["actualPrice", "price"] as const) {
+    const value = body[field];
+    if (value === undefined && partial) continue;
+    if (
+      typeof value !== "number" ||
+      !Number.isFinite(value) ||
+      value < 0 ||
+      value > 99_999_999.99 ||
+      Math.abs(value * 100 - Math.round(value * 100)) > 0.000001
+    ) {
+      return { error: `${field} must be a non-negative amount with at most two decimal places.` };
+    }
+    data[field] = value;
+  }
+
+  for (const field of ["stock", "minOrderQty", "maxOrderQty"] as const) {
+    const value = body[field];
+    if (value === undefined && (partial || field === "minOrderQty" || field === "maxOrderQty")) continue;
+    if (field === "maxOrderQty" && value === null) {
+      data.maxOrderQty = null;
+      continue;
+    }
+    if (
+      typeof value !== "number" ||
+      !Number.isSafeInteger(value) ||
+      value < (field === "stock" ? 0 : 1) ||
+      value > 2_147_483_647
+    ) {
+      return {
+        error:
+          field === "stock"
+            ? "stock must be a non-negative 32-bit integer."
+            : `${field} must be a positive 32-bit integer or null for maxOrderQty.`,
+      };
+    }
+    data[field] = value;
+  }
+
+  if (body.imageUrl !== undefined) {
+    if (body.imageUrl === null) {
+      data.imageUrl = null;
+    } else if (typeof body.imageUrl !== "string") {
+      return { error: "imageUrl must be a Cloudinary URL or null." };
+    } else {
+      try {
+        const imageUrl = new URL(body.imageUrl);
+        if (imageUrl.protocol !== "https:" || imageUrl.hostname !== "res.cloudinary.com") {
+          return { error: "imageUrl must be an HTTPS Cloudinary URL." };
+        }
+        data.imageUrl = imageUrl.toString();
+      } catch {
+        return { error: "imageUrl must be a valid HTTPS Cloudinary URL." };
+      }
+    }
+  }
+
+  for (const field of ["isActive", "isFeatured"] as const) {
+    const value = body[field];
+    if (value === undefined) continue;
+    if (typeof value !== "boolean") return { error: `${field} must be a boolean.` };
+    data[field] = value;
+  }
+
+  return { data };
+};
+
+const calculateDiscount = (actualPrice: number, sellingPrice: number): number => {
+  if (actualPrice === 0) return 0;
+  return Math.round((((actualPrice - sellingPrice) / actualPrice) * 100 + Number.EPSILON) * 100) / 100;
+};
+
+const validatePricePair = (actualPrice: number, sellingPrice: number): string | null => {
+  if (sellingPrice > actualPrice) return "price cannot be greater than actualPrice.";
+  return null;
+};
+
+const validateOrderQuantities = (minOrderQty: number, maxOrderQty: number | null): string | null => {
+  if (maxOrderQty !== null && maxOrderQty < minOrderQty) {
+    return "maxOrderQty must be greater than or equal to minOrderQty.";
+  }
+  return null;
+};
+
+const validateActiveCategory = async (categoryId: string): Promise<boolean> => {
+  const category = await db.category.findUnique({
+    where: { id: categoryId },
+    select: { id: true, isActive: true },
+  });
+  return category?.isActive === true;
+};
+
+type ProductCreationResult =
+  | { success: true; product: ProductWithCategory }
+  | { success: false; error: { code: string; message: string } };
+
+const createValidatedProduct = async (
+  data: CompleteAdminProductData,
+  requireCategory: boolean,
+): Promise<ProductCreationResult> => {
+  const priceError = validatePricePair(data.actualPrice, data.price);
+  const orderError = validateOrderQuantities(data.minOrderQty ?? 1, data.maxOrderQty ?? null);
+  if (priceError || orderError) {
+    return { success: false, error: { code: "INVALID_PRODUCT", message: priceError ?? orderError! } };
+  }
+
+  if (requireCategory && !data.categoryId) {
+    return { success: false, error: { code: "INVALID_CATEGORY", message: "An active category is required." } };
+  }
+  if (data.categoryId && !(await validateActiveCategory(data.categoryId))) {
+    return { success: false, error: { code: "INVALID_CATEGORY", message: "An active category is required." } };
+  }
+
+  const product = await db.product.create({
+    data: {
+      ...data,
+      discount: calculateDiscount(data.actualPrice, data.price),
+    },
+    include: { category: { select: { id: true, name: true, slug: true } } },
+  });
+  return { success: true, product };
+};
+
+const parseListInteger = (value: unknown, field: string, fallback: number, maximum: number): number => {
+  if (value === undefined) return fallback;
+  if (typeof value !== "string" || !/^\d+$/.test(value)) {
+    throw new InvalidAdminProductQueryError(`${field} must be a positive integer.`);
+  }
+
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > maximum) {
+    throw new InvalidAdminProductQueryError(`${field} must be between 1 and ${maximum}.`);
+  }
+  return parsed;
+};
+
+export const getAdminProducts = async (request: Request, response: Response): Promise<void> => {
+  const query = request.query as unknown as Record<string, unknown>;
+  const getQueryString = (key: string): string | undefined => {
+    const value = query[key];
+    if (value === undefined) return undefined;
+    if (typeof value !== "string") {
+      throw new InvalidAdminProductQueryError(`${key} must be a single string value.`);
+    }
+    return value;
+  };
+
+  try {
+    const page = parseListInteger(query.page, "page", 1, Number.MAX_SAFE_INTEGER);
+    const limit = parseListInteger(query.limit, "limit", 20, 100);
+    const search = getQueryString("search")?.trim() ?? "";
+    const categoryId = getQueryString("categoryId");
+    const status = getQueryString("status") ?? "all";
+    const stock = getQueryString("stock") ?? "all";
+    const sort = getQueryString("sort") ?? "createdAt";
+    const direction = getQueryString("direction") ?? "desc";
+
+    if (search.length > 200) {
+      throw new InvalidAdminProductQueryError("search must be at most 200 characters.");
+    }
+    if (categoryId !== undefined && categoryId.length === 0) {
+      throw new InvalidAdminProductQueryError("categoryId cannot be empty.");
+    }
+    if (!["all", "active", "inactive"].includes(status)) {
+      throw new InvalidAdminProductQueryError("status must be all, active, or inactive.");
+    }
+    if (!["all", "inStock", "outOfStock", "lowStock"].includes(stock)) {
+      throw new InvalidAdminProductQueryError("stock must be all, inStock, outOfStock, or lowStock.");
+    }
+    if (!["price", "stock", "createdAt"].includes(sort)) {
+      throw new InvalidAdminProductQueryError("sort must be price, stock, or createdAt.");
+    }
+    if (!["asc", "desc"].includes(direction)) {
+      throw new InvalidAdminProductQueryError("direction must be asc or desc.");
+    }
+
+    const conditions: Prisma.Sql[] = [];
+    if (search) {
+      const term = `%${search}%`;
+      conditions.push(Prisma.sql`(p."name" ILIKE ${term} OR p."code" ILIKE ${term})`);
+    }
+    if (categoryId !== undefined) conditions.push(Prisma.sql`p."categoryId" = ${categoryId}`);
+    if (status === "active") conditions.push(Prisma.sql`p."isActive" = TRUE`);
+    if (status === "inactive") conditions.push(Prisma.sql`p."isActive" = FALSE`);
+    if (stock === "inStock") conditions.push(Prisma.sql`p."stock" > 0`);
+    if (stock === "outOfStock") conditions.push(Prisma.sql`p."stock" = 0`);
+    if (stock === "lowStock") {
+      conditions.push(Prisma.sql`p."stock" > 0 AND p."stock" < p."minOrderQty"`);
+    }
+
+    const whereClause = conditions.length
+      ? Prisma.sql`WHERE ${Prisma.join(conditions, " AND ")}`
+      : Prisma.empty;
+    const sortColumn =
+      sort === "price"
+        ? Prisma.raw('p."price"')
+        : sort === "stock"
+          ? Prisma.raw('p."stock"')
+          : Prisma.raw('p."createdAt"');
+    const sortDirection = direction === "asc" ? Prisma.raw("ASC") : Prisma.raw("DESC");
+    const offset = (page - 1) * limit;
+    if (!Number.isSafeInteger(offset)) {
+      throw new InvalidAdminProductQueryError("The requested page is too large.");
+    }
+
+    type AdminProductRow = Prisma.ProductGetPayload<{}> & {
+      categoryName: string | null;
+      categorySlug: string | null;
+    };
+
+    const [rows, countRows] = await Promise.all([
+      db.$queryRaw<AdminProductRow[]>(Prisma.sql`
+        SELECT p.*, c."name" AS "categoryName", c."slug" AS "categorySlug"
+        FROM "Product" AS p
+        LEFT JOIN "Category" AS c ON c."id" = p."categoryId"
+        ${whereClause}
+        ORDER BY ${sortColumn} ${sortDirection}, p."id" ASC
+        LIMIT ${limit} OFFSET ${offset}
+      `),
+      db.$queryRaw<Array<{ totalItems: bigint }>>(Prisma.sql`
+        SELECT COUNT(*) AS "totalItems"
+        FROM "Product" AS p
+        ${whereClause}
+      `),
+    ]);
+    const totalItems = Number(countRows[0]?.totalItems ?? 0);
+    const items = rows.map(({ categoryName, categorySlug, ...product }) => ({
+      ...product,
+      category:
+        categoryName === null
+          ? null
+          : { id: product.categoryId, name: categoryName, slug: categorySlug },
+    }));
+
+    response.json({
+      items,
+      pagination: {
+        page,
+        limit,
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+      },
+    });
+  } catch (error) {
+    if (error instanceof InvalidAdminProductQueryError) {
+      apiError(response, 400, "INVALID_PRODUCT_QUERY", error.message);
+      return;
+    }
+    console.error("Failed to retrieve admin products:", error);
+    apiError(response, 500, "INTERNAL_ERROR", "Failed to retrieve products.");
+  }
+};
+
+export const createAdminProduct = async (
+  request: Request<Record<string, string>, unknown, AdminProductBody>,
+  response: Response,
+): Promise<void> => {
+  const parsed = parseAdminProductBody(request.body, false);
+  if (!parsed.data) {
+    apiError(response, 400, "INVALID_PRODUCT", parsed.error ?? "Invalid product data.");
+    return;
+  }
+
+  const data = parsed.data as CompleteAdminProductData;
+
+  try {
+    const result = await createValidatedProduct(data, true);
+    if (!result.success) {
+      apiError(response, 400, result.error.code, result.error.message);
+      return;
+    }
+
+    response.status(201).json({ product: result.product });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      apiError(response, 409, "DUPLICATE_PRODUCT_CODE", "A product with this code already exists.");
+      return;
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
+      apiError(response, 400, "INVALID_CATEGORY", "The provided category does not exist.");
+      return;
+    }
+    console.error("Failed to create admin product:", error);
+    apiError(response, 500, "INTERNAL_ERROR", "Failed to create product.");
+  }
+};
+
+export const updateAdminProduct = async (
+  request: Request<Record<string, string>, unknown, AdminProductBody>,
+  response: Response,
+): Promise<void> => {
+  const parsed = parseAdminProductBody(request.body, true);
+  if (!parsed.data || Object.keys(parsed.data).length === 0) {
+    apiError(response, 400, "INVALID_PRODUCT", parsed.error ?? "At least one product field is required.");
+    return;
+  }
+
+  try {
+    const existing = await db.product.findUnique({
+      where: { id: request.params.id },
+      select: { id: true, actualPrice: true, price: true, minOrderQty: true, maxOrderQty: true },
+    });
+    if (!existing) {
+      apiError(response, 404, "PRODUCT_NOT_FOUND", "Product not found.");
+      return;
+    }
+
+    const data = parsed.data;
+    const actualPrice = data.actualPrice ?? Number(existing.actualPrice);
+    const sellingPrice = data.price ?? Number(existing.price);
+    const minOrderQty = data.minOrderQty ?? existing.minOrderQty;
+    const maxOrderQty = data.maxOrderQty === undefined ? existing.maxOrderQty : data.maxOrderQty;
+    const priceError = validatePricePair(actualPrice, sellingPrice);
+    const orderError = validateOrderQuantities(minOrderQty, maxOrderQty);
+    if (priceError || orderError) {
+      apiError(response, 400, "INVALID_PRODUCT", priceError ?? orderError!);
+      return;
+    }
+
+    if (data.categoryId !== undefined && !(await validateActiveCategory(data.categoryId))) {
+      apiError(response, 400, "INVALID_CATEGORY", "An active category is required.");
+      return;
+    }
+
+    const priceChanged = data.actualPrice !== undefined || data.price !== undefined;
+    const product = await db.product.update({
+      where: { id: existing.id },
+      data: {
+        ...data,
+        ...(priceChanged ? { discount: calculateDiscount(actualPrice, sellingPrice) } : {}),
+      },
+      include: { category: { select: { id: true, name: true, slug: true } } },
+    });
+    response.json({ product });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      apiError(response, 409, "DUPLICATE_PRODUCT_CODE", "A product with this code already exists.");
+      return;
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      apiError(response, 404, "PRODUCT_NOT_FOUND", "Product not found.");
+      return;
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
+      apiError(response, 400, "INVALID_CATEGORY", "The provided category does not exist.");
+      return;
+    }
+    console.error("Failed to update admin product:", error);
+    apiError(response, 500, "INTERNAL_ERROR", "Failed to update product.");
+  }
+};
+
+export const createCloudinaryUploadSignature = (_request: Request, response: Response): void => {
+  const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
+  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+    apiError(response, 503, "CLOUDINARY_NOT_CONFIGURED", "Cloudinary uploads are not configured.");
+    return;
+  }
+
+  const timestamp = Math.floor(Date.now() / 1000);
+  const signature = createHash("sha1")
+    .update(`folder=${cloudinaryProductFolder}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`)
+    .digest("hex");
+
+  response.json({
+    cloudName: CLOUDINARY_CLOUD_NAME,
+    apiKey: CLOUDINARY_API_KEY,
+    timestamp,
+    folder: cloudinaryProductFolder,
+    signature,
+  });
+};
 
 type ProductWithCategory = Prisma.ProductGetPayload<{
   include: {
@@ -53,73 +698,74 @@ export const createProduct = async (
   request: Request<Record<string, string>, unknown, CreateProductBody>,
   response: Response,
 ): Promise<void> => {
-  const {
-    code,
-    name,
-    description,
-    content,
-    actualPrice,
-    price,
-    discount,
-    stock,
-    minOrderQty,
-    maxOrderQty,
-    imageUrl,
-    categoryId,
-    categorySlug,
-    isActive,
-    isFeatured,
-  } = request.body;
+  const body: unknown = request.body;
+  if (!isRecord(body)) {
+    response.status(400).json({ error: "Request body must be a JSON object." });
+    return;
+  }
+
+  const unknownField = Object.keys(body).find((key) => !legacyProductBodyFields.has(key));
+  if (unknownField) {
+    response.status(400).json({ error: `Unknown product field: ${unknownField}.` });
+    return;
+  }
+  if (
+    body.categorySlug !== undefined &&
+    body.categorySlug !== null &&
+    typeof body.categorySlug !== "string"
+  ) {
+    response.status(400).json({ error: "categorySlug must be a string or null." });
+    return;
+  }
+  if (
+    body.discount !== undefined &&
+    body.discount !== null &&
+    (typeof body.discount !== "number" || !Number.isFinite(body.discount) || body.discount < 0 || body.discount > 100)
+  ) {
+    response.status(400).json({ error: "discount must be a percentage between 0 and 100." });
+    return;
+  }
+
+  const normalizedBody: Record<string, unknown> = { ...body };
+  delete normalizedBody.categorySlug;
+  delete normalizedBody.discount;
+  if (normalizedBody.categoryId === null) delete normalizedBody.categoryId;
+  if (normalizedBody.minOrderQty === undefined) normalizedBody.minOrderQty = 1;
 
   try {
-    let resolvedCategoryId = categoryId;
-
-    if (categorySlug) {
+    if (typeof body.categorySlug === "string" && body.categorySlug.length > 0) {
       const category = await db.category.findUnique({
-        where: { slug: categorySlug },
+        where: { slug: body.categorySlug },
         select: { id: true },
       });
 
       if (!category) {
         response.status(400).json({
-          error: `No category exists with slug "${categorySlug}".`,
+          error: `No category exists with slug "${body.categorySlug}".`,
         });
         return;
       }
 
-      resolvedCategoryId = category.id;
+      normalizedBody.categoryId = category.id;
     }
 
-    const product = await db.product.create({
-      data: {
-        code,
-        name,
-        description,
-        content,
-        actualPrice,
-        price,
-        discount,
-        stock,
-        minOrderQty,
-        maxOrderQty,
-        imageUrl,
-        categoryId: resolvedCategoryId,
-        isActive: isActive === undefined ? true : Boolean(isActive),
-        isFeatured: isFeatured === undefined ? false : Boolean(isFeatured),
-      },
-      include: {
-        category: {
-          select: {
-            slug: true,
-          },
-        },
-      },
-    });
+    const parsed = parseAdminProductBody(normalizedBody, false, false);
+    if (!parsed.data) {
+      response.status(400).json({ error: parsed.error ?? "Invalid product data." });
+      return;
+    }
+
+    const data = parsed.data as CompleteAdminProductData;
+    const result = await createValidatedProduct(data, false);
+    if (!result.success) {
+      response.status(400).json({ error: result.error.message });
+      return;
+    }
 
     response.status(201).json({
       status: true,
       message: "Product created Sucessfully",
-      product: formatProduct(product),
+      product: formatProduct(result.product),
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
@@ -143,17 +789,88 @@ export const createCategory = async (
   request: Request<Record<string, string>, unknown, CreateCategoryBody>,
   response: Response,
 ): Promise<void> => {
-  const { name, slug, description, imageUrl, sortOrder, isActive } = request.body;
+  const body: unknown = request.body;
+  if (!isRecord(body)) {
+    response.status(400).json({ error: "Request body must be a JSON object." });
+    return;
+  }
+
+  const allowedFields = new Set([
+    "name",
+    "slug",
+    "description",
+    "imageUrl",
+    "sortOrder",
+    "isActive",
+  ]);
+  const unknownField = Object.keys(body).find((field) => !allowedFields.has(field));
+  if (unknownField) {
+    response.status(400).json({ error: `Unknown category field: ${unknownField}.` });
+    return;
+  }
+
+  const name = body.name;
+  if (typeof name !== "string" || name.trim().length === 0) {
+    response.status(400).json({ error: "name must be a non-empty string." });
+    return;
+  }
+
+  const slug = body.slug;
+  if (typeof slug !== "string" || slug.trim().length === 0) {
+    response.status(400).json({ error: "slug must be a non-empty string." });
+    return;
+  }
+
+  for (const field of ["description", "imageUrl"] as const) {
+    const value = body[field];
+    if (value !== undefined && value !== null && typeof value !== "string") {
+      response.status(400).json({ error: `${field} must be a string or null.` });
+      return;
+    }
+  }
+
+  const sortOrder = body.sortOrder;
+  if (
+    sortOrder !== undefined &&
+    (typeof sortOrder !== "number" ||
+      !Number.isSafeInteger(sortOrder) ||
+      sortOrder < -2_147_483_648 ||
+      sortOrder > 2_147_483_647)
+  ) {
+    response.status(400).json({ error: "sortOrder must be a signed 32-bit integer." });
+    return;
+  }
+
+  const isActive = body.isActive;
+  if (isActive !== undefined && typeof isActive !== "boolean") {
+    response.status(400).json({ error: "isActive must be a boolean." });
+    return;
+  }
+
+  const descriptionValue = body.description;
+  const description =
+    typeof descriptionValue === "string"
+      ? descriptionValue.trim() || null
+      : descriptionValue === null || descriptionValue === undefined
+        ? descriptionValue
+        : undefined;
+  const imageUrlValue = body.imageUrl;
+  const imageUrl =
+    typeof imageUrlValue === "string"
+      ? imageUrlValue.trim() || null
+      : imageUrlValue === null || imageUrlValue === undefined
+        ? imageUrlValue
+        : undefined;
 
   try {
     const category = await db.category.create({
       data: {
-        name,
-        slug,
+        name: name.trim(),
+        slug: slug.trim(),
         description,
         imageUrl,
         sortOrder,
-        isActive: isActive === undefined ? true : Boolean(isActive),
+        isActive,
       },
     });
 
