@@ -1,5 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./ComboPackTable.css";
+import {
+  fetchBackendProducts,
+  fetchBackendCategories,
+  mapBackendProductToComboItem,
+} from "../api/products";
 
 export interface ComboItem {
   id: string;
@@ -460,6 +465,10 @@ interface ComboPackTableProps {
 }
 
 export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) => {
+  const [items, setItems] = useState<ComboItem[]>(COMBO_DATA);
+  const [categoriesList, setCategoriesList] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLiveBackend, setIsLiveBackend] = useState<boolean>(false);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("price-asc");
@@ -467,6 +476,70 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
   const [addedItemNotice, setAddedItemNotice] = useState<string | null>(null);
   const [activePreview, setActivePreview] = useState<ComboItem | null>(null);
   const [addedItemIds, setAddedItemIds] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+
+    Promise.allSettled([fetchBackendProducts(), fetchBackendCategories()])
+      .then(([productsRes, categoriesRes]) => {
+        if (!isMounted) return;
+
+        const categoryMap: Record<string, string> = {};
+        const fetchedCatNames: string[] = [];
+
+        if (categoriesRes.status === "fulfilled" && categoriesRes.value) {
+          for (const cat of categoriesRes.value) {
+            categoryMap[cat.slug.toLowerCase()] = cat.name;
+            if (cat.name && !fetchedCatNames.includes(cat.name)) {
+              fetchedCatNames.push(cat.name);
+            }
+          }
+        }
+
+        if (
+          productsRes.status === "fulfilled" &&
+          Array.isArray(productsRes.value) &&
+          productsRes.value.length > 0
+        ) {
+          const mapped = productsRes.value.map((prod) =>
+            mapBackendProductToComboItem(prod, categoryMap),
+          );
+          setItems(mapped);
+          setIsLiveBackend(true);
+
+          const productCategories = Array.from(
+            new Set(mapped.map((it) => it.category).filter(Boolean)),
+          );
+          setCategoriesList(
+            Array.from(new Set([...fetchedCatNames, ...productCategories])),
+          );
+        } else {
+          setCategoriesList(
+            Array.from(new Set(COMBO_DATA.map((it) => it.category))),
+          );
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch backend products:", err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const categoryOptions = useMemo(() => {
+    const set = new Set<string>();
+    categoriesList.forEach((c) => set.add(c));
+    items.forEach((it) => {
+      if (it.category) set.add(it.category);
+    });
+    return Array.from(set);
+  }, [categoriesList, items]);
 
   const triggerFlyToCart = (item: ComboItem, qty: number, targetBtn?: HTMLElement | null) => {
     try {
@@ -620,7 +693,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
   };
 
   const filteredAndSortedItems = useMemo(() => {
-    let result = [...COMBO_DATA];
+    let result = [...items];
 
     if (selectedCategory !== "all") {
       result = result.filter((it) => it.category === selectedCategory);
@@ -651,7 +724,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
     });
 
     return result;
-  }, [searchQuery, sortBy, selectedCategory]);
+  }, [items, searchQuery, sortBy, selectedCategory]);
 
   const displayedItems = filteredAndSortedItems;
 
@@ -660,23 +733,29 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
       "Sparklers",
       "Ground Chakkars",
       "Flower Pots & Fountains",
+      "Rockets",
       "Rockets & Aerial Skyshots",
       "Sound Crackers",
       "Combo Packs & Gift Boxes",
     ];
 
     const groups: { category: string; items: ComboItem[] }[] = [];
+    const processed = new Set<string>();
 
     for (const cat of categoryOrder) {
-      const items = displayedItems.filter((it) => it.category === cat);
-      if (items.length > 0) {
-        groups.push({ category: cat, items });
+      const matched = displayedItems.filter((it) => it.category === cat);
+      if (matched.length > 0) {
+        groups.push({ category: cat, items: matched });
+        processed.add(cat);
       }
     }
 
-    const others = displayedItems.filter((it) => !categoryOrder.includes(it.category));
-    if (others.length > 0) {
-      groups.push({ category: "Other Crackers", items: others });
+    for (const it of displayedItems) {
+      if (!processed.has(it.category)) {
+        processed.add(it.category);
+        const matched = displayedItems.filter((x) => x.category === it.category);
+        groups.push({ category: it.category, items: matched });
+      }
     }
 
     return groups;
@@ -795,12 +874,11 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                 aria-label="Category"
               >
                 <option value="all">All Categories</option>
-                <option value="Sparklers">Sparklers</option>
-                <option value="Ground Chakkars">Ground Chakkars</option>
-                <option value="Flower Pots & Fountains">Flower Pots & Fountains</option>
-                <option value="Rockets & Aerial Skyshots">Rockets & Aerial Skyshots</option>
-                <option value="Sound Crackers">Sound Crackers</option>
-                <option value="Combo Packs & Gift Boxes">Combo Packs & Gift Boxes</option>
+                {categoryOptions.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

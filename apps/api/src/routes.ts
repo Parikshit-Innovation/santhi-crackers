@@ -7,7 +7,7 @@ import {
   getCategoryBySlug,
   getCrackersData,
   getProductById,
-  getProducts,
+  // getProducts,
 } from "./controller.js";
 import { corsMiddleware } from "./utils.js";
 
@@ -15,10 +15,10 @@ const router = Router();
 
 router.use(corsMiddleware);
 
-router.get("/items", getCrackersData);
-router.post("/items", createProduct);
-router.get("/products", getProducts);
-router.get("/products/:id", getProductById);
+router.get("/products", getCrackersData);
+router.post("/product", createProduct);
+// router.get("/products", getProducts);
+router.get("/product/:id", getProductById);
 router.get("/categories", getCategories);
 router.get("/categories/:slug", getCategoryBySlug);
 router.post("/categories", createCategory);

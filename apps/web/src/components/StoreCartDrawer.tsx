@@ -14,6 +14,8 @@ interface StoreCartDrawerProps {
   onUpdateQuantity: (id: string, newQty: number) => void;
   onRemoveItem: (id: string) => void;
   onClearCart?: () => void;
+  backendCartId?: string;
+  isLoading?: boolean;
 }
 
 export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
@@ -23,6 +25,8 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
   onUpdateQuantity,
   onRemoveItem,
   onClearCart,
+  backendCartId,
+  isLoading,
 }) => {
   const [discountCode, setDiscountCode] = useState("");
   const [discountApplied, setDiscountApplied] = useState(false);
@@ -99,9 +103,16 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
       >
         {/* Header */}
         <div className="store-drawer-header">
-          <h2 className="store-drawer-title">
-            Your Cart {totalItemCount > 0 && `(${totalItemCount} items)`}
-          </h2>
+          <div>
+            <h2 className="store-drawer-title">
+              Your Cart {totalItemCount > 0 && `(${totalItemCount} items)`}
+            </h2>
+            {backendCartId && (
+              <span className="store-drawer-session-id" title={`Backend Session: ${backendCartId}`}>
+                Session: {backendCartId.slice(0, 10)}...
+              </span>
+            )}
+          </div>
           <button
             type="button"
             className="store-drawer-close"

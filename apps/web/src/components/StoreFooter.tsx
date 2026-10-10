@@ -51,16 +51,19 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
             <div className="store-footer-col store-footer-contact-col">
               <h4 className="store-footer-col-title">Store & Depot</h4>
               <address className="store-footer-address">
-                3/1322/3/1, Opposite to SNM Matriculation School,
-                <br />
-                Checkpost, Parapatti, Sivakasi,
-                <br />
-                Tamil Nadu 626 189
+                <div style={{ marginBottom: "8px" }}>
+                  <span style={{ fontWeight: 600, color: "#1e293b" }}>Branch 1: </span>
+                  15A, College Division, Karattupalyam, Gobichettipalayam.
+                </div>
+                <div>
+                  <span style={{ fontWeight: 600, color: "#1e293b" }}>Branch 2: </span>
+                  1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.
+                </div>
               </address>
 
               <div className="store-footer-contact-actions">
                 <div className="store-footer-phones">
-                  <a href="tel:+918072011455" className="store-footer-phone-pill">
+                  <a href="tel:+919865240462" className="store-footer-phone-pill">
                     <svg
                       viewBox="0 0 24 24"
                       width="13"
@@ -71,9 +74,9 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
                     >
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
-                    +91 80720 11455
+                    +91 98652 40462
                   </a>
-                  <a href="tel:+919345189265" className="store-footer-phone-pill">
+                  <a href="tel:+919486688699" className="store-footer-phone-pill">
                     <svg
                       viewBox="0 0 24 24"
                       width="13"
@@ -84,12 +87,38 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
                     >
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
-                    +91 93451 89265
+                    +91 94866 88699
+                  </a>
+                  <a href="tel:+919865240095" className="store-footer-phone-pill">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="13"
+                      height="13"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    +91 98652 40095
+                  </a>
+                  <a href="tel:+917373292931" className="store-footer-phone-pill">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="13"
+                      height="13"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    +91 73732 92931
                   </a>
                 </div>
 
                 <a
-                  href="https://wa.me/919345189265?text=Hello%20Shanthi%20Crackers,%20I%20would%20like%20to%20order%20crackers."
+                  href="https://wa.me/919865240462?text=Hello%20Shanthi%20Crackers,%20I%20would%20like%20to%20order%20crackers."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="store-footer-whatsapp-btn"
@@ -123,8 +152,8 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
               <div className="store-footer-map-container">
                 <div className="store-footer-map-frame">
                   <iframe
-                    title="Shanthi Crackers Sivakasi Depot Location Map"
-                    src="https://maps.google.com/maps?q=3%2F1322%2F3%2F1%2C+Opposite+to+SNM+Matriculation+School%2C+Checkpost%2C+Parapatti%2C+Sivakasi%2C+Tamil+Nadu+626189&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    title="Shanthi Crackers Gobichettipalayam Depot Location Map"
+                    src="https://maps.google.com/maps?q=1%2F1%2C+Kalingiyam+Main+Road%2C+Kalingiyam%2C+Gobichettipalayam&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     width="100%"
                     height="175"
                     style={{ border: 0 }}
@@ -134,7 +163,7 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
                   />
                 </div>
                 <a
-                  href="https://maps.google.com/?q=3/1322/3/1,+Opposite+to+SNM+Matriculation+School,+Checkpost,+Parapatti,+Sivakasi,+Tamil+Nadu+626189"
+                  href="https://maps.google.com/?q=1%2F1%2C+Kalingiyam+Main+Road%2C+Kalingiyam%2C+Gobichettipalayam"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="store-footer-map-link"

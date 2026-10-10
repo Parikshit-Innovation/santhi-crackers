@@ -8,8 +8,8 @@ import type {
   CreateCategoryBody,
   CreateProductBody,
   GetCategoriesResponse,
-  ProductSortOption,
 } from "./types.js";
+
 import {
   CART_COOKIE_NAME,
   formatCart,
@@ -17,7 +17,6 @@ import {
   getCartCookieOptions,
   isValidLimit,
   isValidPositiveInteger,
-  isValidSortOption,
 } from "./utils.js";
 
 type ProductWithCategory = Prisma.ProductGetPayload<{
@@ -242,135 +241,135 @@ export const getCart = async (request: Request, response: Response): Promise<voi
   }
 };
 
-export const getProducts = async (
-  request: Request,
-  response: Response,
-): Promise<void> => {
-  try {
-    const { page, limit, search, category, sort } = request.query;
+// export const getProducts = async (
+//   request: Request,
+//   response: Response,
+// ): Promise<void> => {
+//   try {
+//     const { page, limit, search, category, sort } = request.query;
 
-    if (page !== undefined && !isValidPositiveInteger(page)) {
-      response.status(400).json({
-        error: {
-          code: "INVALID_PAGINATION",
-          message: "Page must be a positive integer and limit must be between 1 and 10.",
-        },
-      });
-      return;
-    }
+//     if (page !== undefined && !isValidPositiveInteger(page)) {
+//       response.status(400).json({
+//         error: {
+//           code: "INVALID_PAGINATION",
+//           message: "Page must be a positive integer and limit must be between 1 and 10.",
+//         },
+//       });
+//       return;
+//     }
 
-    if (limit !== undefined && !isValidLimit(limit)) {
-      response.status(400).json({
-        error: {
-          code: "INVALID_PAGINATION",
-          message: "Page must be a positive integer and limit must be between 1 and 10.",
-        },
-      });
-      return;
-    }
+//     if (limit !== undefined && !isValidLimit(limit)) {
+//       response.status(400).json({
+//         error: {
+//           code: "INVALID_PAGINATION",
+//           message: "Page must be a positive integer and limit must be between 1 and 10.",
+//         },
+//       });
+//       return;
+//     }
 
-    if (sort !== undefined && !isValidSortOption(sort)) {
-      response.status(400).json({
-        error: {
-          code: "INVALID_SORT",
-          message: "Sort must be one of: newest, price_asc, price_desc, name_asc, name_desc.",
-        },
-      });
-      return;
-    }
+//     if (sort !== undefined && !isValidSortOption(sort)) {
+//       response.status(400).json({
+//         error: {
+//           code: "INVALID_SORT",
+//           message: "Sort must be one of: newest, price_asc, price_desc, name_asc, name_desc.",
+//         },
+//       });
+//       return;
+//     }
 
-    const pageNumber = page !== undefined ? parseInt((page as string).trim(), 10) : 1;
-    const limitNumber = limit !== undefined ? parseInt((limit as string).trim(), 10) : 10;
-    const sortOption: ProductSortOption =
-      sort !== undefined ? ((sort as string).trim() as ProductSortOption) : "newest";
+//     const pageNumber = page !== undefined ? parseInt((page as string).trim(), 10) : 1;
+//     const limitNumber = limit !== undefined ? parseInt((limit as string).trim(), 10) : 10;
+//     const sortOption: ProductSortOption =
+//       sort !== undefined ? ((sort as string).trim() as ProductSortOption) : "newest";
 
-    const where: Prisma.ProductWhereInput = { isActive: true };
+//     const where: Prisma.ProductWhereInput = { isActive: true };
 
-    if (typeof category === "string" && category.trim().length > 0) {
-      where.category = { slug: category.trim(), isActive: true };
-    }
+//     if (typeof category === "string" && category.trim().length > 0) {
+//       where.category = { slug: category.trim(), isActive: true };
+//     }
 
-    if (typeof search === "string" && search.trim().length > 0) {
-      const searchTerm = search.trim();
-      where.OR = [
-        { name: { contains: searchTerm, mode: "insensitive" } },
-        { code: { contains: searchTerm, mode: "insensitive" } },
-      ];
-    }
+//     if (typeof search === "string" && search.trim().length > 0) {
+//       const searchTerm = search.trim();
+//       where.OR = [
+//         { name: { contains: searchTerm, mode: "insensitive" } },
+//         { code: { contains: searchTerm, mode: "insensitive" } },
+//       ];
+//     }
 
-    let orderBy: Prisma.ProductOrderByWithRelationInput[];
-    switch (sortOption) {
+//     let orderBy: Prisma.ProductOrderByWithRelationInput[];
+//     switch (sortOption) {
 
-      case "price_asc":
-        orderBy = [{ price: "asc" }, { id: "asc" }];
-        break;
-      case "price_desc":
-        orderBy = [{ price: "desc" }, { id: "asc" }];
-        break;
-      case "name_asc":
-        orderBy = [{ name: "asc" }, { id: "asc" }];
-        break;
-      case "name_desc":
-        orderBy = [{ name: "desc" }, { id: "asc" }];
-        break;
-      case "newest":
-      default:
-        orderBy = [{ createdAt: "desc" }, { id: "asc" }];
-        break;
-    }
+//       case "price_asc":
+//         orderBy = [{ price: "asc" }, { id: "asc" }];
+//         break;
+//       case "price_desc":
+//         orderBy = [{ price: "desc" }, { id: "asc" }];
+//         break;
+//       case "name_asc":
+//         orderBy = [{ name: "asc" }, { id: "asc" }];
+//         break;
+//       case "name_desc":
+//         orderBy = [{ name: "desc" }, { id: "asc" }];
+//         break;
+//       case "newest":
+//       default:
+//         orderBy = [{ createdAt: "desc" }, { id: "asc" }];
+//         break;
+//     }
 
-    const skip = (pageNumber - 1) * limitNumber;
-    const take = limitNumber;
+//     const skip = (pageNumber - 1) * limitNumber;
+//     const take = limitNumber;
 
-    const [products, totalItems] = await Promise.all([
-      db.product.findMany({
-        where,
-        skip,
-        take,
-        orderBy,
-        include: {
-          category: {
-            select: { id: true, name: true, slug: true, isActive: true },
-          },
-        },
-      }),
-      db.product.count({ where }),
-    ]);
+//     const [products, totalItems] = await Promise.all([
+//       db.product.findMany({
+//         where,
+//         skip,
+//         take,
+//         orderBy,
+//         include: {
+//           category: {
+//             select: { id: true, name: true, slug: true, isActive: true },
+//           },
+//         },
+//       }),
+//       db.product.count({ where }),
+//     ]);
 
-    const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / limitNumber);
+//     const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / limitNumber);
 
-    const items: CatalogProductResponse[] = products.map(
-      (product: (typeof products)[number]) => ({
-        id: product.id,
-        code: product.code,
-        name: product.name,
-        description: product.description,
-        content: product.content,
-        actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
-        price: formatDecimalPrice(product.price) ?? "0.00",
-        discount: formatDecimalPrice(product.discount),
-        stock: product.stock,
-        imageUrl: product.imageUrl,
-        category:
-          product.category && product.category.isActive
-            ? { id: product.category.id, name: product.category.name, slug: product.category.slug }
-            : null,
-        isActive: product.isActive,
-        isFeatured: product.isFeatured,
-      }),
-    );
+//     const items: CatalogProductResponse[] = products.map(
+//       (product: (typeof products)[number]) => ({
+//         id: product.id,
+//         code: product.code,
+//         name: product.name,
+//         description: product.description,
+//         content: product.content,
+//         actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
+//         price: formatDecimalPrice(product.price) ?? "0.00",
+//         discount: formatDecimalPrice(product.discount),
+//         stock: product.stock,
+//         imageUrl: product.imageUrl,
+//         category:
+//           product.category && product.category.isActive
+//             ? { id: product.category.id, name: product.category.name, slug: product.category.slug }
+//             : null,
+//         isActive: product.isActive,
+//         isFeatured: product.isFeatured,
+//       }),
+//     );
 
-    response.status(200).json({
-      items,
-      pagination: { page: pageNumber, limit: limitNumber, totalItems, totalPages },
-    });
-  } catch (error) {
-    console.error("Failed to retrieve products:", error);
-    response.status(500).json({
-      error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to retrieve products." },
-    });
-  }
-};
+//     response.status(200).json({
+//       items,
+//       pagination: { page: pageNumber, limit: limitNumber, totalItems, totalPages },
+//     });
+//   } catch (error) {
+//     console.error("Failed to retrieve products:", error);
+//     response.status(500).json({
+//       error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to retrieve products." },
+//     });
+//   }
+// };
 
 export const getProductById = async (
   request: Request<{ id: string }>,

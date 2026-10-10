@@ -13,17 +13,17 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  topAddress = "3/1322/3/1, Opposite to SNM Matriculation School, Checkpost, Parapatti, Sivakasi, Tamil Nadu 626 189",
-  storeName = "S.R.TRADERS",
-  brandTagline = "ELEPHANT CRACKERS",
+  topAddress = "15A, College Division, Karattupalyam, Gobichettipalayam | 1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam",
+  storeName = "SANTHI SIVAKASI CRACKERS",
+  brandTagline = "SANTHI CRACKERS",
   locationTitle = "Location",
   addressLines = [
-    "3/1322/3/1 , Opposite to SNM Matriculation School, Checkpost,",
-    "Parapatti, Sivakasi, Tamil Nadu 626 189",
+    "15A, College Division, Karattupalyam, Gobichettipalayam.",
+    "1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.",
   ],
   activeTab = "Home",
   onTabChange,
-  phone = "919443123456",
+  phone = "919865240462",
 }) => {
   const [currentTab, setCurrentTab] = useState(activeTab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

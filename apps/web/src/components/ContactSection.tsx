@@ -121,9 +121,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
         <section className="contact-details-section">
           <div className="contact-details-header">
             <div className="contact-details-badge">Official Store & Depot</div>
-            <h2 className="contact-store-name">Elephant Crackers SR Traders</h2>
+            <h2 className="contact-store-name">Santhi Sivakasi Crackers</h2>
             <p className="contact-store-desc">
-              Visit our Sivakasi wholesale store or reach out via phone, WhatsApp, and email for
+              Visit our wholesale depots in Gobichettipalayam or reach out via phone, WhatsApp, and email for
               bulk inquiries & orders.
             </p>
           </div>
@@ -149,14 +149,21 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
               <div className="contact-info-content">
                 <h3 className="contact-info-title">Store Address</h3>
                 <address className="contact-info-address">
-                  3/1322/3/1, Opposite to SNM Matriculation School,
-                  <br />
-                  Checkpost, Parapatti, Sivakasi,
-                  <br />
-                  Tamil Nadu 626 189
+                  <div style={{ marginBottom: "10px" }}>
+                    <div style={{ fontWeight: 700, color: "#1e293b", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "2px" }}>
+                      Branch 1
+                    </div>
+                    <div>15A, College Division, Karattupalyam, Gobichettipalayam.</div>
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: "#1e293b", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "2px" }}>
+                      Branch 2
+                    </div>
+                    <div>1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.</div>
+                  </div>
                 </address>
                 <a
-                  href="https://maps.google.com/?q=3/1322/3/1,+Opposite+to+SNM+Matriculation+School,+Checkpost,+Parapatti,+Sivakasi,+Tamil+Nadu+626189"
+                  href="https://maps.google.com/?q=1/1,+Kalingiyam+Main+Road,+Kalingiyam,+Gobichettipalayam"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="contact-map-link"
@@ -200,50 +207,76 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
                   Tap below to call our store representatives directly:
                 </p>
                 <div className="contact-phone-list">
-                  <a href="tel:+918072011455" className="contact-phone-pill">
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="14"
-                      height="14"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                    </svg>
-                    +91 80720 11455
-                  </a>
-                  <a href="tel:+919345189265" className="contact-phone-pill">
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="14"
-                      height="14"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                    </svg>
-                    +91 93451 89265
-                  </a>
+                  <div className="contact-phone-grid">
+                    <a href="tel:+919865240462" className="contact-phone-pill">
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="14"
+                        height="14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      +91 98652 40462
+                    </a>
+                    <a href="tel:+919486688699" className="contact-phone-pill">
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="14"
+                        height="14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      +91 94866 88699
+                    </a>
+                    <a href="tel:+919865240095" className="contact-phone-pill">
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="14"
+                        height="14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      +91 98652 40095
+                    </a>
+                    <a href="tel:+917373292931" className="contact-phone-pill">
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="14"
+                        height="14"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      +91 73732 92931
+                    </a>
+                  </div>
                   <a
-                    href="https://wa.me/919345189265?text=Hello%20Elephant%20Crackers%20SR%20Traders,%20I%20would%20like%20to%20order%20crackers."
+                    href="https://wa.me/919865240462?text=Hello%20Santhi%20Crackers,%20I%20would%20like%20to%20order%20crackers."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="contact-whatsapp-btn"
                   >
-                    <div className="contact-whatsapp-btn-left">
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="18"
-                        height="18"
-                        fill="currentColor"
-                        className="contact-whatsapp-icon"
-                      >
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                      </svg>
-                      <span>Instant WhatsApp Chat</span>
-                    </div>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="currentColor"
+                      className="contact-whatsapp-icon"
+                    >
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                    <span className="contact-whatsapp-text">Instant WhatsApp Chat</span>
                     <svg
                       viewBox="0 0 24 24"
                       width="14"
@@ -251,6 +284,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2.2"
+                      className="contact-whatsapp-arrow"
                     >
                       <line x1="5" y1="12" x2="19" y2="12" />
                       <polyline points="12 5 19 12 12 19" />
@@ -319,10 +353,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
         {showFaq && (
           <div className="contact-faq-accordion">
             <div className="contact-faq-item">
-              <h4 className="contact-faq-q">Where is Elephant Crackers SR Traders located?</h4>
+              <h4 className="contact-faq-q">Where is Santhi Crackers located?</h4>
               <p className="contact-faq-a">
-                We are located at 3/1322/3/1, Opposite to SNM Matriculation School, Checkpost,
-                Parapatti, Sivakasi, Tamil Nadu 626 189.
+                We have two branches in Gobichettipalayam:
+                <br />
+                • <strong>Branch 1:</strong> 15A, College Division, Karattupalyam, Gobichettipalayam.
+                <br />
+                • <strong>Branch 2:</strong> 1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.
               </p>
             </div>
             <div className="contact-faq-item">

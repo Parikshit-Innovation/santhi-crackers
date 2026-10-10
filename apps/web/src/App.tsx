@@ -1,17 +1,60 @@
-import { useState } from "react";
-import { StoreNavbar } from "./components/StoreNavbar";
-import { StoreHero } from "./components/StoreHero";
-import { MarqueeBanner } from "./components/MarqueeBanner";
-import { ComboPackTable, ComboItem } from "./components/ComboPackTable";
-import { StoreCartDrawer, CartEntry } from "./components/StoreCartDrawer";
+import { useState, useEffect } from "react";
 import { AboutSection } from "./components/AboutSection";
+import { ComboItem, ComboPackTable } from "./components/ComboPackTable";
 import { ContactSection } from "./components/ContactSection";
+import { MarqueeBanner } from "./components/MarqueeBanner";
+import { CartEntry, StoreCartDrawer } from "./components/StoreCartDrawer";
 import { StoreFooter } from "./components/StoreFooter";
+import { StoreHero } from "./components/StoreHero";
+import { StoreNavbar } from "./components/StoreNavbar";
+import {
+  fetchBackendCart,
+  mapBackendCartItemToCartEntry,
+  loadCachedCart,
+  saveCachedCart,
+  BackendCart,
+} from "./api/cart";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact">("home");
-  const [cartItems, setCartItems] = useState<CartEntry[]>([]);
+  const [cartItems, setCartItems] = useState<CartEntry[]>(() => loadCachedCart());
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [backendCart, setBackendCart] = useState<BackendCart | null>(null);
+  const [isCartLoading, setIsCartLoading] = useState(false);
+
+  // Initialize and synchronize backend cart from GET /api/cart
+  useEffect(() => {
+    let isMounted = true;
+    setIsCartLoading(true);
+
+    fetchBackendCart()
+      .then((cart) => {
+        if (!isMounted || !cart) return;
+        setBackendCart(cart);
+
+        // If backend session cart has existing items, synchronize into cart state
+        if (cart.items && cart.items.length > 0) {
+          const mapped = cart.items.map((it) => mapBackendCartItemToCartEntry(it));
+          setCartItems(mapped);
+          saveCachedCart(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Unable to fetch backend cart session:", err);
+      })
+      .finally(() => {
+        if (isMounted) setIsCartLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Persist updated cart items locally
+  useEffect(() => {
+    saveCachedCart(cartItems);
+  }, [cartItems]);
 
   const cartCount = cartItems.reduce((acc, entry) => acc + entry.quantity, 0);
 
@@ -51,7 +94,15 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "var(--bg-canvas, #0433ff)",
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+      }}
+    >
       <StoreNavbar
         cartCount={cartCount}
         onCartClick={() => setIsCartOpen(true)}
@@ -82,6 +133,8 @@ export default function App() {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}
+        backendCartId={backendCart?.id}
+        isLoading={isCartLoading}
       />
     </div>
   );

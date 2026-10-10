@@ -30,7 +30,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
     }
   }, [activePage]);
 
-  const links = ["Home", "About", "Apparel", "Contact us", "Blog"];
+  const links = ["Home", "About", "Contact us"];
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);

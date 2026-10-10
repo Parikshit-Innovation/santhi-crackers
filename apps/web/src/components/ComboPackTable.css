@@ -77,7 +77,7 @@
   font-family: var(--font-heading);
   font-size: clamp(34px, 4.2vw, 46px);
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   line-height: 1.1;
   margin: 0;
   letter-spacing: 0.02em;
@@ -88,27 +88,27 @@
   font-family: var(--font-promo);
   font-size: 15px;
   font-weight: 400;
-  color: var(--alert-red, #dc2626);
-  background: none !important;
-  background-color: transparent !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  padding: 4px 14px !important;
+  border-radius: 9999px !important;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   display: inline-block;
-  box-shadow: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  width: fit-content;
 }
 
 /* Category Group Header Rows & Sections */
 .combo-category-header-row {
-  background-color: #fafbfd;
+  background-color: #dc2626;
 }
 
 .combo-category-header-td {
   padding: 12px 14px !important;
-  background-color: #f8fafc !important;
-  border-top: 1.5px solid #edf2f7 !important;
-  border-bottom: 1.5px solid #edf2f7 !important;
+  background-color: #dc2626 !important;
+  border-top: 1.5px solid #b91c1c !important;
+  border-bottom: 1.5px solid #b91c1c !important;
 }
 
 .combo-category-header {
@@ -122,7 +122,7 @@
   font-family: var(--font-heading);
   font-size: 18px;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   display: inline-flex;
@@ -133,19 +133,19 @@
 .combo-category-title::before {
   content: '';
   display: inline-block;
-  width: 4px;
-  height: 14px;
-  background-color: var(--alert-red, #dc2626);
+  width: 5px;
+  height: 15px;
+  background-color: #fef0ce;
   border-radius: 2px;
 }
 
 .combo-category-badge {
   font-family: var(--font-body);
   font-size: 11px;
-  font-weight: 600;
-  color: #64748b;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  font-weight: 700;
+  color: var(--primary-blue, #0433ff);
+  background-color: #fff8eb;
+  border: 1px solid var(--border-cream, #e2d5c3);
   padding: 2px 8px;
   border-radius: 9999px;
 }
@@ -153,8 +153,8 @@
 .combo-category-mobile-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
 .combo-category-mobile-section:last-child {
@@ -162,8 +162,9 @@
 }
 
 .combo-category-mobile-section .combo-category-header {
-  padding: 8px 4px 6px 4px;
-  border-bottom: 1.5px solid #edf2f7;
+  padding: 10px 4px 8px 4px;
+  border-bottom: 1.5px solid var(--border-cream, #e2d5c3);
+  margin-bottom: 2px;
 }
 
 /* Right Controls */
@@ -177,12 +178,12 @@
 .combo-product-count {
   font-family: var(--font-body);
   font-size: 14px;
-  color: #64748b;
-  font-weight: 500;
+  color: #e0e7ff;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-/* Search pill */
+/* Search pill - Cream Box */
 .combo-search-pill {
   position: relative;
   width: 230px;
@@ -193,15 +194,15 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: #64748b;
   pointer-events: none;
 }
 
 .combo-search-field {
   width: 100%;
   padding: 9px 14px 9px 36px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: #fffdf7; /* Cream box */
+  border: 1.5px solid var(--border-cream, #e2d5c3);
   border-radius: 9999px;
   font-family: var(--font-body);
   font-size: 13.5px;
@@ -209,40 +210,43 @@
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .combo-search-field::placeholder {
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .combo-search-field:focus {
-  border-color: var(--primary-blue, #1d4ed8);
-  box-shadow: 0 0 0 3px var(--primary-blue-light, rgba(29, 78, 216, 0.1));
+  border-color: var(--primary-blue, #0433ff);
+  box-shadow: 0 0 0 3px rgba(255, 253, 247, 0.4);
 }
 
-/* Sort pill */
+/* Sort pill - Cream Button Box */
 .combo-sort-pill {
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: #fff8eb; /* Cream button box */
+  border: 1.5px solid var(--border-cream, #e2d5c3);
   border-radius: 9999px;
   padding: 8px 18px;
   min-height: 40px;
   box-sizing: border-box;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .combo-sort-pill:hover {
-  border-color: #cbd5e1;
+  background-color: #fef0ce;
+  border-color: var(--primary-blue, #0433ff);
 }
 
 .combo-sort-label {
   font-family: var(--font-body);
   font-size: 13.5px;
-  font-weight: 500;
-  color: #64748b;
+  font-weight: 700;
+  color: var(--primary-blue, #0433ff);
   white-space: nowrap;
 }
 
@@ -259,36 +263,37 @@
   line-height: 1.4;
 }
 
-/* Filter button */
+/* Filter button - Cream Button */
 .combo-filter-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: #fff8eb; /* Cream button */
+  border: 1.5px solid var(--border-cream, #e2d5c3);
   border-radius: 9999px;
   padding: 8px 18px;
   font-family: var(--font-body);
   font-size: 13.5px;
-  font-weight: 500;
-  color: #0f172a;
+  font-weight: 700;
+  color: var(--primary-blue, #0433ff);
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.15s ease;
   outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .combo-filter-btn:hover {
-  background-color: #f8fafc;
-  border-color: #cbd5e1;
+  background-color: #fef0ce;
+  border-color: var(--primary-blue, #0433ff);
 }
 
-/* Table Card Container */
+/* Table Card Container - Festive Red Products Background */
 .combo-table-card {
-  background-color: #ffffff;
-  border: 1px solid #edf2f7;
-  border-radius: 0;
+  background-color: #dc2626;
+  border: 2px solid #b91c1c;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
 }
 
 .combo-table-responsive {
@@ -306,18 +311,18 @@
   font-family: var(--font-body);
 }
 
-/* Table Head */
+/* Table Head - Deep Festive Red */
 .combo-data-table thead tr {
-  background-color: #fafbfd;
-  border-bottom: 1px solid #edf2f7;
+  background-color: #b91c1c;
+  border-bottom: 2px solid #991b1b;
 }
 
 .combo-data-table th {
-  padding: 8px 10px;
+  padding: 10px 10px;
   font-family: var(--font-body);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
@@ -360,18 +365,15 @@
   padding-right: 12px;
 }
 
-/* Table Body */
-.combo-data-table tbody tr {
-  border-bottom: 1px solid #f1f5f9;
+/* Table Body - Luxury Cream Rows */
+.combo-data-table tbody tr.combo-table-row {
+  background-color: #fffdf7;
+  border-bottom: 2px solid #dc2626;
   transition: background-color 0.15s ease;
 }
 
-.combo-data-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.combo-data-table tbody tr:hover {
-  background-color: #f8fafc;
+.combo-data-table tbody tr.combo-table-row:hover {
+  background-color: #faf4e8;
 }
 
 .combo-data-table td {
@@ -446,16 +448,16 @@
   color: #0f172a;
 }
 
-/* Stepper (Neat Professional Oval Shape) */
+/* Stepper (Neat Professional Oval Shape - Cream Box) */
 .combo-qty-control,
 .combo-qty-stepper {
   display: inline-flex;
   align-items: center;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: #f5ebd7; /* Cream box */
+  border: 1.5px solid var(--border-cream, #e2d5c3);
   border-radius: 9999px;
   overflow: hidden;
-  padding: 1px 2px;
+  padding: 1px 3px;
 }
 
 .combo-qty-btn {
@@ -463,9 +465,9 @@
   height: 20px;
   border: none;
   background: transparent;
-  color: #475569;
+  color: var(--primary-blue, #0433ff);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -476,12 +478,12 @@
 }
 
 .combo-qty-btn:hover:not(:disabled) {
-  background-color: var(--primary-blue-light, rgba(29, 78, 216, 0.08));
-  color: var(--primary-blue, #1d4ed8);
+  background-color: #fffdf7;
+  color: var(--primary-blue, #0433ff);
 }
 
 .combo-qty-btn:disabled {
-  color: #cbd5e1;
+  color: #cdbca4;
   cursor: not-allowed;
 }
 
@@ -493,7 +495,7 @@
   text-align: center;
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f172a;
   outline: none;
 }
@@ -506,46 +508,47 @@
   color: #0f172a;
 }
 
-/* Add Button in Warning Yellow */
+/* Add Button in Luxury Cream with Blue Text */
 .td-action {
   text-align: right;
   padding-right: 12px !important;
 }
 
 .combo-add-btn {
-  background-color: var(--warning-yellow, #fbbf24);
-  border: 1px solid #f59e0b;
-  color: #1e293b;
-  padding: 4px 12px;
+  background-color: #fff8eb; /* Cream button */
+  border: 1.5px solid var(--border-cream, #dfcfb5);
+  color: var(--primary-blue, #0433ff);
+  padding: 5px 14px;
   border-radius: 9999px;
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  gap: 5px;
+  transition: all 0.15s ease;
   outline: none;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .combo-add-btn svg {
-  color: #1e293b;
-  stroke: #1e293b;
+  color: var(--primary-blue, #0433ff);
+  stroke: var(--primary-blue, #0433ff);
 }
 
 .combo-add-btn:hover {
-  background-color: #f59e0b;
-  border-color: #d97706;
-  color: #0f172a;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  background-color: #fef0ce;
+  border-color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0433ff);
+  box-shadow: 0 3px 8px rgba(4, 51, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 .combo-add-btn:active {
   transform: scale(0.97);
-  background-color: #d97706;
+  background-color: #fae4b5;
 }
 
 .combo-add-btn.added {
@@ -693,46 +696,95 @@
   }
 
   .combo-table-card {
-    border-radius: 0;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     width: 100%;
     overflow-x: hidden;
+    background-color: #dc2626; /* Products Background: Festive Red */
+    border: 1.5px solid #b91c1c;
   }
 
-  /* Mobile Card Row */
-  .combo-mobile-card {
-    background-color: #ffffff;
-    border: 1px solid #edf2f7;
-    border-radius: 4px;
-    padding: 7px 10px;
+  .combo-mobile-list {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
+    padding: 12px 10px;
     width: 100%;
     box-sizing: border-box;
-    transition: background-color 0.15s ease;
+    background-color: #dc2626; /* Red Products Canvas */
+  }
+
+  .combo-category-mobile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .combo-category-mobile-section .combo-category-header {
+    padding: 8px 4px 6px 4px;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.28);
+    margin-bottom: 2px;
+  }
+
+  .combo-category-mobile-section .combo-category-title {
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  }
+
+  .combo-category-mobile-section .combo-category-title::before {
+    background-color: #fef0ce;
+  }
+
+  .combo-category-mobile-section .combo-category-badge {
+    background-color: #fff8eb;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+  }
+
+  /* Mobile Card Row - Luxury Cream Box with Light Yellow Product Info */
+  .combo-mobile-card {
+    background-color: #fffdf7; /* Luxury Cream Card */
+    border: 1.5px solid var(--border-cream, #e2d5c3);
+    border-radius: 14px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
   }
 
   .combo-mobile-card:hover {
-    background-color: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
   }
 
+  /* ONLY this colored place is Light Yellow as requested */
   .combo-m-top {
     display: flex;
-    align-items: flex-start;
-    gap: 8px;
+    align-items: center;
+    gap: 12px;
     width: 100%;
+    background-color: #fef08a; /* Bright vibrant Light Yellow Box */
+    border: 1.5px solid #facc15;
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(234, 179, 8, 0.18);
   }
 
   .combo-m-thumb {
-    width: 36px;
-    height: 36px;
-    border-radius: 4px;
-    border: 1px solid #e2e8f0;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    border: 1.5px solid #facc15;
     overflow: hidden;
     flex-shrink: 0;
     cursor: pointer;
-    background-color: #f8fafc;
+    background-color: #ffffff;
   }
 
   .combo-m-thumb img {
@@ -756,12 +808,12 @@
     align-items: center;
     gap: 5px;
     font-size: 11px;
-    color: #64748b;
-    font-weight: 500;
+    color: #78350f;
+    font-weight: 600;
   }
 
   .combo-m-dot {
-    color: #cbd5e1;
+    color: #ca8a04;
   }
 
   .combo-m-content {
@@ -771,7 +823,7 @@
   .combo-m-name {
     font-family: var(--font-heading), var(--font-tamil), sans-serif;
     font-size: 15.5px;
-    font-weight: 600;
+    font-weight: 800;
     color: #0f172a;
     line-height: 1.25;
     word-break: break-word;
@@ -781,8 +833,8 @@
   .combo-m-prices {
     display: flex;
     align-items: center;
-    gap: 5px;
-    margin-top: 1px;
+    gap: 6px;
+    margin-top: 2px;
     flex-wrap: wrap;
   }
 
@@ -796,19 +848,20 @@
 
   .combo-m-current {
     font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
     color: #0f172a;
   }
 
   .combo-m-total-badge {
     font-family: var(--font-body);
-    background-color: #f1f5f9;
-    color: #0f172a;
+    background-color: #ffffff;
+    color: var(--primary-blue, #0433ff);
     font-size: 11px;
-    font-weight: 600;
-    padding: 2px 6px;
+    font-weight: 700;
+    padding: 2px 7px;
     border-radius: 9999px;
+    border: 1px solid #facc15;
   }
 
   .combo-m-bottom {
@@ -816,8 +869,8 @@
     align-items: center;
     justify-content: space-between;
     gap: 6px;
-    padding-top: 5px;
-    border-top: 1px solid #f8fafc;
+    padding: 2px 4px 2px 4px;
+    border-top: none;
     width: 100%;
     box-sizing: border-box;
   }
@@ -825,19 +878,55 @@
   .combo-m-stepper {
     flex-shrink: 0;
     border-radius: 9999px;
+    background-color: #fff8eb;
+    border: 1.5px solid #dfcfb5;
   }
 
+  .combo-m-stepper .combo-qty-btn {
+    color: var(--primary-blue, #0433ff);
+    font-weight: 800;
+  }
+
+  .combo-m-stepper .combo-qty-input {
+    color: #0f172a;
+    font-weight: 800;
+  }
+
+  /* Mobile Add Button - Luxury Cream Button */
   .combo-m-add-btn {
     font-family: var(--font-body);
-    font-weight: 600;
-    padding: 4px 12px;
-    font-size: 11.5px;
+    font-weight: 700;
+    padding: 6px 16px;
+    font-size: 12.5px;
     border-radius: 9999px;
+    background-color: #fff8eb; /* Cream button */
+    border: 1.5px solid #dfcfb5;
+    color: var(--primary-blue, #0433ff);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .combo-m-add-btn:hover {
+    background-color: #fef0ce;
+  }
+
+  .combo-m-add-btn:active {
+    background-color: #fae4b5;
+  }
+
+  .combo-m-add-btn.added {
+    background-color: #22c55e !important;
+    color: #ffffff !important;
+    border-color: #16a34a !important;
   }
 
   /* Header & Controls Responsive */
   .combo-heading {
     font-size: 32px;
+    color: #ffffff;
   }
 
   .combo-header-bar {
@@ -1026,37 +1115,36 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: #fff8eb; /* Cream button */
+  border: 1.5px solid var(--border-cream, #e2d5c3);
   border-radius: 9999px;
   font-family: var(--font-body);
   font-size: 13px;
-  font-weight: 550;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
-  color: #475569;
+  color: var(--primary-blue, #0433ff);
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: all 0.15s ease;
   outline: none;
   user-select: none;
 }
 
 .combo-page-num-btn:hover:not(.active) {
-  background-color: #f8fafc;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background-color: #fef0ce;
+  border-color: var(--primary-blue, #0433ff);
 }
 
 .combo-page-num-btn.active {
-  background-color: #0f172a;
-  border-color: #0f172a;
-  color: #ffffff;
-  font-weight: 600;
+  background-color: #fce5b2;
+  border-color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0433ff);
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* =========================================================
-   Check Order Modal Dialog
-   Check Order Modal Dialog
+   Check Order Modal Dialog - Luxury Cream Box
    ========================================================= */
 .combo-order-modal-backdrop {
   position: fixed;
@@ -1072,8 +1160,9 @@
 }
 
 .combo-order-modal-dialog {
-  background-color: #ffffff;
-  border-radius: 0;
+  background-color: var(--bg-box-cream, #fffdf7);
+  border: 2px solid var(--border-cream, #e2d5c3);
+  border-radius: 16px;
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
@@ -1368,21 +1457,23 @@
 }
 
 .combo-order-confirm-btn {
-  background-color: #0f172a;
-  color: #ffffff;
-  border: 1px solid #0f172a;
+  background-color: #fff5da; /* Cream button */
+  color: var(--primary-blue, #0433ff);
+  border: 1.5px solid var(--primary-blue, #0433ff);
   border-radius: 9999px;
   padding: 12px 18px;
   font-family: var(--font-body);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   outline: none;
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .combo-order-confirm-btn:hover {
-  background-color: #1e293b;
+  background-color: #fde8b8;
+  box-shadow: 0 4px 12px rgba(4, 51, 255, 0.2);
 }
 
 /* Mobile responsive adjustments */

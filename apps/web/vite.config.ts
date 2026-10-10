@@ -15,5 +15,12 @@ export default defineConfig({
       host: "untolerative-len-rumblingly.ngrok-free.dev",
       clientPort: 443,
     },
+
+    proxy: {
+      "/api": {
+        target: "http://localhost:3007",
+        changeOrigin: true,
+      },
+    },
   },
 });

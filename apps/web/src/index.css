@@ -16,58 +16,96 @@
   --font-tamil: 'Noto Sans Tamil', sans-serif;
   --font-premium: 'Cinzel', Georgia, serif;
 
-  /* Site-wide Brand Color Palette - Formal, Smooth & Premium */
-  --primary-blue: #1d4ed8;
-  --alert-red: #dc2626;
-  --warning-yellow: #fbbf24;
-  --success-green: #15803d;
+  /* Site-wide Brand Color Palette - Blue Background & Luxury Cream Boxes/Buttons */
+  --primary-blue: #0433ff;          /* Vibrant royal blue requested by user */
+  --primary-blue-deep: #0324b8;     /* Rich saturated royal blue */
+  --primary-blue-dark: #021a8c;     /* Dark navy blue */
+  --alert-red: #ef4444;             /* Vibrant crimson red */
+  --alert-red-dark: #dc2626;        /* Deep festive red */
+  --warning-yellow: #fbbf24;        /* Golden festival spark */
+  --success-green: #22c55e;         /* Pure festive emerald */
 
-  /* Pure White Design System */
-  --bg-canvas: #ffffff;            /* Pure white base canvas */
-  --bg-surface: #ffffff;           /* Elevated pure white */
-  --bg-cream-card: #ffffff;        /* Pure white cards */
-  --bg-cream-tint: #ffffff;        /* Pure white headers & banners */
-  --bg-cream-subtle: #f8fafc;      /* Subtle clean alternate rows */
-  --bg-cream-deep: #f1f5f9;        /* Clean neutral dividers & badges */
-  --border-cream: #e2e8f0;         /* Modern clean border */
-  --border-cream-light: #f1f5f9;   /* Light clean divider */
-  --text-main: #0f172a;            /* Clean dark slate primary text */
-  --text-muted: #475569;           /* Clean slate-600 secondary text */
-  --text-light: #64748b;           /* Clean slate-500 caption text */
+  /* Blue Background Canvas System */
+  --bg-canvas: #0433ff;             /* Blue background requested by user */
+  --bg-canvas-deep: #0226c4;        /* Deep rich royal blue */
+  --bg-surface: #0328cc;            /* Elevated royal surface */
+
+  /* Luxury Cream Boxes & Cards System */
+  --bg-box-cream: #fffdf7;          /* Pure warm ivory cream box */
+  --bg-box-cream-card: #fffdf7;     /* Pure warm cream card */
+  --bg-box-cream-alt: #faf4e8;      /* Alternate soft warm cream */
+  --bg-box-cream-subtle: #f6efe1;   /* Subtle tinted cream for headers/stripes */
+  --bg-box-cream-deep: #efe4d1;     /* Rich warm cream pill */
+
+  /* Borders */
+  --border-cream: #e2d5c3;          /* Soft luxury sand border */
+  --border-cream-dark: #cdbca4;     /* Rich gold/sand border */
+  --border-cream-light: #f1e9dc;    /* Subtle cream divider */
+  --border-white-subtle: rgba(255, 255, 255, 0.22); /* White accent on blue */
+
+  /* Luxury Cream Buttons System */
+  --btn-cream: #fff8eb;             /* Warm glowing cream button */
+  --btn-cream-hover: #fef0ce;       /* Rich cream hover */
+  --btn-cream-active: #fce5b2;      /* Active pressed cream */
+  --btn-cream-border: #dfcfb5;      /* Refined button border */
+  --btn-cream-text: #0433ff;        /* Royal blue text on cream button */
+
+  /* Text Colors */
+  --text-main: #ffffff;             /* White text for blue canvas */
+  --text-muted: #e0e7ff;            /* Soft light tint text on blue */
+  --text-light: #bfdbfe;            /* Sky caption text on blue */
+  --text-on-cream: #0f172a;         /* High contrast slate on cream boxes */
+  --text-on-cream-muted: #475569;   /* Slate secondary on cream boxes */
+  --text-on-cream-light: #64748b;   /* Slate caption on cream boxes */
 
   /* Harmonized helper shades */
-  --primary-blue-hover: #1e40af;
-  --primary-blue-light: rgba(29, 78, 216, 0.08);
-  --primary-blue-glow: rgba(29, 78, 216, 0.15);
+  --primary-blue-hover: #2651ff;
+  --primary-blue-light: rgba(4, 51, 255, 0.16);
+  --primary-blue-glow: rgba(4, 51, 255, 0.45);
 
-  --alert-red-hover: #b91c1c;
-  --alert-red-light: rgba(220, 38, 38, 0.08);
+  --alert-red-hover: #f87171;
+  --alert-red-light: rgba(239, 68, 68, 0.18);
+  --alert-red-glow: rgba(239, 68, 68, 0.4);
 
   --warning-yellow-hover: #f59e0b;
   --warning-yellow-light: rgba(251, 191, 36, 0.15);
 
-  --success-green-hover: #166534;
-  --success-green-light: rgba(21, 128, 61, 0.1);
+  --success-green-hover: #16a34a;
+  --success-green-light: rgba(34, 197, 94, 0.15);
 }
 
 ::selection {
-  background-color: var(--primary-blue);
+  background-color: var(--alert-red);
   color: #ffffff;
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #ffffff;
+  background-color: var(--bg-canvas, #0433ff);
+  color: var(--text-main, #ffffff);
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
   font-family: var(--font-body);
-  background-color: #ffffff;
-  color: var(--text-main, #0f172a);
+  background-color: var(--bg-canvas, #0433ff);
+  color: var(--text-main, #ffffff);
   min-height: 100vh;
   margin: 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--bg-canvas, #0433ff);
 }
 
 button, input, select, textarea {

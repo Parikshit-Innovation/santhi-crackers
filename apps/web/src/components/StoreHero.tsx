@@ -19,9 +19,8 @@ export const StoreHero: React.FC<StoreHeroProps> = ({ onAction }) => {
 
   return (
     <section className="store-hero-wrapper">
-      {/* 1. Desktop / Laptop Web View Banner (Wide Landscape) */}
       <div
-        className="store-hero-desktop"
+        className="store-hero-card"
         onClick={handleScrollToProducts}
         role="button"
         tabIndex={0}
@@ -32,20 +31,15 @@ export const StoreHero: React.FC<StoreHeroProps> = ({ onAction }) => {
         }}
         aria-label="Shanthi Sivakasi Crackers - Shop Now"
       >
-        <div className="store-hero-desktop-card">
-          <img
-            src="/home/home-web.png"
-            alt="Shanthi Sivakasi Crackers Kalingiam 2026 - Direct Wholesale Depot"
-            className="store-hero-desktop-img"
-            loading="eager"
-            fetchPriority="high"
-          />
-        </div>
-      </div>
-
-      {/* 2. Mobile Responsive Hero Placeholder (Empty) */}
-      <div className="store-hero-mobile">
-        <div className="store-hero-mobile-placeholder" aria-hidden="true" />
+        <img
+          src="/home/image.png"
+          alt="Shanthi Sivakasi Crackers Kalingiam 2026 - Direct Wholesale Depot"
+          className="store-hero-img"
+          loading="eager"
+          fetchPriority="high"
+          width="1584"
+          height="672"
+        />
       </div>
     </section>
   );
