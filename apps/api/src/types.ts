@@ -80,3 +80,28 @@ export type GetCategoriesResponse = {
   categories: CategoryListItemResponse[];
 };
 
+export type CartItemResponse = {
+  id: string;
+  productId: string;
+  quantity: number;
+  price: string;
+  total: string;
+  name?: string;
+  imageUrl?: string | null;
+  categorySlug?: string | null;
+};
+
+export type CartSummaryResponse = {
+  totalItems: number;
+  subtotal: string;
+};
+
+export type CartResponse = {
+  id: string;
+  items: CartItemResponse[];
+  summary: CartSummaryResponse;
+};
+
+export type GetCartResponse = {
+  cart: CartResponse;
+};

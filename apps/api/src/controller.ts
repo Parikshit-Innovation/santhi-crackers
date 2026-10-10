@@ -1,4 +1,5 @@
-import { Prisma, db } from "@repo/db/client";
+import { Prisma } from "@prisma/client";
+import { db } from "@repo/db/client";
 import type { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
 import type {
@@ -10,27 +11,24 @@ import type {
   ProductSortOption,
 } from "./types.js";
 import {
+  CART_COOKIE_NAME,
+  formatCart,
   formatDecimalPrice,
+  getCartCookieOptions,
   isValidLimit,
   isValidPositiveInteger,
   isValidSortOption,
 } from "./utils.js";
 
-type ProductWithCategory = NonNullable<
-  Awaited<
-    ReturnType<
-      typeof db.product.findFirst<{
-        include: {
-          category: {
-            select: {
-              slug: true;
-            };
-          };
-        };
-      }>
-    >
-  >
->;
+type ProductWithCategory = Prisma.ProductGetPayload<{
+  include: {
+    category: {
+      select: {
+        slug: true;
+      };
+    };
+  };
+}>;
 
 const formatProduct = (product: ProductWithCategory) => {
   const { categoryId: _categoryId, category, ...productData } = product;
@@ -55,10 +53,6 @@ export const getCrackersData = async (_request: Request, response: Response): Pr
     });
 
     response.json({ items: items.map(formatProduct) });
-    /*
-       
-    */
-    
   } catch (error) {
     console.error("Failed to retrieve items:", error);
     response.status(500).json({
@@ -178,7 +172,7 @@ export const createCategory = async (
     response
       .status(201)
       .json({ status: true, message: "Category Created Successfully ", category });
-      
+
   } catch (error: any) {
     if (error?.code === "P2002") {
       response.status(409).json({
@@ -194,10 +188,13 @@ export const createCategory = async (
 
 export const getCart = async (request: Request, response: Response): Promise<void> => {
   try {
-    let guestToken = request.cookies.cart_id as string | undefined;
-    let cart = guestToken
-      ? await db.cart.findUnique({
-          where: { guestToken },
+    const cookieToken = request.cookies?.[CART_COOKIE_NAME] as string | undefined;
+
+    let cart = cookieToken
+      ? await db.cart.findFirst({
+          where: {
+            OR: [{ guestToken: cookieToken }, { id: cookieToken }],
+          },
           include: {
             items: {
               include: {
@@ -215,7 +212,7 @@ export const getCart = async (request: Request, response: Response): Promise<voi
       : null;
 
     if (!cart) {
-      guestToken = randomUUID();
+      const guestToken = randomUUID();
       cart = await db.cart.create({
         data: { guestToken },
         include: {
@@ -233,52 +230,11 @@ export const getCart = async (request: Request, response: Response): Promise<voi
         },
       });
 
-      response.cookie("cart_id", guestToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-        path: "/",
-      });
+      response.cookie(CART_COOKIE_NAME, guestToken, getCartCookieOptions());
     }
 
-    const items = cart.items.map((item: (typeof cart.items)[number]) => {
-      const unitPrice = Number(item.price);
-
-      return {
-        id: item.id,
-        productId: item.productId,
-        quantity: item.quantity,
-        price: unitPrice.toFixed(2),
-        total: (unitPrice * item.quantity).toFixed(2),
-        ...(item.product
-          ? {
-              name: item.product.name,
-              imageUrl: item.product.imageUrl,
-              categorySlug: item.product.category?.slug ?? null,
-            }
-          : {}),
-      };
-    });
-
-    const totalItems = items.reduce(
-      (total: number, item: (typeof items)[number]) => total + item.quantity,
-      0,
-    );
-    const subtotal = items
-      .reduce(
-        (total: number, item: (typeof items)[number]) =>
-          total + Number(item.total),
-        0,
-      )
-      .toFixed(2);
-
     response.json({
-      cart: {
-        id: cart.id,
-        items,
-        summary: { totalItems, subtotal },
-      },
+      cart: formatCart(cart),
     });
   } catch (error) {
     console.error("Failed to retrieve cart:", error);
@@ -297,8 +253,7 @@ export const getProducts = async (
       response.status(400).json({
         error: {
           code: "INVALID_PAGINATION",
-          message:
-            "Page must be a positive integer and limit must be between 1 and 10.",
+          message: "Page must be a positive integer and limit must be between 1 and 10.",
         },
       });
       return;
@@ -308,8 +263,7 @@ export const getProducts = async (
       response.status(400).json({
         error: {
           code: "INVALID_PAGINATION",
-          message:
-            "Page must be a positive integer and limit must be between 1 and 10.",
+          message: "Page must be a positive integer and limit must be between 1 and 10.",
         },
       });
       return;
@@ -319,35 +273,21 @@ export const getProducts = async (
       response.status(400).json({
         error: {
           code: "INVALID_SORT",
-          message:
-            "Sort must be one of: newest, price_asc, price_desc, name_asc, name_desc.",
+          message: "Sort must be one of: newest, price_asc, price_desc, name_asc, name_desc.",
         },
       });
       return;
     }
 
-    const pageNumber =
-      page !== undefined ? parseInt((page as string).trim(), 10) : 1;
-    const limitNumber =
-      limit !== undefined ? parseInt((limit as string).trim(), 10) : 10;
+    const pageNumber = page !== undefined ? parseInt((page as string).trim(), 10) : 1;
+    const limitNumber = limit !== undefined ? parseInt((limit as string).trim(), 10) : 10;
     const sortOption: ProductSortOption =
-      sort !== undefined
-        ? ((sort as string).trim() as ProductSortOption)
-        : "newest";
+      sort !== undefined ? ((sort as string).trim() as ProductSortOption) : "newest";
 
-    type ProductFindManyArgs = NonNullable<Parameters<typeof db.product.findMany>[0]>;
-    type ProductWhereInput = NonNullable<ProductFindManyArgs["where"]>;
-    type ProductOrderByInput = NonNullable<ProductFindManyArgs["orderBy"]>;
-
-    const where: ProductWhereInput = {
-      isActive: true,
-    };
+    const where: Prisma.ProductWhereInput = { isActive: true };
 
     if (typeof category === "string" && category.trim().length > 0) {
-      where.category = {
-        slug: category.trim(),
-        isActive: true,
-      };
+      where.category = { slug: category.trim(), isActive: true };
     }
 
     if (typeof search === "string" && search.trim().length > 0) {
@@ -358,8 +298,9 @@ export const getProducts = async (
       ];
     }
 
-    let orderBy: ProductOrderByInput;
+    let orderBy: Prisma.ProductOrderByWithRelationInput[];
     switch (sortOption) {
+
       case "price_asc":
         orderBy = [{ price: "asc" }, { id: "asc" }];
         break;
@@ -389,75 +330,44 @@ export const getProducts = async (
         orderBy,
         include: {
           category: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              isActive: true,
-            },
+            select: { id: true, name: true, slug: true, isActive: true },
           },
         },
       }),
       db.product.count({ where }),
     ]);
 
-    const totalPages =
-      totalItems === 0 ? 0 : Math.ceil(totalItems / limitNumber);
+    const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / limitNumber);
 
     const items: CatalogProductResponse[] = products.map(
       (product: (typeof products)[number]) => ({
-      id: product.id,
-      code: product.code,
-      name: product.name,
-      description: product.description,
-      content: product.content,
-      actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
-      price: formatDecimalPrice(product.price) ?? "0.00",
-      discount: formatDecimalPrice(product.discount),
-      stock: product.stock,
-      imageUrl: product.imageUrl,
-      category:
-        product.category && product.category.isActive
-          ? {
-              id: product.category.id,
-              name: product.category.name,
-              slug: product.category.slug,
-            }
-          : null,
-      isActive: product.isActive,
-      isFeatured: product.isFeatured,
-    }));
+        id: product.id,
+        code: product.code,
+        name: product.name,
+        description: product.description,
+        content: product.content,
+        actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
+        price: formatDecimalPrice(product.price) ?? "0.00",
+        discount: formatDecimalPrice(product.discount),
+        stock: product.stock,
+        imageUrl: product.imageUrl,
+        category:
+          product.category && product.category.isActive
+            ? { id: product.category.id, name: product.category.name, slug: product.category.slug }
+            : null,
+        isActive: product.isActive,
+        isFeatured: product.isFeatured,
+      }),
+    );
 
     response.status(200).json({
       items,
-      pagination: {
-        page: pageNumber,
-        limit: limitNumber,
-        totalItems,
-        totalPages,
-      },
+      pagination: { page: pageNumber, limit: limitNumber, totalItems, totalPages },
     });
-    /*
-    GET /api/products
-
-    Response (200 OK):
-    {
-      "items": [],
-      "pagination": {
-        "page": 1,
-        "limit": 10,
-        "totalItems": 0,
-        "totalPages": 0
-      }
-    }
-    */
   } catch (error) {
     console.error("Failed to retrieve products:", error);
     response.status(500).json({
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to retrieve products.",
-      },
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to retrieve products." },
     });
   }
 };
@@ -471,10 +381,7 @@ export const getProductById = async (
 
     if (!id || typeof id !== "string" || id.trim().length === 0) {
       response.status(400).json({
-        error: {
-          code: "INVALID_ID",
-          message: "Product ID is required.",
-        },
+        error: { code: "INVALID_ID", message: "Product ID is required." },
       });
       return;
     }
@@ -483,22 +390,14 @@ export const getProductById = async (
       where: { id: id.trim() },
       include: {
         category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            isActive: true,
-          },
+          select: { id: true, name: true, slug: true, isActive: true },
         },
       },
     });
 
     if (!product || !product.isActive) {
       response.status(404).json({
-        error: {
-          code: "PRODUCT_NOT_FOUND",
-          message: "Product not found.",
-        },
+        error: { code: "PRODUCT_NOT_FOUND", message: "Product not found." },
       });
       return;
     }
@@ -516,48 +415,17 @@ export const getProductById = async (
       imageUrl: product.imageUrl,
       category:
         product.category && product.category.isActive
-          ? {
-              id: product.category.id,
-              name: product.category.name,
-              slug: product.category.slug,
-            }
+          ? { id: product.category.id, name: product.category.name, slug: product.category.slug }
           : null,
       isActive: product.isActive,
       isFeatured: product.isFeatured,
     };
 
     response.status(200).json(item);
-    /*
-    GET /api/products/:id
-
-    Response (200 OK):
-    {
-      "id": "product-id",
-      "code": "ROCKET-001",
-      "name": "Deluxe Rocket",
-      "description": "Colorful sky rocket",
-      "content": "Pack of 5",
-      "actualPrice": "500.00",
-      "price": "425.00",
-      "discount": "15.00",
-      "stock": 20,
-      "imageUrl": "/images/deluxe-rocket.jpg",
-      "category": {
-        "id": "category-id",
-        "name": "Rockets",
-        "slug": "rockets"
-      },
-      "isActive": true,
-      "isFeatured": true
-    }
-    */
   } catch (error) {
     console.error("Failed to retrieve product by ID:", error);
     response.status(500).json({
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to retrieve product.",
-      },
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to retrieve product." },
     });
   }
 };
@@ -573,9 +441,7 @@ export const getCategories = async (
       include: {
         _count: {
           select: {
-            products: {
-              where: { isActive: true },
-            },
+            products: { where: { isActive: true } },
           },
         },
       },
@@ -595,31 +461,10 @@ export const getCategories = async (
 
     const responseBody: GetCategoriesResponse = { categories: result };
     response.status(200).json(responseBody);
-    /*
-    GET /api/categories
-
-    Response (200 OK):
-    {
-      "categories": [
-        {
-          "id": "category-id",
-          "name": "Rockets",
-          "slug": "rockets",
-          "description": "Colorful sky rockets",
-          "imageUrl": "/images/categories/rockets.jpg",
-          "sortOrder": 1,
-          "productCount": 12
-        }
-      ]
-    }
-    */
   } catch (error) {
     console.error("Failed to retrieve categories:", error);
     response.status(500).json({
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to retrieve categories.",
-      },
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to retrieve categories." },
     });
   }
 };
@@ -634,10 +479,7 @@ export const getCategoryBySlug = async (
 
     if (!slug || typeof slug !== "string" || slug.trim().length === 0) {
       response.status(400).json({
-        error: {
-          code: "INVALID_SLUG",
-          message: "Category slug is required.",
-        },
+        error: { code: "INVALID_SLUG", message: "Category slug is required." },
       });
       return;
     }
@@ -646,8 +488,7 @@ export const getCategoryBySlug = async (
       response.status(400).json({
         error: {
           code: "INVALID_PAGINATION",
-          message:
-            "Page must be a positive integer and limit must be between 1 and 10.",
+          message: "Page must be a positive integer and limit must be between 1 and 10.",
         },
       });
       return;
@@ -657,17 +498,14 @@ export const getCategoryBySlug = async (
       response.status(400).json({
         error: {
           code: "INVALID_PAGINATION",
-          message:
-            "Page must be a positive integer and limit must be between 1 and 10.",
+          message: "Page must be a positive integer and limit must be between 1 and 10.",
         },
       });
       return;
     }
 
-    const pageNumber =
-      page !== undefined ? parseInt((page as string).trim(), 10) : 1;
-    const limitNumber =
-      limit !== undefined ? parseInt((limit as string).trim(), 10) : 10;
+    const pageNumber = page !== undefined ? parseInt((page as string).trim(), 10) : 1;
+    const limitNumber = limit !== undefined ? parseInt((limit as string).trim(), 10) : 10;
 
     const category = await db.category.findUnique({
       where: { slug: slug.trim() },
@@ -675,19 +513,12 @@ export const getCategoryBySlug = async (
 
     if (!category || !category.isActive) {
       response.status(404).json({
-        error: {
-          code: "CATEGORY_NOT_FOUND",
-          message: "Category not found.",
-        },
+        error: { code: "CATEGORY_NOT_FOUND", message: "Category not found." },
       });
       return;
     }
 
-    const where = {
-      categoryId: category.id,
-      isActive: true,
-    };
-
+    const where = { categoryId: category.id, isActive: true };
     const skip = (pageNumber - 1) * limitNumber;
     const take = limitNumber;
 
@@ -699,20 +530,14 @@ export const getCategoryBySlug = async (
         orderBy: [{ createdAt: "desc" }, { id: "asc" }],
         include: {
           category: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              isActive: true,
-            },
+            select: { id: true, name: true, slug: true, isActive: true },
           },
         },
       }),
       db.product.count({ where }),
     ]);
 
-    const totalPages =
-      totalItems === 0 ? 0 : Math.ceil(totalItems / limitNumber);
+    const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / limitNumber);
 
     const items: CatalogProductResponse[] = products.map(
       (product: (typeof products)[number]) => ({
@@ -728,11 +553,7 @@ export const getCategoryBySlug = async (
         imageUrl: product.imageUrl,
         category:
           product.category && product.category.isActive
-            ? {
-                id: product.category.id,
-                name: product.category.name,
-                slug: product.category.slug,
-              }
+            ? { id: product.category.id, name: product.category.name, slug: product.category.slug }
             : null,
         isActive: product.isActive,
         isFeatured: product.isFeatured,
@@ -740,47 +561,14 @@ export const getCategoryBySlug = async (
     );
 
     response.status(200).json({
-      category: {
-        id: category.id,
-        name: category.name,
-        slug: category.slug,
-      },
+      category: { id: category.id, name: category.name, slug: category.slug },
       items,
-      pagination: {
-        page: pageNumber,
-        limit: limitNumber,
-        totalItems,
-        totalPages,
-      },
+      pagination: { page: pageNumber, limit: limitNumber, totalItems, totalPages },
     });
-    /*
-    GET /api/categories/:slug
-
-    Response (200 OK):
-    {
-      "category": {
-        "id": "category-id",
-        "name": "Sparklers",
-        "slug": "sparklers"
-      },
-      "items": [],
-      "pagination": {
-        "page": 1,
-        "limit": 10,
-        "totalItems": 0,
-        "totalPages": 0
-      }
-    }
-    */
   } catch (error) {
     console.error("Failed to retrieve category by slug:", error);
     response.status(500).json({
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to retrieve category.",
-      },
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Failed to retrieve category." },
     });
   }
 };
-
-

@@ -9,8 +9,11 @@ import {
   getProductById,
   getProducts,
 } from "./controller.js";
+import { corsMiddleware } from "./utils.js";
 
 const router = Router();
+
+router.use(corsMiddleware);
 
 router.get("/items", getCrackersData);
 router.post("/items", createProduct);
