@@ -3,6 +3,8 @@ import { db } from "@repo/db/client";
 import type { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
 import type { CreateCategoryBody, CreateProductBody } from "./types.js";
+import { CART_COOKIE_NAME, formatCart, getCartCookieOptions, parsePagination } from "./utils.js";
+
 
 type ProductWithCategory = Prisma.ProductGetPayload<{
   include: {
@@ -176,10 +178,13 @@ export const createCategory = async (
 
 export const getCart = async (request: Request, response: Response): Promise<void> => {
   try {
-    let guestToken = request.cookies.cart_id as string | undefined;
-    let cart = guestToken
-      ? await db.cart.findUnique({
-          where: { guestToken },
+    const cookieToken = request.cookies?.[CART_COOKIE_NAME] as string | undefined;
+
+    let cart = cookieToken
+      ? await db.cart.findFirst({
+          where: {
+            OR: [{ guestToken: cookieToken }, { id: cookieToken }],
+          },
           include: {
             items: {
               include: {
@@ -197,7 +202,7 @@ export const getCart = async (request: Request, response: Response): Promise<voi
       : null;
 
     if (!cart) {
-      guestToken = randomUUID();
+      const guestToken = randomUUID();
       cart = await db.cart.create({
         data: { guestToken },
         include: {
@@ -215,48 +220,88 @@ export const getCart = async (request: Request, response: Response): Promise<voi
         },
       });
 
-      response.cookie("cart_id", guestToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-        path: "/",
-      });
+      response.cookie(CART_COOKIE_NAME, guestToken, getCartCookieOptions());
     }
 
-    const items = cart.items.map((item) => {
-      const unitPrice = Number(item.price);
-
-      return {
-        id: item.id,
-        productId: item.productId,
-        quantity: item.quantity,
-        price: unitPrice.toFixed(2),
-        total: (unitPrice * item.quantity).toFixed(2),
-        ...(item.product
-          ? {
-              name: item.product.name,
-              imageUrl: item.product.imageUrl,
-              categorySlug: item.product.category?.slug ?? null,
-            }
-          : {}),
-      };
-    });
-
-    const totalItems = items.reduce((total, item) => total + item.quantity, 0);
-    const subtotal = items
-      .reduce((total, item) => total + Number(item.total), 0)
-      .toFixed(2);
-
     response.json({
-      cart: {
-        id: cart.id,
-        items,
-        summary: { totalItems, subtotal },
-      },
+      cart: formatCart(cart),
     });
   } catch (error) {
     console.error("Failed to retrieve cart:", error);
     response.status(500).json({ error: "Failed to retrieve cart." });
   }
 };
+
+export const getProductsByCategory = async (request: Request, response: Response): Promise<void> => {
+  const { slug } = request.params;
+  const pagination = parsePagination(request.query.page, request.query.limit);
+
+  if (!pagination) {
+    response.status(400).json({
+      error: {
+        code: "INVALID_PAGINATION",
+        message: "Page must be a positive integer and limit must be between 1 and 10.",
+      },
+    });
+    return;
+  }
+
+  const { page, limit } = pagination;
+
+  try {
+    const category = await db.category.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        isActive: true,
+      },
+    });
+
+    if (!category || !category.isActive) {
+      response.status(404).json({ error: "Category not found." });
+      return;
+    }
+
+    const where = {
+      categoryId: category.id,
+      isActive: true,
+    };
+
+    const [totalItems, products] = await Promise.all([
+      db.product.count({ where }),
+      db.product.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          category: {
+            select: { slug: true },
+          },
+        },
+      }),
+    ]);
+
+    response.json({
+      category: {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+      },
+      items: products.map(formatProduct),
+      pagination: {
+        page,
+        limit,
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to retrieve products by category:", error);
+    response.status(500).json({ error: "Failed to retrieve products." });
+  }
+};
+
+

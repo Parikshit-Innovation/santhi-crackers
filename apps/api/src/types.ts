@@ -24,3 +24,48 @@ export type CreateCategoryBody = {
   sortOrder?: number;
   isActive?: boolean;
 };
+
+export type CartItemResponse = {
+  id: string;
+  productId: string;
+  quantity: number;
+  price: string;
+  total: string;
+  name?: string;
+  imageUrl?: string | null;
+  categorySlug?: string | null;
+};
+
+export type CartSummaryResponse = {
+  totalItems: number;
+  subtotal: string;
+};
+
+export type CartResponse = {
+  id: string;
+  items: CartItemResponse[];
+  summary: CartSummaryResponse;
+};
+
+export type GetCartResponse = {
+  cart: CartResponse;
+};
+
+export type PaginationResponse = {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+export type CategorySummary = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export type GetProductsByCategoryResponse = {
+  category: CategorySummary;
+  items: Record<string, unknown>[];
+  pagination: PaginationResponse;
+};
