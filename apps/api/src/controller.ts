@@ -3,8 +3,10 @@ import type { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
 import type {
   CatalogProductResponse,
+  CategoryListItemResponse,
   CreateCategoryBody,
   CreateProductBody,
+  GetCategoriesResponse,
   ProductSortOption,
 } from "./types.js";
 import {
@@ -579,17 +581,20 @@ export const getCategories = async (
       },
     });
 
-    const result = categories.map((cat) => ({
-      id: cat.id,
-      name: cat.name,
-      slug: cat.slug,
-      description: cat.description,
-      imageUrl: cat.imageUrl,
-      sortOrder: cat.sortOrder,
-      productCount: cat._count.products,
-    }));
+    const result: CategoryListItemResponse[] = categories.map(
+      (cat: (typeof categories)[number]) => ({
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description,
+        imageUrl: cat.imageUrl,
+        sortOrder: cat.sortOrder,
+        productCount: cat._count.products,
+      }),
+    );
 
-    response.status(200).json({ categories: result });
+    const responseBody: GetCategoriesResponse = { categories: result };
+    response.status(200).json(responseBody);
     /*
     GET /api/categories
 

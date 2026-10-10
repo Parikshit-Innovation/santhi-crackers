@@ -66,3 +66,17 @@ export type GetProductsResponse = {
   pagination: ProductPaginationResponse;
 };
 
+export type CategoryListItemResponse = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  imageUrl: string | null;
+  sortOrder: number;
+  productCount: number;
+};
+
+export type GetCategoriesResponse = {
+  categories: CategoryListItemResponse[];
+};
+
