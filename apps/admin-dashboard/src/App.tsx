@@ -1,13 +1,32 @@
-import { useState } from "react";
-import type { FormEvent } from "react";
-import { 
-  LayoutDashboard, Package, ListTree, ShoppingCart, 
-  LogOut, Menu, Bell, Search, X, Edit, Eye, 
-  Trash2, Plus, ImageIcon, ChevronLeft, ChevronRight,
-  FileText, Printer, Truck, User, Phone, MapPin, CreditCard, ChevronDown,
-  ArrowUp, ArrowDown, Layers
+import {
+    ArrowDown,
+    ArrowUp,
+    ChevronDown,
+    ChevronLeft, ChevronRight,
+    CreditCard,
+    Edit, Eye,
+    FileText,
+    ImageIcon,
+    Layers,
+    LayoutDashboard,
+    ListTree,
+    LogOut,
+    MapPin,
+    Menu,
+    Package,
+    Phone,
+    Plus,
+    Printer,
+    Search,
+    ShoppingCart,
+    Trash2,
+    Truck, User,
+    X
 } from "lucide-react";
+import type { FormEvent } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
+import { translate, type Language } from "./lib/i18n";
 
 // ── Types & Data ─────────────────────────────────────────────────────────────
 export interface OrderItem {
@@ -228,6 +247,18 @@ const INITIAL_ORDERS: Order[] = [
 
 // ── Main App Component ───────────────────────────────────────────────────────
 export default function App() {
+  const [language, setLanguage] = useState<Language>(() =>
+    window.localStorage.getItem("admin-language") === "ta" ? "ta" : "en",
+  );
+  const t = (key: string, values?: Record<string, string | number>) => translate(language, key, values);
+  const statusLabel = (status: string) => t(`status.${status.toLowerCase()}`);
+
+  useEffect(() => {
+    window.localStorage.setItem("admin-language", language);
+    document.documentElement.lang = language;
+    document.title = translate(language, "app.title");
+  }, [language]);
+
   const [currentRoute, setCurrentRoute] = useState("/admin/login");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -497,7 +528,7 @@ export default function App() {
         <td style="padding: 12px; text-align: center; color: #64748b;">${index + 1}</td>
         <td style="padding: 12px;">
           <div style="font-weight: 700; color: #0f172a;">${item.name}</div>
-          <div style="font-size: 12px; color: #64748b;">Code: ${item.code}</div>
+          <div style="font-size: 12px; color: #64748b;">${t("invoice.code")} ${item.code}</div>
         </td>
         <td style="padding: 12px; text-align: center; font-weight: 600;">${item.qty}</td>
         <td style="padding: 12px; text-align: right; color: #334155;">₹${item.unitPrice}</td>
@@ -507,9 +538,9 @@ export default function App() {
 
     printWindow.document.write(`
       <!DOCTYPE html>
-      <html>
+      <html lang="${language}">
         <head>
-          <title>Order Invoice - ${order.id}</title>
+          <title>${t("order.invoiceTitle", { id: order.id })}</title>
           <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #0f172a; background: #fff; line-height: 1.5; }
@@ -540,41 +571,41 @@ export default function App() {
           <div class="invoice-box">
             <div class="header">
               <div>
-                <div class="brand">Shanthi Sivakasi Crackers</div>
-                <div class="subbrand">Official Order Invoice & Summary</div>
+                <div class="brand">${t("app.brand")}</div>
+                <div class="subbrand">${t("invoice.summary")}</div>
               </div>
               <div class="order-title">
                 <div class="order-no">${order.id}</div>
-                <div class="order-date">Date: ${order.date}</div>
+                <div class="order-date">${t("invoice.date")} ${order.date}</div>
               </div>
             </div>
 
             <div class="grid-2">
               <div>
-                <div class="block-title">Customer & Delivery Details</div>
-                <div class="info-p"><strong>Customer:</strong> ${order.customer}</div>
-                <div class="info-p"><strong>Phone:</strong> ${order.phone}</div>
-                <div class="info-p"><strong>Email:</strong> ${order.email}</div>
-                <div class="info-p"><strong>Address:</strong> ${order.address}, ${order.city}, ${order.state} - ${order.pincode}</div>
+                <div class="block-title">${t("invoice.customerDelivery")}</div>
+                <div class="info-p"><strong>${t("invoice.customer")}</strong> ${order.customer}</div>
+                <div class="info-p"><strong>${t("invoice.phone")}</strong> ${order.phone}</div>
+                <div class="info-p"><strong>${t("invoice.email")}</strong> ${order.email}</div>
+                <div class="info-p"><strong>${t("invoice.address")}</strong> ${order.address}, ${order.city}, ${order.state} - ${order.pincode}</div>
               </div>
               <div>
-                <div class="block-title">Payment & Status Summary</div>
-                <div class="info-p"><strong>Payment Status:</strong> ${order.payment}</div>
-                <div class="info-p"><strong>Payment Mode:</strong> ${order.paymentMethod}</div>
-                <div class="info-p"><strong>Order Status:</strong> ${order.status}</div>
-                <div class="info-p"><strong>Last Updated:</strong> ${order.updatedAt}</div>
+                <div class="block-title">${t("invoice.paymentSummary")}</div>
+                <div class="info-p"><strong>${t("invoice.paymentStatus")}</strong> ${statusLabel(order.payment)}</div>
+                <div class="info-p"><strong>${t("invoice.paymentMode")}</strong> ${order.paymentMethod}</div>
+                <div class="info-p"><strong>${t("invoice.orderStatus")}</strong> ${statusLabel(order.status)}</div>
+                <div class="info-p"><strong>${t("invoice.lastUpdated")}</strong> ${order.updatedAt}</div>
               </div>
             </div>
 
-            <div class="block-title">Ordered Items Breakdown</div>
+            <div class="block-title">${t("invoice.itemsBreakdown")}</div>
             <table>
               <thead>
                 <tr>
                   <th style="text-align: center; width: 40px;">#</th>
-                  <th>Item Description</th>
-                  <th style="text-align: center;">Qty</th>
-                  <th style="text-align: right;">Unit Price</th>
-                  <th style="text-align: right;">Total</th>
+                  <th>${t("invoice.itemDescription")}</th>
+                  <th style="text-align: center;">${t("invoice.quantity")}</th>
+                  <th style="text-align: right;">${t("invoice.unitPrice")}</th>
+                  <th style="text-align: right;">${t("invoice.total")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -583,15 +614,15 @@ export default function App() {
             </table>
 
             <div class="totals">
-              <div class="total-row"><span>Subtotal</span><span>₹${order.subtotal}</span></div>
-              ${order.discount > 0 ? `<div class="total-row" style="color: #16a34a;"><span>Discount</span><span>-₹${order.discount}</span></div>` : ''}
-              <div class="total-row"><span>Delivery Fee</span><span>₹${order.deliveryFee}</span></div>
-              <div class="grand-total"><span>Grand Total</span><span>₹${order.total}</span></div>
+              <div class="total-row"><span>${t("invoice.subtotal")}</span><span>₹${order.subtotal}</span></div>
+              ${order.discount > 0 ? `<div class="total-row" style="color: #16a34a;"><span>${t("invoice.discount")}</span><span>-₹${order.discount}</span></div>` : ''}
+              <div class="total-row"><span>${t("invoice.deliveryFee")}</span><span>₹${order.deliveryFee}</span></div>
+              <div class="grand-total"><span>${t("invoice.grandTotal")}</span><span>₹${order.total}</span></div>
             </div>
 
             <div class="footer">
-              Thank you for ordering with Shanthi Sivakasi Crackers!<br/>
-              Computer generated invoice summary.
+              ${t("invoice.thankYou")}<br/>
+              ${t("invoice.generated")}
             </div>
           </div>
           <script>
@@ -646,30 +677,34 @@ export default function App() {
   if (!isAuthenticated || currentRoute === "/admin/login") {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-[#FAF8F4] p-6 text-black font-manrope">
+        <div className="fixed top-4 right-4 inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white p-1 shadow-sm" role="group" aria-label={t("language.switch")}>
+          <button type="button" onClick={() => setLanguage("en")} aria-pressed={language === "en"} className={`px-3 py-1.5 rounded-md text-sm font-bold ${language === "en" ? "bg-[#0000FF] text-white" : "text-black hover:bg-gray-100"}`}>{t("language.english")}</button>
+          <button type="button" onClick={() => setLanguage("ta")} aria-pressed={language === "ta"} className={`px-3 py-1.5 rounded-md text-sm font-bold ${language === "ta" ? "bg-[#0000FF] text-white" : "text-black hover:bg-gray-100"}`}>{t("language.tamil")}</button>
+        </div>
         <div className="w-full max-w-md bg-white border border-[#E5E5E5] rounded-xl p-8 shadow-lg">
           <div className="text-center mb-8">
-            <img src="/logo.jpg" alt="Shanthi Sivakasi Crackers Logo" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-md rounded-full" />
-            <h1 className="text-3xl font-bold text-black mb-2">Shanthi Sivakasi Crackers</h1>
-            <p className="text-lg text-black font-semibold">Manage your store.</p>
+            <img src="/logo.jpg" alt={t("app.logoAlt")} className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-md rounded-full" />
+            <h1 className="text-3xl font-bold text-black mb-2">{t("app.brand")}</h1>
+            <p className="text-lg text-black font-semibold">{t("login.manageStore")}</p>
           </div>
           <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg mb-6 flex items-center justify-center text-sm font-bold">
-            DEMO SIGN-IN
+            {t("login.demo")}
           </div>
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-base font-bold text-black mb-2">Email address</label>
-              <input type="email" required defaultValue="admin@deepakart.com" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-lg font-medium" />
+              <label className="block text-base font-bold text-black mb-2">{t("login.email")}</label>
+              <input type="email" required onInvalid={(event) => event.currentTarget.setCustomValidity(event.currentTarget.validity.typeMismatch ? t("validation.email") : t("validation.required"))} onInput={(event) => event.currentTarget.setCustomValidity("")} defaultValue="admin@deepakart.com" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-lg font-medium" />
             </div>
             <div>
-              <label className="block text-base font-bold text-black mb-2">Password</label>
-              <input type="password" required defaultValue="password123" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-lg font-medium" />
+              <label className="block text-base font-bold text-black mb-2">{t("login.password")}</label>
+              <input type="password" required onInvalid={(event) => event.currentTarget.setCustomValidity(t("validation.required"))} onInput={(event) => event.currentTarget.setCustomValidity("")} defaultValue="password123" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-lg font-medium" />
             </div>
             <div className="flex items-center">
               <input type="checkbox" id="remember" className="w-5 h-5 text-[#0000FF] border-gray-300 rounded focus:ring-[#0000FF]" />
-              <label htmlFor="remember" className="ml-3 block text-base font-semibold text-black">Remember me</label>
+              <label htmlFor="remember" className="ml-3 block text-base font-semibold text-black">{t("login.remember")}</label>
             </div>
             <button type="submit" className="w-full py-4 bg-[#0000FF] text-white font-bold text-lg rounded-lg shadow-md hover:bg-blue-700 transition-colors">
-              Log in
+              {t("login.submit")}
             </button>
           </form>
         </div>
@@ -706,24 +741,24 @@ export default function App() {
     <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
         <div className="flex items-center gap-3">
-          <img src="/logo.jpg" alt="Logo" className="w-12 h-12 object-contain rounded-full shadow-sm" />
+          <img src="/logo.jpg" alt={t("app.logoAlt")} className="w-12 h-12 object-contain rounded-full shadow-sm" />
           <div>
-            <h2 className="font-bold text-lg text-black leading-tight">Shanthi Sivakasi</h2>
-            <p className="text-sm font-semibold text-black">ADMIN</p>
+            <h2 className="font-bold text-lg text-black leading-tight">{t("app.brandShort")}</h2>
+            <p className="text-sm font-semibold text-black">{t("nav.admin")}</p>
           </div>
         </div>
-        <button className="lg:hidden p-2 text-black" onClick={() => setSidebarOpen(false)}>
+        <button aria-label={t("common.closeNavigation")} className="lg:hidden p-2 text-black" onClick={() => setSidebarOpen(false)}>
           <X size={24} />
         </button>
       </div>
       
       <div className="p-6">
-        <p className="text-sm font-bold text-black uppercase tracking-wider mb-4">Workspace</p>
+        <p className="text-sm font-bold text-black uppercase tracking-wider mb-4">{t("common.workspace")}</p>
         <nav>
-          <NavItem icon={LayoutDashboard} label="Dashboard" path="/admin" />
-          <NavItem icon={Package} label="Products" path="/admin/products" />
-          <NavItem icon={ListTree} label="Categories" path="/admin/categories" />
-          <NavItem icon={ShoppingCart} label="Orders" path="/admin/orders" badge={24} />
+          <NavItem icon={LayoutDashboard} label={t("common.dashboard")} path="/admin" />
+          <NavItem icon={Package} label={t("common.products")} path="/admin/products" />
+          <NavItem icon={ListTree} label={t("common.categories")} path="/admin/categories" />
+          <NavItem icon={ShoppingCart} label={t("common.orders")} path="/admin/orders" badge={24} />
         </nav>
 
         <div className="my-6 border-t border-gray-100"></div>
@@ -732,7 +767,7 @@ export default function App() {
       <div className="absolute bottom-0 w-full p-6 border-t border-gray-100 bg-white">
         <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-red-600 font-bold text-lg hover:bg-red-50 rounded-lg transition-colors">
           <LogOut size={24} />
-          <span>Log out</span>
+          <span>{t("common.logout")}</span>
         </button>
       </div>
     </aside>
@@ -741,13 +776,17 @@ export default function App() {
   const Header = ({ title, subtitle }: { title: string, subtitle?: string }) => (
     <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between shadow-2xs">
       <div className="flex items-center gap-4">
-        <button className="lg:hidden p-2 -ml-2 text-black hover:bg-slate-100 rounded-lg" onClick={() => setSidebarOpen(true)}>
+        <button aria-label={t("common.openNavigation")} className="lg:hidden p-2 -ml-2 text-black hover:bg-slate-100 rounded-lg" onClick={() => setSidebarOpen(true)}>
           <Menu size={24} />
         </button>
         <div>
           <h1 className="text-xl font-extrabold text-black leading-tight">{title}</h1>
           {subtitle && <p className="text-xs font-medium text-black">{subtitle}</p>}
         </div>
+      </div>
+      <div className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white p-1" role="group" aria-label={t("language.switch")}>
+        <button type="button" onClick={() => setLanguage("en")} aria-pressed={language === "en"} className={`px-3 py-1.5 rounded-md text-sm font-bold ${language === "en" ? "bg-[#0000FF] text-white" : "text-black hover:bg-gray-100"}`}>{t("language.english")}</button>
+        <button type="button" onClick={() => setLanguage("ta")} aria-pressed={language === "ta"} className={`px-3 py-1.5 rounded-md text-sm font-bold ${language === "ta" ? "bg-[#0000FF] text-white" : "text-black hover:bg-gray-100"}`}>{t("language.tamil")}</button>
       </div>
     </header>
   );
@@ -768,21 +807,21 @@ export default function App() {
         <div className="bg-gradient-to-r from-blue-950 via-[#0000FF] to-blue-900 text-white p-8 rounded-2xl shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-2 max-w-2xl z-10">
             <div className="inline-flex items-center gap-2 bg-blue-500/30 text-blue-200 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-blue-400/30">
-              <span>Shanthi Sivakasi Crackers Panel</span>
+              <span>{t("dashboard.panel")}</span>
             </div>
-            <h2 className="text-3xl font-extrabold text-white">Store Executive Overview</h2>
+            <h2 className="text-3xl font-extrabold text-white">{t("dashboard.overview")}</h2>
             <p className="text-blue-100 text-base font-medium leading-relaxed">
-              Real-time metrics, live inventory monitoring, and customer order management for Shanthi Sivakasi Crackers.
+              {t("dashboard.description")}
             </p>
           </div>
           <div className="flex flex-wrap gap-3 z-10">
             <button onClick={() => navigate("/admin/products")} className="px-5 py-2.5 bg-white text-[#0000FF] hover:bg-blue-50 font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2 cursor-pointer">
               <Package size={18} />
-              <span>Manage Catalog</span>
+              <span>{t("dashboard.manageCatalog")}</span>
             </button>
             <button onClick={() => navigate("/admin/orders")} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2 cursor-pointer">
               <ShoppingCart size={18} />
-              <span>View Orders</span>
+              <span>{t("dashboard.viewOrders")}</span>
             </button>
           </div>
         </div>
@@ -790,12 +829,12 @@ export default function App() {
         {/* Dynamic Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
-            { label: "Total Products", value: totalProductsCount.toString(), sub: "In store catalog", bg: "bg-white" },
-            { label: "Active Products", value: activeProductsCount.toString(), sub: "Visible to customers", bg: "bg-white" },
-            { label: "Total Orders", value: totalOrdersCount.toString(), sub: "All time orders", bg: "bg-white" },
-            { label: "Pending Orders", value: pendingOrdersCount.toString(), sub: "Requires processing", bg: "bg-yellow-50 border-yellow-200" },
-            { label: "Total Sales Revenue", value: `₹${totalSalesRevenue.toLocaleString('en-IN')}`, sub: "From paid orders", bg: "bg-green-50 border-green-200" },
-            { label: "Out of Stock", value: outOfStockCount.toString(), sub: "Products need restocking", bg: "bg-red-50 border-red-200" }
+            { label: t("dashboard.totalProducts"), value: totalProductsCount.toString(), sub: t("dashboard.catalog"), bg: "bg-white" },
+            { label: t("dashboard.activeProducts"), value: activeProductsCount.toString(), sub: t("dashboard.visibleCustomers"), bg: "bg-white" },
+            { label: t("dashboard.totalOrders"), value: totalOrdersCount.toString(), sub: t("dashboard.allTimeOrders"), bg: "bg-white" },
+            { label: t("dashboard.pendingOrders"), value: pendingOrdersCount.toString(), sub: t("dashboard.requiresProcessing"), bg: "bg-yellow-50 border-yellow-200" },
+            { label: t("dashboard.salesRevenue"), value: `₹${totalSalesRevenue.toLocaleString('en-IN')}`, sub: t("dashboard.fromPaidOrders"), bg: "bg-green-50 border-green-200" },
+            { label: t("dashboard.outOfStock"), value: outOfStockCount.toString(), sub: t("dashboard.restock"), bg: "bg-red-50 border-red-200" }
           ].map((stat, i) => (
             <div key={i} className={`p-6 rounded-xl border border-gray-200 shadow-sm ${stat.bg}`}>
               <p className="text-base font-bold text-black mb-2">{stat.label}</p>
@@ -811,21 +850,21 @@ export default function App() {
           <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="text-xl font-bold text-black">Recent orders</h2>
-                <p className="text-base font-semibold text-black">The latest activity from your store</p>
+                <h2 className="text-xl font-bold text-black">{t("dashboard.recentOrders")}</h2>
+                <p className="text-base font-semibold text-black">{t("dashboard.latestActivity")}</p>
               </div>
-              <button onClick={() => navigate("/admin/orders")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">View all orders →</button>
+              <button onClick={() => navigate("/admin/orders")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">{t("dashboard.viewAllOrders")}</button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-gray-200 text-sm font-bold text-black uppercase">
-                    <th className="pb-3 px-2">Order</th>
-                    <th className="pb-3 px-2">Customer</th>
-                    <th className="pb-3 px-2">Total</th>
-                    <th className="pb-3 px-2">Status</th>
-                    <th className="pb-3 px-2">Date</th>
-                    <th className="pb-3 px-2 text-right">Action</th>
+                    <th className="pb-3 px-2">{t("order.id")}</th>
+                    <th className="pb-3 px-2">{t("dashboard.customer")}</th>
+                    <th className="pb-3 px-2">{t("common.total")}</th>
+                    <th className="pb-3 px-2">{t("common.status")}</th>
+                    <th className="pb-3 px-2">{t("common.date")}</th>
+                    <th className="pb-3 px-2 text-right">{t("dashboard.action")}</th>
                   </tr>
                 </thead>
                 <tbody className="text-base font-semibold text-black divide-y divide-gray-100">
@@ -840,10 +879,10 @@ export default function App() {
                           o.status === 'Pending' ? 'bg-orange-50 text-orange-800 border-orange-200' :
                           o.status === 'Shipped' ? 'bg-blue-50 text-blue-800 border-blue-200' : 
                           o.status === 'Delivered' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'
-                        }`}>{o.status}</span>
+                        }`}>{statusLabel(o.status)}</span>
                       </td>
                       <td className="py-4 px-2 text-black text-sm">{o.date}</td>
-                      <td className="py-4 px-2 text-right text-[#0000FF] font-bold text-sm">View →</td>
+                      <td className="py-4 px-2 text-right text-[#0000FF] font-bold text-sm">{t("dashboard.view")}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -854,13 +893,13 @@ export default function App() {
           {/* Low Stock Products */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-black">Low stock products</h2>
-              <button onClick={() => navigate("/admin/products")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">Manage →</button>
+              <h2 className="text-xl font-bold text-black">{t("dashboard.lowStockProducts")}</h2>
+              <button onClick={() => navigate("/admin/products")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">{t("dashboard.manage")}</button>
             </div>
             <div className="space-y-4">
               {productsList.filter((p: Product) => p.stock < 10).length === 0 ? (
                 <div className="p-4 text-center text-black font-semibold text-sm">
-                  All products are well stocked!
+                  {t("dashboard.wellStocked")}
                 </div>
               ) : (
                 productsList.filter((p: Product) => p.stock < 10).slice(0, 5).map((p: Product) => (
@@ -874,9 +913,9 @@ export default function App() {
                       <p className="text-xs font-mono text-black">{p.code}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-base text-black">{p.stock} pcs</p>
+                      <p className="font-bold text-base text-black">{p.stock} {t("stock.pieces")}</p>
                       <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${p.stock === 0 ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-800 border-yellow-200'}`}>
-                        {p.stock === 0 ? 'Out of Stock' : 'Low Stock'}
+                        {p.stock === 0 ? t("stock.out") : t("stock.low")}
                       </span>
                     </div>
                   </div>
@@ -897,11 +936,11 @@ export default function App() {
         <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">Product Catalog</h2>
-              <p className="text-xs font-medium text-black">Manage fireworks items, inventory stock, and pricing</p>
+              <h2 className="text-lg font-extrabold text-black leading-tight">{t("product.catalog")}</h2>
+              <p className="text-xs font-medium text-black">{t("product.description")}</p>
             </div>
             <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
-              {filteredProducts.length} items
+              {t("common.itemCount", { count: filteredProducts.length })}
             </span>
           </div>
 
@@ -913,11 +952,11 @@ export default function App() {
                 type="text" 
                 value={productSearch}
                 onChange={(e) => { setProductSearch(e.target.value); setProductCurrentPage(1); }}
-                placeholder="Search name or code..." 
+                placeholder={t("product.search")}
                 className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
               />
               {productSearch && (
-                <button onClick={() => { setProductSearch(""); setProductCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
+                <button aria-label={t("common.clearSearch")} onClick={() => { setProductSearch(""); setProductCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
                   <X size={14} />
                 </button>
               )}
@@ -930,7 +969,7 @@ export default function App() {
                 onChange={(e) => { setProductCategoryFilter(e.target.value); setProductCurrentPage(1); }}
                 className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
               >
-                <option value="All">All Categories</option>
+                <option value="All">{t("product.allCategories")}</option>
                 {categoriesList.map(c => (
                   <option key={c.id} value={c.name}>{c.name}</option>
                 ))}
@@ -945,9 +984,9 @@ export default function App() {
                 onChange={(e) => { setProductStatusFilter(e.target.value); setProductCurrentPage(1); }}
                 className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
               >
-                <option value="All">All Statuses</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option value="All">{t("product.allStatuses")}</option>
+                <option value="Active">{statusLabel("Active")}</option>
+                <option value="Inactive">{statusLabel("Inactive")}</option>
               </select>
               <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
@@ -958,7 +997,7 @@ export default function App() {
               className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap"
             >
               <Plus size={16} />
-              <span>Add Product</span>
+              <span>{t("product.add")}</span>
             </button>
           </div>
         </div>
@@ -968,12 +1007,12 @@ export default function App() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
-                <th className="py-3.5 px-5">Product Details</th>
-                <th className="py-3.5 px-5">Category</th>
-                <th className="py-3.5 px-5">Pricing</th>
-                <th className="py-3.5 px-5">Stock Level</th>
-                <th className="py-3.5 px-5">Status</th>
-                <th className="py-3.5 px-5 text-right">Actions</th>
+                <th className="py-3.5 px-5">{t("product.details")}</th>
+                <th className="py-3.5 px-5">{t("common.category")}</th>
+                <th className="py-3.5 px-5">{t("product.pricing")}</th>
+                <th className="py-3.5 px-5">{t("product.stockLevel")}</th>
+                <th className="py-3.5 px-5">{t("common.status")}</th>
+                <th className="py-3.5 px-5 text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
@@ -982,15 +1021,15 @@ export default function App() {
                   <td colSpan={6} className="py-12 text-center">
                     <div className="max-w-md mx-auto space-y-2">
                       <Package size={40} className="mx-auto text-black" />
-                      <h3 className="text-base font-bold text-black">No products found</h3>
+                      <h3 className="text-base font-bold text-black">{t("product.noResults")}</h3>
                       <p className="text-xs text-black">
-                        No items match your search or filter options. Try clearing filters or add a new product.
+                        {t("product.noResultsDescription")}
                       </p>
                       <button 
                         onClick={() => { setProductSearch(""); setProductCategoryFilter("All"); setProductStatusFilter("All"); setProductCurrentPage(1); }}
                         className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-lg transition-colors inline-block cursor-pointer"
                       >
-                        Clear Filters
+                        {t("product.clearFilters")}
                       </button>
                     </div>
                   </td>
@@ -1037,13 +1076,13 @@ export default function App() {
                           <span className={`w-1.5 h-1.5 rounded-full ${
                             p.stock === 0 ? 'bg-rose-500' : p.stock < 10 ? 'bg-amber-500' : 'bg-emerald-500'
                           }`}></span>
-                          <span>{p.stock === 0 ? 'Out of Stock' : p.stock < 10 ? `Low Stock (${p.stock})` : `In Stock (${p.stock})`}</span>
+                          <span>{p.stock === 0 ? t("stock.out") : p.stock < 10 ? t("stock.lowCount", { count: p.stock }) : t("stock.inCount", { count: p.stock })}</span>
                         </span>
                       </td>
                       <td className="py-3.5 px-5">
                         <button
                           onClick={() => handleToggleProductStatus(p.id)}
-                          title="Click to toggle visibility status"
+                          title={t("product.toggleVisibility")}
                           className={`inline-flex items-center justify-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
                             p.status === "Active" 
                               ? "text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100" 
@@ -1051,28 +1090,28 @@ export default function App() {
                           }`}
                         >
                           <span className={`w-1.5 h-1.5 rounded-full ${p.status === "Active" ? "bg-emerald-500" : "bg-slate-400"}`}></span>
-                          <span>{p.status}</span>
+                          <span>{statusLabel(p.status)}</span>
                         </button>
                       </td>
                       <td className="py-3.5 px-5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button 
                             onClick={() => setViewingProduct(p)}
-                            title="View Product Overview"
+                            title={t("product.viewOverview")}
                             className="p-1.5 text-black hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Eye size={16} />
                           </button>
                           <button 
                             onClick={() => handleOpenEditProduct(p)}
-                            title="Edit Product Details"
+                            title={t("product.editDetails")}
                             className="p-1.5 text-black hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
                             onClick={() => setDeletingProduct(p)}
-                            title="Delete Product"
+                            title={t("product.deleteAction")}
                             className="p-1.5 text-black hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Trash2 size={16} />
@@ -1091,7 +1130,7 @@ export default function App() {
         {filteredProducts.length > 0 && (
           <div className="p-4 bg-slate-50/50 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
             <p className="text-xs font-semibold text-black">
-              Showing <span className="font-bold text-black">{(productCurrentPage - 1) * productsPerPage + 1}</span> to <span className="font-bold text-black">{Math.min(productCurrentPage * productsPerPage, filteredProducts.length)}</span> of <span className="font-bold text-black">{filteredProducts.length}</span> products
+              {t("common.showingRange", { start: (productCurrentPage - 1) * productsPerPage + 1, end: Math.min(productCurrentPage * productsPerPage, filteredProducts.length), count: filteredProducts.length, items: t("common.items") })}
             </p>
             <div className="flex items-center gap-1.5">
               <button 
@@ -1100,7 +1139,7 @@ export default function App() {
                 className="px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-all flex items-center gap-1 cursor-pointer"
               >
                 <ChevronLeft size={14} />
-                <span>Prev</span>
+                <span>{t("common.prev")}</span>
               </button>
               {Array.from({ length: totalProductPages }, (_, i) => i + 1).map(page => (
                 <button
@@ -1116,7 +1155,7 @@ export default function App() {
                 onClick={() => setProductCurrentPage(p => Math.min(p + 1, totalProductPages))}
                 className="px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-all flex items-center gap-1 cursor-pointer"
               >
-                <span>Next</span>
+                <span>{t("common.next")}</span>
                 <ChevronRight size={14} />
               </button>
             </div>
@@ -1129,39 +1168,43 @@ export default function App() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
             <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-black">Add New Product</h3>
-              <button onClick={() => setIsAddProductOpen(false)} className="p-1 text-black hover:text-black rounded-lg">
+              <h3 className="text-xl font-bold text-black">{t("product.addTitle")}</h3>
+              <button aria-label={t("common.closeDialog")} onClick={() => setIsAddProductOpen(false)} className="p-1 text-black hover:text-black rounded-lg">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleSaveAddProduct} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Product Name *</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.name")} *</label>
                   <input 
                     type="text" 
-                    required 
+                    required
+                    onInvalid={(event) => event.currentTarget.setCustomValidity(t("validation.required"))}
+                    onInput={(event) => event.currentTarget.setCustomValidity("")}
                     value={prodName}
                     onChange={(e) => setProdName(e.target.value)}
-                    placeholder="e.g. 1000 Wala Garland"
+                    placeholder={t("product.nameExample")}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Product Code/SKU *</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.code")} *</label>
                   <input 
                     type="text" 
-                    required 
+                    required
+                    onInvalid={(event) => event.currentTarget.setCustomValidity(t("validation.required"))}
+                    onInput={(event) => event.currentTarget.setCustomValidity("")}
                     value={prodCode}
                     onChange={(e) => setProdCode(e.target.value)}
-                    placeholder="e.g. GAR-1000-01"
+                    placeholder={t("product.codeExample")}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Category</label>
+                <label className="block text-xs font-bold text-black uppercase mb-1">{t("common.category")}</label>
                 <select 
                   value={prodCategory}
                   onChange={(e) => setProdCategory(e.target.value)}
@@ -1173,7 +1216,7 @@ export default function App() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Actual Price (MRP) ₹</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.actualPrice")}</label>
                   <input 
                     type="number" 
                     min={0}
@@ -1183,7 +1226,7 @@ export default function App() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Selling Price ₹</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.sellingPrice")}</label>
                   <input 
                     type="number" 
                     min={0}
@@ -1196,7 +1239,7 @@ export default function App() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Stock Quantity</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.stockQuantity")}</label>
                   <input 
                     type="number" 
                     min={0}
@@ -1206,14 +1249,14 @@ export default function App() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Status</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("common.status")}</label>
                   <select 
                     value={prodStatus}
                     onChange={(e) => setProdStatus(e.target.value as "Active" | "Inactive")}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
+                    <option value="Active">{statusLabel("Active")}</option>
+                    <option value="Inactive">{statusLabel("Inactive")}</option>
                   </select>
                 </div>
               </div>
@@ -1224,13 +1267,13 @@ export default function App() {
                   onClick={() => setIsAddProductOpen(false)}
                   className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <button 
                   type="submit"
                   className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
                 >
-                  Save Product
+                  {t("product.save")}
                 </button>
               </div>
             </form>
@@ -1243,28 +1286,32 @@ export default function App() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
             <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-black">Edit Product</h3>
-              <button onClick={() => setEditingProduct(null)} className="p-1 text-black hover:text-black rounded-lg">
+              <h3 className="text-xl font-bold text-black">{t("product.editTitle")}</h3>
+              <button aria-label={t("common.closeDialog")} onClick={() => setEditingProduct(null)} className="p-1 text-black hover:text-black rounded-lg">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleSaveEditProduct} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Product Name *</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.name")} *</label>
                   <input 
                     type="text" 
-                    required 
+                    required
+                    onInvalid={(event) => event.currentTarget.setCustomValidity(t("validation.required"))}
+                    onInput={(event) => event.currentTarget.setCustomValidity("")}
                     value={prodName}
                     onChange={(e) => setProdName(e.target.value)}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Product Code/SKU *</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.code")} *</label>
                   <input 
                     type="text" 
-                    required 
+                    required
+                    onInvalid={(event) => event.currentTarget.setCustomValidity(t("validation.required"))}
+                    onInput={(event) => event.currentTarget.setCustomValidity("")}
                     value={prodCode}
                     onChange={(e) => setProdCode(e.target.value)}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
@@ -1273,7 +1320,7 @@ export default function App() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Category</label>
+                <label className="block text-xs font-bold text-black uppercase mb-1">{t("common.category")}</label>
                 <select 
                   value={prodCategory}
                   onChange={(e) => setProdCategory(e.target.value)}
@@ -1285,7 +1332,7 @@ export default function App() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Actual Price (MRP) ₹</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.actualPrice")}</label>
                   <input 
                     type="number" 
                     min={0}
@@ -1295,7 +1342,7 @@ export default function App() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Selling Price ₹</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.sellingPrice")}</label>
                   <input 
                     type="number" 
                     min={0}
@@ -1308,7 +1355,7 @@ export default function App() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Stock Quantity</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("product.stockQuantity")}</label>
                   <input 
                     type="number" 
                     min={0}
@@ -1318,14 +1365,14 @@ export default function App() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Status</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">{t("common.status")}</label>
                   <select 
                     value={prodStatus}
                     onChange={(e) => setProdStatus(e.target.value as "Active" | "Inactive")}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
+                    <option value="Active">{statusLabel("Active")}</option>
+                    <option value="Inactive">{statusLabel("Inactive")}</option>
                   </select>
                 </div>
               </div>
@@ -1336,13 +1383,13 @@ export default function App() {
                   onClick={() => setEditingProduct(null)}
                   className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <button 
                   type="submit"
                   className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
                 >
-                  Update Product
+                  {t("product.update")}
                 </button>
               </div>
             </form>
@@ -1359,7 +1406,7 @@ export default function App() {
                 <h3 className="text-xl font-bold text-black">{viewingProduct.name}</h3>
                 <p className="text-xs text-black font-mono">{viewingProduct.code}</p>
               </div>
-              <button onClick={() => setViewingProduct(null)} className="p-1 text-black hover:text-black rounded-lg">
+              <button aria-label={t("common.closeDialog")} onClick={() => setViewingProduct(null)} className="p-1 text-black hover:text-black rounded-lg">
                 <X size={20} />
               </button>
             </div>
@@ -1370,39 +1417,39 @@ export default function App() {
 
               <div className="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
                 <div>
-                  <p className="text-xs font-bold text-black uppercase">Selling Price</p>
+                  <p className="text-xs font-bold text-black uppercase">{t("product.sellingPrice")}</p>
                   <p className="text-xl font-extrabold text-black">₹{viewingProduct.sellingPrice}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-black uppercase">MRP (Actual Price)</p>
+                  <p className="text-xs font-bold text-black uppercase">{t("product.mrp")}</p>
                   <p className="text-lg font-bold text-black line-through">₹{viewingProduct.actualPrice}</p>
                 </div>
                 {viewingProduct.actualPrice > viewingProduct.sellingPrice && (
                   <div className="col-span-2 pt-2 border-t border-gray-200 flex justify-between text-xs font-bold text-green-700">
-                    <span>Discount Offer:</span>
-                    <span>Save ₹{viewingProduct.actualPrice - viewingProduct.sellingPrice} ({Math.round(((viewingProduct.actualPrice - viewingProduct.sellingPrice) / viewingProduct.actualPrice) * 100)}% OFF)</span>
+                    <span>{t("product.discountOffer")}</span>
+                    <span>{t("product.saveAmount", { amount: viewingProduct.actualPrice - viewingProduct.sellingPrice, percent: Math.round(((viewingProduct.actualPrice - viewingProduct.sellingPrice) / viewingProduct.actualPrice) * 100) })}</span>
                   </div>
                 )}
               </div>
 
               <div className="space-y-2 text-sm font-semibold">
                 <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-black">Category:</span>
+                  <span className="text-black">{t("common.category")}:</span>
                   <span className="font-bold text-black">{viewingProduct.category}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-black">Stock Quantity:</span>
-                  <span className="font-bold text-black">{viewingProduct.stock} units</span>
+                  <span className="text-black">{t("product.stockQuantity")}:</span>
+                  <span className="font-bold text-black">{viewingProduct.stock} {t("product.units")}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-black">Availability:</span>
+                  <span className="text-black">{t("product.availability")}</span>
                   <span className={`font-bold ${viewingProduct.stock === 0 ? 'text-red-600' : viewingProduct.stock < 10 ? 'text-yellow-600' : 'text-green-600'}`}>
-                    {viewingProduct.stock === 0 ? 'Out of Stock' : viewingProduct.stock < 10 ? 'Low Stock' : 'In Stock'}
+                    {viewingProduct.stock === 0 ? t("stock.out") : viewingProduct.stock < 10 ? t("stock.low") : t("stock.in")}
                   </span>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-black">Catalog Status:</span>
-                  <span className={`font-bold ${viewingProduct.status === 'Active' ? 'text-green-600' : 'text-black'}`}>{viewingProduct.status}</span>
+                  <span className="text-black">{t("product.catalogStatus")}</span>
+                  <span className={`font-bold ${viewingProduct.status === 'Active' ? 'text-green-600' : 'text-black'}`}>{statusLabel(viewingProduct.status)}</span>
                 </div>
               </div>
 
@@ -1411,7 +1458,7 @@ export default function App() {
                   onClick={() => setViewingProduct(null)}
                   className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-lg transition-colors"
                 >
-                  Close Overview
+                  {t("product.closeOverview")}
                 </button>
               </div>
             </div>
@@ -1426,22 +1473,22 @@ export default function App() {
             <div className="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
               <Trash2 size={28} />
             </div>
-            <h3 className="text-xl font-bold text-black">Delete Product?</h3>
+            <h3 className="text-xl font-bold text-black">{t("product.deleteTitle")}</h3>
             <p className="text-base text-black font-medium">
-              Are you sure you want to delete <span className="font-bold text-black">"{deletingProduct.name}"</span>? This will remove it from the catalog.
+              {t("product.deleteConfirm", { name: deletingProduct.name })}
             </p>
             <div className="pt-2 flex justify-center gap-3">
               <button 
                 onClick={() => setDeletingProduct(null)}
                 className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button 
                 onClick={handleConfirmDeleteProduct}
                 className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
               >
-                Delete Product
+                {t("product.deleteAction")}
               </button>
             </div>
           </div>
@@ -1458,11 +1505,11 @@ export default function App() {
         <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">Product Categories</h2>
-              <p className="text-xs font-medium text-black">Organize fireworks catalog into structured store categories</p>
+              <h2 className="text-lg font-extrabold text-black leading-tight">{t("category.title")}</h2>
+              <p className="text-xs font-medium text-black">{t("category.description")}</p>
             </div>
             <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
-              {categoriesList.length} categories
+              {t("common.categoryCount", { count: categoriesList.length })}
             </span>
           </div>
 
@@ -1474,11 +1521,11 @@ export default function App() {
                 type="text" 
                 value={categorySearch}
                 onChange={(e) => setCategorySearch(e.target.value)}
-                placeholder="Search category or slug..." 
+                placeholder={t("category.search")}
                 className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
               />
               {categorySearch && (
-                <button onClick={() => setCategorySearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
+                <button aria-label={t("common.clearSearch")} onClick={() => setCategorySearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
                   <X size={14} />
                 </button>
               )}
@@ -1490,7 +1537,7 @@ export default function App() {
               className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap"
             >
               <Plus size={16} />
-              <span>Add Category</span>
+              <span>{t("category.add")}</span>
             </button>
           </div>
         </div>
@@ -1500,12 +1547,12 @@ export default function App() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
-                <th className="py-3.5 px-5">Category Name</th>
-                <th className="py-3.5 px-5">Slug Route</th>
-                <th className="py-3.5 px-5 text-center">Product Count</th>
-                <th className="py-3.5 px-5 text-center">Sort Order</th>
-                <th className="py-3.5 px-5 text-center">Status</th>
-                <th className="py-3.5 px-5 text-right">Actions</th>
+                <th className="py-3.5 px-5">{t("category.name")}</th>
+                <th className="py-3.5 px-5">{t("category.slug")}</th>
+                <th className="py-3.5 px-5 text-center">{t("category.productCount")}</th>
+                <th className="py-3.5 px-5 text-center">{t("category.sortOrder")}</th>
+                <th className="py-3.5 px-5 text-center">{t("common.status")}</th>
+                <th className="py-3.5 px-5 text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
@@ -1514,8 +1561,8 @@ export default function App() {
                   <td colSpan={6} className="py-12 text-center">
                     <div className="max-w-md mx-auto space-y-2">
                       <Layers size={40} className="mx-auto text-black" />
-                      <h3 className="text-base font-bold text-black">No categories found</h3>
-                      <p className="text-xs text-black font-medium">Try searching for a different keyword or create a new category.</p>
+                      <h3 className="text-base font-bold text-black">{t("category.noResults")}</h3>
+                      <p className="text-xs text-black font-medium">{t("category.noResultsDescription")}</p>
                     </div>
                   </td>
                 </tr>
@@ -1528,7 +1575,7 @@ export default function App() {
                       <td className="py-3.5 px-5 text-black font-mono text-xs">/{c.slug}</td>
                       <td className="py-3.5 px-5 text-center">
                         <span className="px-2.5 py-0.5 bg-slate-100 text-black text-xs font-bold rounded-full border border-slate-200">
-                          {count} products
+                          {t("common.productCount", { count })}
                         </span>
                       </td>
                       <td className="py-3.5 px-5 text-center">
@@ -1537,7 +1584,7 @@ export default function App() {
                             type="button"
                             disabled={index === 0}
                             onClick={() => handleMoveCategorySort(c.id, "up")} 
-                            title="Move 1 step up"
+                            title={t("category.moveUp")}
                             className="p-1 text-black hover:text-black hover:bg-white rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                           >
                             <ArrowUp size={13} />
@@ -1548,13 +1595,13 @@ export default function App() {
                             value={c.sort}
                             onChange={(e) => handleDirectSortChange(c.id, Number(e.target.value))}
                             className="w-10 text-center font-extrabold text-xs bg-transparent outline-none border-b border-transparent focus:border-blue-600 focus:bg-white rounded text-black"
-                            title="Type sort number directly"
+                            title={t("category.sortDirect")}
                           />
                           <button 
                             type="button"
                             disabled={index === filteredCategories.length - 1}
                             onClick={() => handleMoveCategorySort(c.id, "down")} 
-                            title="Move 1 step down"
+                            title={t("category.moveDown")}
                             className="p-1 text-black hover:text-black hover:bg-white rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                           >
                             <ArrowDown size={13} />
@@ -1564,7 +1611,7 @@ export default function App() {
                       <td className="py-3.5 px-5 text-center">
                         <button
                           onClick={() => handleToggleCategoryStatus(c.id)}
-                          title="Click to toggle status"
+                          title={t("category.toggleStatus")}
                           className={`inline-flex items-center justify-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
                             c.status === "Active" 
                               ? "text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100" 
@@ -1572,21 +1619,21 @@ export default function App() {
                           }`}
                         >
                           <span className={`w-1.5 h-1.5 rounded-full ${c.status === "Active" ? "bg-emerald-500" : "bg-slate-400"}`}></span>
-                          <span>{c.status}</span>
+                          <span>{statusLabel(c.status)}</span>
                         </button>
                       </td>
                       <td className="py-3.5 px-5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button 
                             onClick={() => handleOpenEditCategory(c)}
-                            title="Edit Category"
+                            title={t("category.editAction")}
                             className="p-1.5 text-black hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
                             onClick={() => setDeletingCategory(c)}
-                            title="Delete Category"
+                            title={t("category.deleteAction")}
                             className="p-1.5 text-black hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Trash2 size={16} />
@@ -1607,42 +1654,44 @@ export default function App() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
             <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-black">Add New Category</h3>
-              <button onClick={() => setIsAddCategoryOpen(false)} className="p-1 text-black hover:text-black rounded-lg">
+              <h3 className="text-xl font-bold text-black">{t("category.addTitle")}</h3>
+              <button aria-label={t("common.closeDialog")} onClick={() => setIsAddCategoryOpen(false)} className="p-1 text-black hover:text-black rounded-lg">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleSaveAddCategory} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-black mb-1">Category Name *</label>
+                <label className="block text-sm font-bold text-black mb-1">{t("category.name")} *</label>
                 <input 
                   type="text" 
-                  required 
+                  required
+                  onInvalid={(event) => event.currentTarget.setCustomValidity(t("validation.required"))}
+                  onInput={(event) => event.currentTarget.setCustomValidity("")}
                   value={catName}
                   onChange={(e) => handleCategoryNameChange(e.target.value)}
-                  placeholder="e.g. Combo Packs"
+                  placeholder={t("category.nameExample")}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-black mb-1">Category Slug</label>
+                <label className="block text-sm font-bold text-black mb-1">{t("category.slugName")}</label>
                 <div className="relative flex items-center">
                   <span className="absolute left-3 text-black font-bold font-mono">/</span>
                   <input 
                     type="text" 
                     value={catSlug}
                     onChange={(e) => setCatSlug(e.target.value)}
-                    placeholder="combo-packs"
+                    placeholder={t("category.slugExample")}
                     className="w-full pl-7 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
-                <p className="text-xs text-black mt-1 font-medium">Auto-generated slug used in store URLs</p>
+                <p className="text-xs text-black mt-1 font-medium">{t("category.slugDescription")}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-black mb-1">Sort Order</label>
+                  <label className="block text-sm font-bold text-black mb-1">{t("category.sortOrder")}</label>
                   <input 
                     type="number" 
                     min={1}
@@ -1653,14 +1702,14 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-black mb-1">Status</label>
+                  <label className="block text-sm font-bold text-black mb-1">{t("common.status")}</label>
                   <select 
                     value={catStatus}
                     onChange={(e) => setCatStatus(e.target.value as "Active" | "Inactive")}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
+                    <option value="Active">{statusLabel("Active")}</option>
+                    <option value="Inactive">{statusLabel("Inactive")}</option>
                   </select>
                 </div>
               </div>
@@ -1671,13 +1720,13 @@ export default function App() {
                   onClick={() => setIsAddCategoryOpen(false)}
                   className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <button 
                   type="submit"
                   className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
                 >
-                  Save Category
+                  {t("category.save")}
                 </button>
               </div>
             </form>
@@ -1690,17 +1739,19 @@ export default function App() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
             <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-black">Edit Category</h3>
-              <button onClick={() => setEditingCategory(null)} className="p-1 text-black hover:text-black rounded-lg">
+              <h3 className="text-xl font-bold text-black">{t("category.updateTitle")}</h3>
+              <button aria-label={t("common.closeDialog")} onClick={() => setEditingCategory(null)} className="p-1 text-black hover:text-black rounded-lg">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleSaveEditCategory} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-black mb-1">Category Name *</label>
+                <label className="block text-sm font-bold text-black mb-1">{t("category.name")} *</label>
                 <input 
                   type="text" 
-                  required 
+                  required
+                  onInvalid={(event) => event.currentTarget.setCustomValidity(t("validation.required"))}
+                  onInput={(event) => event.currentTarget.setCustomValidity("")}
                   value={catName}
                   onChange={(e) => setCatName(e.target.value)}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
@@ -1708,7 +1759,7 @@ export default function App() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-black mb-1">Category Slug</label>
+                <label className="block text-sm font-bold text-black mb-1">{t("category.slugName")}</label>
                 <div className="relative flex items-center">
                   <span className="absolute left-3 text-black font-bold font-mono">/</span>
                   <input 
@@ -1722,7 +1773,7 @@ export default function App() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-black mb-1">Sort Order</label>
+                  <label className="block text-sm font-bold text-black mb-1">{t("category.sortOrder")}</label>
                   <input 
                     type="number" 
                     min={1}
@@ -1733,14 +1784,14 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-black mb-1">Status</label>
+                  <label className="block text-sm font-bold text-black mb-1">{t("common.status")}</label>
                   <select 
                     value={catStatus}
                     onChange={(e) => setCatStatus(e.target.value as "Active" | "Inactive")}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
+                    <option value="Active">{statusLabel("Active")}</option>
+                    <option value="Inactive">{statusLabel("Inactive")}</option>
                   </select>
                 </div>
               </div>
@@ -1751,13 +1802,13 @@ export default function App() {
                   onClick={() => setEditingCategory(null)}
                   className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <button 
                   type="submit"
                   className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
                 >
-                  Update Category
+                  {t("category.update")}
                 </button>
               </div>
             </form>
@@ -1772,22 +1823,22 @@ export default function App() {
             <div className="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
               <Trash2 size={28} />
             </div>
-            <h3 className="text-xl font-bold text-black">Delete Category?</h3>
+            <h3 className="text-xl font-bold text-black">{t("category.deleteTitle")}</h3>
             <p className="text-base text-black font-medium">
-              Are you sure you want to delete <span className="font-bold text-black">"{deletingCategory.name}"</span>? This will remove it from category selections across your catalog.
+              {t("category.deleteConfirm", { name: deletingCategory.name })}
             </p>
             <div className="pt-2 flex justify-center gap-3">
               <button 
                 onClick={() => setDeletingCategory(null)}
                 className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button 
                 onClick={handleConfirmDeleteCategory}
                 className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
               >
-                Delete Category
+                {t("category.deleteAction")}
               </button>
             </div>
           </div>
@@ -1804,11 +1855,11 @@ export default function App() {
         <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">Order Management</h2>
-              <p className="text-xs font-medium text-black">Track customer purchases, fulfillment status, and invoice summaries</p>
+              <h2 className="text-lg font-extrabold text-black leading-tight">{t("order.title")}</h2>
+              <p className="text-xs font-medium text-black">{t("order.description")}</p>
             </div>
             <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
-              {filteredOrders.length} orders
+              {t("common.orderCount", { count: filteredOrders.length })}
             </span>
           </div>
 
@@ -1820,11 +1871,11 @@ export default function App() {
                 type="text" 
                 value={orderSearch}
                 onChange={(e) => { setOrderSearch(e.target.value); setOrderCurrentPage(1); }}
-                placeholder="Search order, customer or phone..." 
+                placeholder={t("order.search")}
                 className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
               />
               {orderSearch && (
-                <button onClick={() => { setOrderSearch(""); setOrderCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
+                <button aria-label={t("common.clearSearch")} onClick={() => { setOrderSearch(""); setOrderCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
                   <X size={14} />
                 </button>
               )}
@@ -1837,13 +1888,13 @@ export default function App() {
                 onChange={(e) => { setOrderStatusFilter(e.target.value); setOrderCurrentPage(1); }}
                 className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
               >
-                <option value="All">All Order Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Processing">Processing</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">Delivered</option>
-                <option value="Cancelled">Cancelled</option>
+                <option value="All">{t("order.allStatuses")}</option>
+                <option value="Pending">{statusLabel("Pending")}</option>
+                <option value="Processing">{statusLabel("Processing")}</option>
+                <option value="Confirmed">{statusLabel("Confirmed")}</option>
+                <option value="Shipped">{statusLabel("Shipped")}</option>
+                <option value="Delivered">{statusLabel("Delivered")}</option>
+                <option value="Cancelled">{statusLabel("Cancelled")}</option>
               </select>
               <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
@@ -1855,11 +1906,11 @@ export default function App() {
                 onChange={(e) => { setPaymentStatusFilter(e.target.value); setOrderCurrentPage(1); }}
                 className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
               >
-                <option value="All">All Payment Statuses</option>
-                <option value="Paid">Paid</option>
-                <option value="Pending">Pending</option>
-                <option value="Failed">Failed</option>
-                <option value="Refunded">Refunded</option>
+                <option value="All">{t("order.allPayments")}</option>
+                <option value="Paid">{statusLabel("Paid")}</option>
+                <option value="Pending">{statusLabel("Pending")}</option>
+                <option value="Failed">{statusLabel("Failed")}</option>
+                <option value="Refunded">{statusLabel("Refunded")}</option>
               </select>
               <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
@@ -1871,14 +1922,14 @@ export default function App() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
-                <th className="py-3.5 px-5">Order ID</th>
-                <th className="py-3.5 px-5">Customer & Phone</th>
-                <th className="py-3.5 px-5 text-center">Items</th>
-                <th className="py-3.5 px-5">Total</th>
-                <th className="py-3.5 px-5">Payment</th>
-                <th className="py-3.5 px-5">Fulfillment Status</th>
-                <th className="py-3.5 px-5">Date</th>
-                <th className="py-3.5 px-5 text-right">Actions</th>
+                <th className="py-3.5 px-5">{t("order.id")}</th>
+                <th className="py-3.5 px-5">{t("order.customerPhone")}</th>
+                <th className="py-3.5 px-5 text-center">{t("order.items")}</th>
+                <th className="py-3.5 px-5">{t("common.total")}</th>
+                <th className="py-3.5 px-5">{t("common.payment")}</th>
+                <th className="py-3.5 px-5">{t("order.fulfillment")}</th>
+                <th className="py-3.5 px-5">{t("common.date")}</th>
+                <th className="py-3.5 px-5 text-right">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
@@ -1887,15 +1938,15 @@ export default function App() {
                   <td colSpan={8} className="py-12 text-center">
                     <div className="max-w-md mx-auto space-y-2">
                       <ShoppingCart size={40} className="mx-auto text-black" />
-                      <h3 className="text-base font-bold text-black">No orders found</h3>
+                      <h3 className="text-base font-bold text-black">{t("order.noResults")}</h3>
                       <p className="text-xs text-black">
-                        No orders match your filter criteria or search. Try clearing filters or searching for another customer name.
+                        {t("order.noResultsDescription")}
                       </p>
                       <button 
                         onClick={() => { setOrderSearch(""); setOrderStatusFilter("All"); setPaymentStatusFilter("All"); setOrderCurrentPage(1); }}
                         className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-lg transition-colors inline-block cursor-pointer"
                       >
-                        Clear Order Filters
+                        {t("order.clearFilters")}
                       </button>
                     </div>
                   </td>
@@ -1919,7 +1970,7 @@ export default function App() {
                         o.payment === 'Paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
                         o.payment === 'Failed' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200'
                       }`}>
-                        {o.payment}
+                        {statusLabel(o.payment)}
                       </span>
                     </td>
                     <td className="py-3.5 px-5">
@@ -1935,12 +1986,12 @@ export default function App() {
                             o.status === 'Cancelled' ? 'bg-rose-50 text-rose-800 border-rose-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                           }`}
                         >
-                          <option value="Pending">Pending</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Confirmed">Confirmed</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Delivered">Delivered</option>
-                          <option value="Cancelled">Cancelled</option>
+                          <option value="Pending">{statusLabel("Pending")}</option>
+                          <option value="Processing">{statusLabel("Processing")}</option>
+                          <option value="Confirmed">{statusLabel("Confirmed")}</option>
+                          <option value="Shipped">{statusLabel("Shipped")}</option>
+                          <option value="Delivered">{statusLabel("Delivered")}</option>
+                          <option value="Cancelled">{statusLabel("Cancelled")}</option>
                         </select>
                         <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-current opacity-70" />
                       </div>
@@ -1951,7 +2002,7 @@ export default function App() {
                         onClick={() => setSelectedOrder(o)}
                         className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold text-xs rounded-xl border border-blue-200 transition-all cursor-pointer inline-flex items-center gap-1"
                       >
-                        <span>View Details</span>
+                        <span>{t("order.viewDetails")}</span>
                         <ChevronRight size={14} />
                       </button>
                     </td>
@@ -1966,7 +2017,7 @@ export default function App() {
         {filteredOrders.length > 0 && (
           <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4">
             <p className="text-sm font-bold text-black">
-              Showing <span className="text-black">{(orderCurrentPage - 1) * ordersPerPage + 1}</span> to <span className="text-black">{Math.min(orderCurrentPage * ordersPerPage, filteredOrders.length)}</span> of <span className="text-black">{filteredOrders.length}</span> orders
+              {t("common.showingRange", { start: (orderCurrentPage - 1) * ordersPerPage + 1, end: Math.min(orderCurrentPage * ordersPerPage, filteredOrders.length), count: filteredOrders.length, items: t("common.ordersCount") })}
             </p>
             <div className="flex items-center gap-2">
               <button 
@@ -1975,7 +2026,7 @@ export default function App() {
                 className="p-2 border border-gray-300 rounded-lg text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-colors flex items-center gap-1 text-black"
               >
                 <ChevronLeft size={16} />
-                <span>Prev</span>
+                <span>{t("common.prev")}</span>
               </button>
               {Array.from({ length: totalOrderPages }, (_, i) => i + 1).map(page => (
                 <button
@@ -1991,7 +2042,7 @@ export default function App() {
                 onClick={() => setOrderCurrentPage(p => Math.min(p + 1, totalOrderPages))}
                 className="p-2 border border-gray-300 rounded-lg text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-colors flex items-center gap-1 text-black"
               >
-                <span>Next</span>
+                <span>{t("common.next")}</span>
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -2007,7 +2058,7 @@ export default function App() {
             <div className="p-6 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-3 mb-1">
-                  <h3 className="text-2xl font-extrabold text-black">Order #{selectedOrder.id}</h3>
+                  <h3 className="text-2xl font-extrabold text-black">{t("order.detailsTitle", { id: selectedOrder.id })}</h3>
                   <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
                     selectedOrder.status === 'Processing' ? 'bg-yellow-50 text-yellow-800 border-yellow-200' :
                     selectedOrder.status === 'Pending' ? 'bg-orange-50 text-orange-800 border-orange-200' :
@@ -2015,10 +2066,10 @@ export default function App() {
                     selectedOrder.status === 'Delivered' ? 'bg-green-50 text-green-800 border-green-200' :
                     selectedOrder.status === 'Cancelled' ? 'bg-red-50 text-red-800 border-red-200' : 'bg-green-50 text-green-800 border-green-200'
                   }`}>
-                    {selectedOrder.status}
+                    {statusLabel(selectedOrder.status)}
                   </span>
                 </div>
-                <p className="text-sm font-semibold text-black">Placed on {selectedOrder.date} • Last updated: {selectedOrder.updatedAt}</p>
+                <p className="text-sm font-semibold text-black">{t("order.placedOn", { date: selectedOrder.date, updatedAt: selectedOrder.updatedAt })}</p>
               </div>
 
               <div className="flex items-center gap-3">
@@ -2028,10 +2079,11 @@ export default function App() {
                   className="px-4 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2"
                 >
                   <Printer size={18} />
-                  <span>Download Summary PDF</span>
+                  <span>{t("order.downloadPdf")}</span>
                 </button>
                 <button 
                   onClick={() => setSelectedOrder(null)}
+                  aria-label={t("common.closeDialog")}
                   className="p-2 text-black hover:text-black rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   <X size={24} />
@@ -2048,41 +2100,41 @@ export default function App() {
                     <Truck size={20} />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-black">Update Order & Payment Status</p>
-                    <p className="text-xs text-black font-medium">Changes take effect live across the dashboard</p>
+                    <p className="text-sm font-bold text-black">{t("order.updateStatus")}</p>
+                    <p className="text-xs text-black font-medium">{t("order.liveChanges")}</p>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
                   {/* Change Order Status */}
                   <div className="flex items-center gap-2">
-                    <label className="text-xs font-bold text-black uppercase">Status:</label>
+                    <label className="text-xs font-bold text-black uppercase">{t("common.status")}:</label>
                     <select 
                       value={selectedOrder.status}
                       onChange={(e) => handleUpdateOrderStatus(selectedOrder.id, e.target.value as Order["status"])}
                       className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] outline-none cursor-pointer"
                     >
-                      <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
-                      <option value="Confirmed">Confirmed</option>
-                      <option value="Shipped">Shipped</option>
-                      <option value="Delivered">Delivered</option>
-                      <option value="Cancelled">Cancelled</option>
+                      <option value="Pending">{statusLabel("Pending")}</option>
+                      <option value="Processing">{statusLabel("Processing")}</option>
+                      <option value="Confirmed">{statusLabel("Confirmed")}</option>
+                      <option value="Shipped">{statusLabel("Shipped")}</option>
+                      <option value="Delivered">{statusLabel("Delivered")}</option>
+                      <option value="Cancelled">{statusLabel("Cancelled")}</option>
                     </select>
                   </div>
 
                   {/* Change Payment Status */}
                   <div className="flex items-center gap-2">
-                    <label className="text-xs font-bold text-black uppercase">Payment:</label>
+                    <label className="text-xs font-bold text-black uppercase">{t("common.payment")}:</label>
                     <select 
                       value={selectedOrder.payment}
                       onChange={(e) => handleUpdatePaymentStatus(selectedOrder.id, e.target.value as Order["payment"])}
                       className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] outline-none cursor-pointer"
                     >
-                      <option value="Paid">Paid</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Failed">Failed</option>
-                      <option value="Refunded">Refunded</option>
+                      <option value="Paid">{statusLabel("Paid")}</option>
+                      <option value="Pending">{statusLabel("Pending")}</option>
+                      <option value="Failed">{statusLabel("Failed")}</option>
+                      <option value="Refunded">{statusLabel("Refunded")}</option>
                     </select>
                   </div>
                 </div>
@@ -2093,7 +2145,7 @@ export default function App() {
                 <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
                   <div className="flex items-center gap-2 text-[#0000FF] font-bold text-sm uppercase tracking-wider">
                     <User size={18} />
-                    <span>Customer Information</span>
+                    <span>{t("order.customerInfo")}</span>
                   </div>
                   <div>
                     <p className="text-lg font-bold text-black">{selectedOrder.customer}</p>
@@ -2111,7 +2163,7 @@ export default function App() {
                 <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
                   <div className="flex items-center gap-2 text-[#0000FF] font-bold text-sm uppercase tracking-wider">
                     <MapPin size={18} />
-                    <span>Delivery Address</span>
+                    <span>{t("order.deliveryAddress")}</span>
                   </div>
                   <p className="text-base font-semibold text-black leading-relaxed">
                     {selectedOrder.address}<br/>
@@ -2122,16 +2174,16 @@ export default function App() {
 
               {/* Ordered Items Breakdown */}
               <div className="space-y-3">
-                <h4 className="text-lg font-bold text-black">Ordered Crackers Breakdown</h4>
+                <h4 className="text-lg font-bold text-black">{t("order.itemsBreakdown")}</h4>
                 <div className="border border-gray-200 rounded-xl overflow-hidden">
                   <table className="w-full text-left">
                     <thead className="bg-gray-50 border-b border-gray-200 text-xs font-bold text-black uppercase">
                       <tr>
                         <th className="py-3 px-4">#</th>
-                        <th className="py-3 px-4">Item Code & Name</th>
-                        <th className="py-3 px-4 text-center">Qty</th>
-                        <th className="py-3 px-4 text-right">Unit Price</th>
-                        <th className="py-3 px-4 text-right">Total Price</th>
+                        <th className="py-3 px-4">{t("order.itemCodeName")}</th>
+                        <th className="py-3 px-4 text-center">{t("order.quantity")}</th>
+                        <th className="py-3 px-4 text-right">{t("order.unitPrice")}</th>
+                        <th className="py-3 px-4 text-right">{t("order.totalPrice")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 text-sm font-semibold text-black">
@@ -2157,28 +2209,28 @@ export default function App() {
                 <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-3">
                   <CreditCard size={24} className="text-[#0000FF]" />
                   <div>
-                    <p className="text-xs font-bold text-black uppercase">Payment Method</p>
+                    <p className="text-xs font-bold text-black uppercase">{t("order.paymentMethod")}</p>
                     <p className="text-base font-bold text-black">{selectedOrder.paymentMethod}</p>
                   </div>
                 </div>
 
                 <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-2">
                   <div className="flex justify-between text-sm font-semibold text-black">
-                    <span>Items Subtotal</span>
+                    <span>{t("order.itemsSubtotal")}</span>
                     <span className="text-black font-bold">₹{selectedOrder.subtotal}</span>
                   </div>
                   {selectedOrder.discount > 0 && (
                     <div className="flex justify-between text-sm font-semibold text-green-600">
-                      <span>Discount Applied</span>
+                      <span>{t("order.discountApplied")}</span>
                       <span className="font-bold">-₹{selectedOrder.discount}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm font-semibold text-black">
-                    <span>Delivery Charges</span>
+                    <span>{t("order.deliveryCharges")}</span>
                     <span className="text-black font-bold">₹{selectedOrder.deliveryFee}</span>
                   </div>
                   <div className="pt-3 border-t border-gray-300 flex justify-between items-center text-lg font-extrabold text-black">
-                    <span>Grand Total</span>
+                    <span>{t("order.grandTotal")}</span>
                     <span className="text-2xl text-[#0000FF]">₹{selectedOrder.total}</span>
                   </div>
                 </div>
@@ -2191,7 +2243,7 @@ export default function App() {
                 onClick={() => setSelectedOrder(null)}
                 className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-lg transition-colors"
               >
-                Close Window
+                {t("order.closeWindow")}
               </button>
             </div>
           </div>
@@ -2210,8 +2262,8 @@ export default function App() {
       default: return (
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-black mb-2">Coming Soon</h2>
-            <p className="text-lg font-semibold text-black">This section is part of the prototype and will be fully functional soon.</p>
+            <h2 className="text-2xl font-bold text-black mb-2">{t("route.comingSoon")}</h2>
+            <p className="text-lg font-semibold text-black">{t("route.prototype")}</p>
           </div>
         </div>
       );
@@ -2219,11 +2271,11 @@ export default function App() {
   };
 
   const getHeaderTitles = () => {
-    if (currentRoute === "/admin") return { title: "Dashboard", sub: "Dashboard" };
-    if (currentRoute === "/admin/products") return { title: "Products", sub: "Admin / Products" };
-    if (currentRoute === "/admin/categories") return { title: "Categories", sub: "Admin / Categories" };
-    if (currentRoute === "/admin/orders") return { title: "Orders", sub: "Admin / Orders" };
-    return { title: "Admin Portal", sub: "Admin" };
+    if (currentRoute === "/admin") return { title: t("common.dashboard"), sub: t("common.dashboard") };
+    if (currentRoute === "/admin/products") return { title: t("common.products"), sub: `${t("nav.admin")} / ${t("common.products")}` };
+    if (currentRoute === "/admin/categories") return { title: t("common.categories"), sub: `${t("nav.admin")} / ${t("common.categories")}` };
+    if (currentRoute === "/admin/orders") return { title: t("common.orders"), sub: `${t("nav.admin")} / ${t("common.orders")}` };
+    return { title: t("header.adminPortal"), sub: t("nav.admin") };
   };
 
   const headers = getHeaderTitles();
