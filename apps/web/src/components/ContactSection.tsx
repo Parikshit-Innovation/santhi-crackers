@@ -165,11 +165,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
         {/* Store Information Section */}
         <section className="contact-details-section">
           <div className="contact-details-header">
-            <div className="contact-details-badge">{t("Official Store & Depot")}</div>
-            <h2 className="contact-store-name">{t("Santhi Sivakasi Crackers")}</h2>
+            <div className="contact-details-badge">{t("Official Store")}</div>
+            <h2 className="contact-store-name">{t("Shanthi Sivakasi Crackers")}</h2>
             <p className="contact-store-desc">
               {t(
-                "Visit our Sivakasi wholesale store or reach out via phone, WhatsApp, and email for bulk inquiries & orders.",
+                "Visit our store or contact us via phone, WhatsApp, or email for bulk enquiries and orders.",
               )}
             </p>
           </div>
@@ -202,51 +202,52 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
               </div>
 
               <div className="contact-branches-list">
-                <div className="contact-branch-box">
-                  <span className="contact-branch-badge">{t("Branch 1")}</span>
+                <a
+                  href="https://maps.google.com/?q=15A,+College+Division,+Karattupalyam,+Gobichettipalayam"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-branch-box"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                  title={t("View Branch 1 on Google Maps")}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span className="contact-branch-badge">{t("Branch 1")}</span>
+                    <span style={{ fontSize: "12px", color: "var(--primary-blue, #0433ff)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      {t("View Map")}
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="7" y1="17" x2="17" y2="7" />
+                        <polyline points="7 7 17 7 17 17" />
+                      </svg>
+                    </span>
+                  </div>
                   <p className="contact-branch-text">
                     {t("15A, College Division, Karattupalyam, Gobichettipalayam.")}
                   </p>
-                </div>
+                </a>
 
-                <div className="contact-branch-box">
-                  <span className="contact-branch-badge">{t("Branch 2")}</span>
+                <a
+                  href="https://maps.google.com/?q=1/1,+Kalingiyam+Main+Road,+Kalingiyam,+Gobichettipalayam"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-branch-box"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                  title={t("View Branch 2 on Google Maps")}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span className="contact-branch-badge">{t("Branch 2")}</span>
+                    <span style={{ fontSize: "12px", color: "var(--primary-blue, #0433ff)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      {t("View Map")}
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="7" y1="17" x2="17" y2="7" />
+                        <polyline points="7 7 17 7 17 17" />
+                      </svg>
+                    </span>
+                  </div>
                   <p className="contact-branch-text">
                     {t("1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.")}
                   </p>
-                </div>
+                </a>
               </div>
-
-              <a
-                href="https://maps.google.com/?q=1/1,+Kalingiyam+Main+Road,+Kalingiyam,+Gobichettipalayam"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-map-link"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="16"
-                  height="16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                <span>{t("View on Google Maps")}</span>
-                <svg
-                  viewBox="0 0 24 24"
-                  width="14"
-                  height="14"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <line x1="7" y1="17" x2="17" y2="7" />
-                  <polyline points="7 7 17 7 17 17" />
-                </svg>
-              </a>
             </div>
 
             {/* 2. Phone, WhatsApp & Email Inquiries Card */}
@@ -401,7 +402,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
           <div className="contact-faq-accordion">
             <div className="contact-faq-item">
               <h4 className="contact-faq-q">
-                {t("Where is Santhi Crackers located?")}
+                {t("Where is Shanthi Crackers located?")}
               </h4>
               <p className="contact-faq-a">
                 {t("We have two branches in Gobichettipalayam:")}
