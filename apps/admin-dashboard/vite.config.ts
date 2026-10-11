@@ -9,6 +9,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
+      "@repo/crackers": path.resolve(import.meta.dirname, "../../packages/crackers"),
+      "@crackers": path.resolve(import.meta.dirname, "../../packages/crackers"),
     },
   },
 
@@ -17,6 +19,13 @@ export default defineConfig({
     port: 5001,
 
     allowedHosts: ["untolerative-len-rumblingly.ngrok-free.dev"],
+
+    proxy: {
+      "/api": {
+        target: "http://localhost:3007",
+        changeOrigin: true,
+      },
+    },
 
     hmr: {
       protocol: "wss",

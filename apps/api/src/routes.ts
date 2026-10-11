@@ -2,12 +2,16 @@ import Router from "express";
 import {
   createCategory,
   createProduct,
+  createQuery,
+  deleteProduct,
   getCart,
   getCategories,
   getCategoryBySlug,
   getCrackersData,
   getProductById,
-  // getProducts,
+  getQueries,
+  handleContactForm,
+  updateProduct,
 } from "./controller.js";
 import { corsMiddleware } from "./utils.js";
 
@@ -17,11 +21,28 @@ router.use(corsMiddleware);
 
 router.get("/products", getCrackersData);
 router.post("/product", createProduct);
-// router.get("/products", getProducts);
+// router.post("/products", createProduct);
+
 router.get("/product/:id", getProductById);
+router.get("/products/:id", getProductById);
+
+router.put("/product/:id", updateProduct);
+router.put("/products/:id", updateProduct);
+router.patch("/product/:id", updateProduct);
+router.patch("/products/:id", updateProduct);
+
+router.delete("/product/:id", deleteProduct);
+router.delete("/products/:id", deleteProduct);
+
 router.get("/categories", getCategories);
 router.get("/categories/:slug", getCategoryBySlug);
 router.post("/categories", createCategory);
 router.get("/cart", getCart);
+
+// Contact / Mail / Queries APIs
+router.post("/contact", handleContactForm);
+router.post("/send-email", handleContactForm);
+router.post("/queries", createQuery);
+router.get("/queries", getQueries);
 
 export default router;

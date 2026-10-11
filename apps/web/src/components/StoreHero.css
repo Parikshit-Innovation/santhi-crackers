@@ -33,3 +33,27 @@
   object-fit: cover;
   user-select: none;
 }
+
+/* Mobile View Alone - Substantially increase hero section height and prominence */
+@media (max-width: 840px) {
+  .store-hero-card {
+    height: clamp(280px, 72vw, 360px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .store-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+}
+
+@media (max-width: 480px) {
+  .store-hero-card {
+    height: clamp(270px, 76vw, 340px);
+  }
+}
+

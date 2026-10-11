@@ -12,7 +12,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": false,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "paths": {
+      "@repo/crackers": ["../../packages/crackers/index.ts"],
+      "@repo/crackers/*": ["../../packages/crackers/*"],
+      "@crackers": ["../../packages/crackers/index.ts"],
+      "@crackers/*": ["../../packages/crackers/*"]
+    }
   },
   "include": ["src", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]

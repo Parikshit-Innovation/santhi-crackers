@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ],
   activeTab = "Home",
   onTabChange,
-  phone = "919865240462",
+  phone = "917373292931",
 }) => {
   const [currentTab, setCurrentTab] = useState(activeTab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -233,7 +233,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="sr-social-row">
               {/* WhatsApp */}
               <a
-                href={`https://wa.me/${phone}`}
+                href={`https://wa.me/${phone}?text=${encodeURIComponent("வணக்கம்! நாங்கள் உங்களிடம் பட்டாசுகள் வாங்க விரும்புகிறோம்.")}`}
                 target="_blank"
                 rel="noreferrer"
                 className="sr-social-btn sr-social-whatsapp"

@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
+import { createCategoryApi, fetchCategoriesApi } from "./api/categories";
+import { createProductApi, fetchProductsApi, updateProductApi, deleteProductApi } from "./api/products";
+import { type CustomerQuery, fetchQueriesApi } from "./api/queries";
 import { 
   LayoutDashboard, Package, ListTree, ShoppingCart, 
-  LogOut, Menu, Bell, Search, X, Edit, Eye, 
+  LogOut, Menu, Search, X, Edit, Eye, 
   Trash2, Plus, ImageIcon, ChevronLeft, ChevronRight,
   FileText, Printer, Truck, User, Phone, MapPin, CreditCard, ChevronDown,
-  ArrowUp, ArrowDown, Layers
+  ArrowUp, ArrowDown, Layers, RefreshCw, Star, MessageSquare
 } from "lucide-react";
+import { useLanguage } from "./context/LanguageContext";
 import "./App.css";
 
 // ── Types & Data ─────────────────────────────────────────────────────────────
@@ -42,22 +46,31 @@ export interface Order {
 }
 
 export interface Category {
-  id: number;
+  id: number | string;
   name: string;
   slug: string;
+  description?: string;
+  imageUrl?: string;
   count: number;
   sort: number;
   status: "Active" | "Inactive";
 }
 
 export interface Product {
-  id: number;
+  id: number | string;
   code: string;
   name: string;
   category: string;
+  categorySlug?: string;
+  description?: string;
+  content?: string;
   actualPrice: number;
   sellingPrice: number;
+  discount?: number;
   stock: number;
+  minOrderQty?: number;
+  maxOrderQty?: number;
+  imageUrl?: string | null;
   status: "Active" | "Inactive";
   featured: boolean;
 }
@@ -228,6 +241,7 @@ const INITIAL_ORDERS: Order[] = [
 
 // ── Main App Component ───────────────────────────────────────────────────────
 export default function App() {
+  const { language, toggleLanguage, t, tProduct, tCategory, isTamil } = useLanguage();
   const [currentRoute, setCurrentRoute] = useState("/admin/login");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -247,7 +261,7 @@ export default function App() {
   const [productCategoryFilter, setProductCategoryFilter] = useState("All");
   const [productStatusFilter, setProductStatusFilter] = useState("All");
   const [productCurrentPage, setProductCurrentPage] = useState(1);
-  const productsPerPage = 5;
+  const productsPerPage = 10;
 
   // Product Modals State
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -258,20 +272,110 @@ export default function App() {
   // Product Form State
   const [prodName, setProdName] = useState("");
   const [prodCode, setProdCode] = useState("");
-  const [prodCategory, setProdCategory] = useState("Fancy Crackers");
-  const [prodActualPrice, setProdActualPrice] = useState<number>(0);
-  const [prodSellingPrice, setProdSellingPrice] = useState<number>(0);
-  const [prodStock, setProdStock] = useState<number>(10);
+  const [prodCategory, setProdCategory] = useState("Rockets");
+  const [prodCategorySlug, setProdCategorySlug] = useState("rockets");
+  const [prodDescription, setProdDescription] = useState("");
+  const [prodContent, setProdContent] = useState("Pack of 5");
+  const [prodActualPrice, setProdActualPrice] = useState<number>(500);
+  const [prodSellingPrice, setProdSellingPrice] = useState<number>(425);
+  const [prodDiscount, setProdDiscount] = useState<number>(15);
+  const [prodStock, setProdStock] = useState<number>(20);
+  const [prodMinOrderQty, setProdMinOrderQty] = useState<number>(1);
+  const [prodMaxOrderQty, setProdMaxOrderQty] = useState<number>(5);
+  const [prodImageUrl, setProdImageUrl] = useState("");
   const [prodStatus, setProdStatus] = useState<"Active" | "Inactive">("Active");
+  const [prodIsFeatured, setProdIsFeatured] = useState<boolean>(true);
+  const [prodIsSubmitting, setProdIsSubmitting] = useState(false);
+  const [prodError, setProdError] = useState<string | null>(null);
+  const [prodNotification, setProdNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [isProductsLoading, setIsProductsLoading] = useState(false);
+
+  // Load real products from API
+  const loadProductsFromApi = async () => {
+    setIsProductsLoading(true);
+    try {
+      const data = await fetchProductsApi();
+      if (data && data.length > 0) {
+        const mapped: Product[] = data.map((p) => {
+          const cat = categoriesList.find(c => c.slug === p.categorySlug);
+          return {
+            id: p.id,
+            code: p.code,
+            name: p.name,
+            category: cat ? cat.name : (p.categorySlug || "Crackers"),
+            categorySlug: p.categorySlug,
+            description: p.description || "",
+            content: p.content || "",
+            actualPrice: Number(p.actualPrice) || 0,
+            sellingPrice: Number(p.price) || 0,
+            discount: Number(p.discount) || 0,
+            stock: Number(p.stock) || 0,
+            minOrderQty: p.minOrderQty ?? 1,
+            maxOrderQty: p.maxOrderQty ?? 10,
+            imageUrl: p.imageUrl || "",
+            status: p.isActive === false ? "Inactive" : "Active",
+            featured: Boolean(p.isFeatured),
+          };
+        });
+        setProductsList(mapped);
+      }
+    } catch (err) {
+      console.warn("Could not load products from API:", err);
+    } finally {
+      setIsProductsLoading(false);
+    }
+  };
+
+  const handleCategorySelectChange = (slugOrName: string) => {
+    const matched = categoriesList.find(c => c.slug === slugOrName || c.name === slugOrName);
+    if (matched) {
+      setProdCategory(matched.name);
+      setProdCategorySlug(matched.slug);
+    } else {
+      setProdCategory(slugOrName);
+      setProdCategorySlug(slugOrName.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+    }
+  };
+
+  const handleActualPriceChange = (val: number) => {
+    setProdActualPrice(val);
+    if (val > 0 && prodSellingPrice > 0) {
+      setProdDiscount(Math.max(0, Math.round(((val - prodSellingPrice) / val) * 100)));
+    }
+  };
+
+  const handleSellingPriceChange = (val: number) => {
+    setProdSellingPrice(val);
+    if (prodActualPrice > 0 && val > 0) {
+      setProdDiscount(Math.max(0, Math.round(((prodActualPrice - val) / prodActualPrice) * 100)));
+    }
+  };
+
+  const handleDiscountChange = (val: number) => {
+    setProdDiscount(val);
+    if (prodActualPrice > 0 && val >= 0) {
+      setProdSellingPrice(Math.round(prodActualPrice * (1 - val / 100)));
+    }
+  };
 
   const handleOpenAddProduct = () => {
     setProdName("");
     setProdCode("");
-    setProdCategory(categoriesList[0]?.name || "Fancy Crackers");
+    const defaultCat = categoriesList.find(c => c.slug === "rockets") || categoriesList[0];
+    setProdCategory(defaultCat?.name || "Rockets");
+    setProdCategorySlug(defaultCat?.slug || "rockets");
+    setProdDescription("Colorful sky rocket for Diwali celebrations");
+    setProdContent("Pack of 5");
     setProdActualPrice(500);
-    setProdSellingPrice(399);
+    setProdSellingPrice(425);
+    setProdDiscount(15);
     setProdStock(20);
+    setProdMinOrderQty(1);
+    setProdMaxOrderQty(5);
+    setProdImageUrl("");
     setProdStatus("Active");
+    setProdIsFeatured(true);
+    setProdError(null);
     setIsAddProductOpen(true);
   };
 
@@ -280,57 +384,214 @@ export default function App() {
     setProdName(prod.name);
     setProdCode(prod.code);
     setProdCategory(prod.category);
+    setProdCategorySlug(prod.categorySlug || "");
+    setProdDescription(prod.description || "");
+    setProdContent(prod.content || "");
     setProdActualPrice(prod.actualPrice);
     setProdSellingPrice(prod.sellingPrice);
+    setProdDiscount(prod.discount || 0);
     setProdStock(prod.stock);
+    setProdMinOrderQty(prod.minOrderQty || 1);
+    setProdMaxOrderQty(prod.maxOrderQty || 10);
+    setProdImageUrl(prod.imageUrl || "");
     setProdStatus(prod.status);
+    setProdIsFeatured(prod.featured);
+    setProdError(null);
   };
 
-  const handleSaveAddProduct = (e: FormEvent) => {
+  const handleSaveAddProduct = async (e: FormEvent) => {
     e.preventDefault();
-    if (!prodName.trim() || !prodCode.trim()) return;
-    const newProd: Product = {
-      id: Date.now(),
-      code: prodCode.trim().toUpperCase(),
-      name: prodName.trim(),
-      category: prodCategory,
-      actualPrice: Number(prodActualPrice) || 0,
-      sellingPrice: Number(prodSellingPrice) || 0,
-      stock: Number(prodStock) || 0,
-      status: prodStatus,
-      featured: false
-    };
-    setProductsList(prev => [newProd, ...prev]);
-    setIsAddProductOpen(false);
+    if (!prodName.trim() || !prodCode.trim()) {
+      setProdError("Product Name and Code are required.");
+      return;
+    }
+
+    setProdIsSubmitting(true);
+    setProdError(null);
+
+    const targetCat = categoriesList.find(c => c.slug === prodCategorySlug || c.name === prodCategory);
+    const resolvedCatSlug = targetCat?.slug || prodCategorySlug || "rockets";
+
+    try {
+      const res = await createProductApi({
+        code: prodCode.trim().toUpperCase(),
+        name: prodName.trim(),
+        description: prodDescription.trim(),
+        content: prodContent.trim(),
+        actualPrice: Number(prodActualPrice) || 0,
+        price: Number(prodSellingPrice) || 0,
+        discount: Number(prodDiscount) || 0,
+        stock: Number(prodStock) || 0,
+        minOrderQty: Number(prodMinOrderQty) || 1,
+        maxOrderQty: Number(prodMaxOrderQty) || 5,
+        imageUrl: prodImageUrl.trim() || null,
+        categorySlug: resolvedCatSlug,
+        isActive: prodStatus === "Active",
+        isFeatured: prodIsFeatured,
+      });
+
+      const bp = res.product;
+      const newProd: Product = {
+        id: bp?.id || Date.now(),
+        code: bp?.code || prodCode.trim().toUpperCase(),
+        name: bp?.name || prodName.trim(),
+        category: targetCat?.name || prodCategory,
+        categorySlug: bp?.categorySlug || resolvedCatSlug,
+        description: bp?.description || prodDescription.trim(),
+        content: bp?.content || prodContent.trim(),
+        actualPrice: Number(bp?.actualPrice ?? prodActualPrice),
+        sellingPrice: Number(bp?.price ?? prodSellingPrice),
+        discount: Number(bp?.discount ?? prodDiscount),
+        stock: Number(bp?.stock ?? prodStock),
+        minOrderQty: bp?.minOrderQty ?? Number(prodMinOrderQty),
+        maxOrderQty: bp?.maxOrderQty ?? Number(prodMaxOrderQty),
+        imageUrl: bp?.imageUrl || prodImageUrl.trim() || "",
+        status: bp?.isActive === false ? "Inactive" : "Active",
+        featured: Boolean(bp?.isFeatured ?? prodIsFeatured),
+      };
+
+      setProductsList(prev => [newProd, ...prev]);
+      setProdNotification({
+        type: "success",
+        message: `Product "${newProd.name}" (${newProd.code}) successfully created on API (localhost:3007/api/product)!`,
+      });
+      setTimeout(() => setProdNotification(null), 4500);
+      setIsAddProductOpen(false);
+
+      // Refresh categories to update productCount
+      loadCategoriesFromApi();
+    } catch (err: any) {
+      console.error("Failed to create product:", err);
+      setProdError(err?.message || "Failed to create product on API.");
+    } finally {
+      setProdIsSubmitting(false);
+    }
   };
 
-  const handleSaveEditProduct = (e: FormEvent) => {
+  const handleSaveEditProduct = async (e: FormEvent) => {
     e.preventDefault();
-    if (!editingProduct || !prodName.trim()) return;
-    setProductsList(prev => prev.map(p => p.id === editingProduct.id ? {
-      ...p,
-      name: prodName.trim(),
-      code: prodCode.trim().toUpperCase(),
-      category: prodCategory,
-      actualPrice: Number(prodActualPrice),
-      sellingPrice: Number(prodSellingPrice),
-      stock: Number(prodStock),
-      status: prodStatus
-    } : p));
-    setEditingProduct(null);
+    if (!editingProduct || !prodName.trim() || !prodCode.trim()) {
+      setProdError("Product Name and Code are required.");
+      return;
+    }
+
+    setProdIsSubmitting(true);
+    setProdError(null);
+
+    const targetCat = categoriesList.find(c => c.slug === prodCategorySlug || c.name === prodCategory);
+    const resolvedCatSlug = targetCat?.slug || prodCategorySlug || undefined;
+
+    try {
+      const res = await updateProductApi(editingProduct.id, {
+        code: prodCode.trim().toUpperCase(),
+        name: prodName.trim(),
+        description: prodDescription.trim(),
+        content: prodContent.trim(),
+        actualPrice: Number(prodActualPrice) || 0,
+        price: Number(prodSellingPrice) || 0,
+        discount: Number(prodDiscount) || 0,
+        stock: Number(prodStock) || 0,
+        minOrderQty: Number(prodMinOrderQty) || 1,
+        maxOrderQty: Number(prodMaxOrderQty) || 10,
+        imageUrl: prodImageUrl.trim() || null,
+        categorySlug: resolvedCatSlug,
+        isActive: prodStatus === "Active",
+        isFeatured: prodIsFeatured,
+      });
+
+      const bp = res.product;
+      const updatedProduct: Product = {
+        ...editingProduct,
+        id: bp?.id || editingProduct.id,
+        code: bp?.code || prodCode.trim().toUpperCase(),
+        name: bp?.name || prodName.trim(),
+        category: targetCat?.name || prodCategory,
+        categorySlug: bp?.categorySlug || resolvedCatSlug || prodCategorySlug,
+        description: bp?.description || prodDescription.trim(),
+        content: bp?.content || prodContent.trim(),
+        actualPrice: Number(bp?.actualPrice ?? prodActualPrice),
+        sellingPrice: Number(bp?.price ?? prodSellingPrice),
+        discount: Number(bp?.discount ?? prodDiscount),
+        stock: Number(bp?.stock ?? prodStock),
+        minOrderQty: bp?.minOrderQty ?? Number(prodMinOrderQty),
+        maxOrderQty: bp?.maxOrderQty ?? Number(prodMaxOrderQty),
+        imageUrl: bp?.imageUrl || prodImageUrl.trim() || null,
+        status: bp?.isActive === false ? "Inactive" : "Active",
+        featured: Boolean(bp?.isFeatured ?? prodIsFeatured),
+      };
+
+      setProductsList(prev => prev.map(p => p.id === editingProduct.id ? updatedProduct : p));
+      setProdNotification({
+        type: "success",
+        message: `Product "${updatedProduct.name}" (${updatedProduct.code}) updated successfully!`,
+      });
+      setTimeout(() => setProdNotification(null), 4500);
+      setEditingProduct(null);
+
+      // Refresh categories to update productCount
+      loadCategoriesFromApi();
+    } catch (err: any) {
+      console.error("Failed to update product:", err);
+      setProdError(err?.message || "Failed to update product on API.");
+    } finally {
+      setProdIsSubmitting(false);
+    }
   };
 
-  const handleConfirmDeleteProduct = () => {
+  const handleConfirmDeleteProduct = async () => {
     if (!deletingProduct) return;
-    setProductsList(prev => prev.filter(p => p.id !== deletingProduct.id));
-    setDeletingProduct(null);
+    setProdIsSubmitting(true);
+    try {
+      await deleteProductApi(deletingProduct.id);
+      setProductsList(prev => prev.filter(p => p.id !== deletingProduct.id));
+      setProdNotification({
+        type: "success",
+        message: `Product "${deletingProduct.name}" deleted successfully!`,
+      });
+      setTimeout(() => setProdNotification(null), 4500);
+      setDeletingProduct(null);
+
+      // Refresh categories to update productCount
+      loadCategoriesFromApi();
+    } catch (err: any) {
+      console.error("Failed to delete product:", err);
+      setProdNotification({
+        type: "error",
+        message: err?.message || "Failed to delete product on API.",
+      });
+      setTimeout(() => setProdNotification(null), 4500);
+    } finally {
+      setProdIsSubmitting(false);
+    }
   };
 
-  const handleToggleProductStatus = (id: number) => {
+  const handleToggleProductStatus = async (id: number | string) => {
+    const targetProduct = productsList.find(p => p.id === id);
+    if (!targetProduct) return;
+    const newStatus: "Active" | "Inactive" = targetProduct.status === "Active" ? "Inactive" : "Active";
+    const newIsActive = newStatus === "Active";
+
+    // Optimistically update
     setProductsList(prev => prev.map(p => p.id === id ? {
       ...p,
-      status: p.status === "Active" ? "Inactive" : "Active"
+      status: newStatus
     } : p));
+
+    try {
+      await updateProductApi(id, { isActive: newIsActive });
+    } catch (err: any) {
+      console.error("Failed to toggle product status on API:", err);
+      // Revert if error
+      setProductsList(prev => prev.map(p => p.id === id ? {
+        ...p,
+        status: targetProduct.status
+      } : p));
+      setProdNotification({
+        type: "error",
+        message: err?.message || "Failed to update status on server.",
+      });
+      setTimeout(() => setProdNotification(null), 4500);
+    }
   };
 
   const filteredProducts = productsList.filter(p => {
@@ -357,14 +618,92 @@ export default function App() {
   // Form State
   const [catName, setCatName] = useState("");
   const [catSlug, setCatSlug] = useState("");
+  const [catDesc, setCatDesc] = useState("");
+  const [catImageUrl, setCatImageUrl] = useState("");
   const [catSort, setCatSort] = useState<number>(1);
   const [catStatus, setCatStatus] = useState<"Active" | "Inactive">("Active");
+  const [catIsSubmitting, setCatIsSubmitting] = useState(false);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
+  const [catError, setCatError] = useState<string | null>(null);
+  const [catNotification, setCatNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  // Load real categories from API on mount
+  const loadCategoriesFromApi = async () => {
+    setIsCategoriesLoading(true);
+    try {
+      const data = await fetchCategoriesApi();
+      if (data && data.length > 0) {
+        const mapped: Category[] = data.map((c, idx) => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          description: c.description || "",
+          imageUrl: c.imageUrl || "",
+          count: typeof c.productCount === "number" ? c.productCount : 0,
+          sort: c.sortOrder ?? idx + 1,
+          status: c.isActive === false ? "Inactive" : "Active",
+        }));
+        setCategoriesList(mapped);
+      }
+    } catch (err) {
+      console.warn("Could not load categories from API:", err);
+    } finally {
+      setIsCategoriesLoading(false);
+    }
+  };
+
+  // Customer Queries State
+  const [queriesList, setQueriesList] = useState<CustomerQuery[]>([]);
+  const [queriesSearch, setQueriesSearch] = useState("");
+  const [isQueriesLoading, setIsQueriesLoading] = useState(false);
+  const [selectedQuery, setSelectedQuery] = useState<CustomerQuery | null>(null);
+  const [queriesCurrentPage, setQueriesCurrentPage] = useState(1);
+  const queriesPerPage = 10;
+
+  const loadQueriesFromApi = async () => {
+    setIsQueriesLoading(true);
+    try {
+      const data = await fetchQueriesApi();
+      if (data && Array.isArray(data.queries)) {
+        setQueriesList(data.queries);
+      }
+    } catch (err) {
+      console.warn("Could not load queries from API:", err);
+    } finally {
+      setIsQueriesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCategoriesFromApi();
+    loadProductsFromApi();
+    loadQueriesFromApi();
+  }, []);
+
+  const filteredQueries = queriesList.filter((q) => {
+    const term = queriesSearch.toLowerCase().trim();
+    if (!term) return true;
+    return (
+      q.mobileNumber.toLowerCase().includes(term) ||
+      q.message.toLowerCase().includes(term) ||
+      (q.status && q.status.toLowerCase().includes(term))
+    );
+  });
+
+  const totalQueryPages = Math.ceil(filteredQueries.length / queriesPerPage) || 1;
+  const paginatedQueries = filteredQueries.slice(
+    (queriesCurrentPage - 1) * queriesPerPage,
+    queriesCurrentPage * queriesPerPage
+  );
 
   const handleOpenAddCategory = () => {
     setCatName("");
     setCatSlug("");
+    setCatDesc("");
+    setCatImageUrl("");
     setCatSort(categoriesList.length + 1);
     setCatStatus("Active");
+    setCatError(null);
     setIsAddCategoryOpen(true);
   };
 
@@ -372,8 +711,11 @@ export default function App() {
     setEditingCategory(cat);
     setCatName(cat.name);
     setCatSlug(cat.slug);
+    setCatDesc(cat.description || "");
+    setCatImageUrl(cat.imageUrl || "");
     setCatSort(cat.sort);
     setCatStatus(cat.status);
+    setCatError(null);
   };
 
   const handleCategoryNameChange = (val: string) => {
@@ -382,20 +724,53 @@ export default function App() {
     setCatSlug(autoSlug);
   };
 
-  const handleSaveAddCategory = (e: FormEvent) => {
+  const handleSaveAddCategory = async (e: FormEvent) => {
     e.preventDefault();
     if (!catName.trim()) return;
+
+    setCatIsSubmitting(true);
+    setCatError(null);
+
     const cleanSlug = catSlug.trim().replace(/^\//, '') || catName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    const newCat: Category = {
-      id: Date.now(),
-      name: catName.trim(),
-      slug: cleanSlug,
-      sort: Number(catSort) || categoriesList.length + 1,
-      status: catStatus,
-      count: 0
-    };
-    setCategoriesList(prev => [...prev, newCat]);
-    setIsAddCategoryOpen(false);
+    const sortNumber = Number(catSort) || categoriesList.length + 1;
+    const isActive = catStatus === "Active";
+
+    try {
+      // POST to backend localhost:3007/api/categories
+      const response = await createCategoryApi({
+        name: catName.trim(),
+        slug: cleanSlug,
+        description: catDesc.trim(),
+        imageUrl: catImageUrl.trim() || undefined,
+        sortOrder: sortNumber,
+        isActive,
+      });
+
+      const backendCat = response.category;
+      const newCat: Category = {
+        id: backendCat?.id || Date.now(),
+        name: backendCat?.name || catName.trim(),
+        slug: backendCat?.slug || cleanSlug,
+        description: backendCat?.description || catDesc.trim(),
+        imageUrl: backendCat?.imageUrl || catImageUrl.trim(),
+        sort: backendCat?.sortOrder ?? sortNumber,
+        status: backendCat?.isActive === false ? "Inactive" : "Active",
+        count: backendCat?.productCount || 0,
+      };
+
+      setCategoriesList(prev => [...prev, newCat]);
+      setCatNotification({
+        type: "success",
+        message: `Category "${newCat.name}" successfully created on API (localhost:3007/api/categories)!`,
+      });
+      setTimeout(() => setCatNotification(null), 4500);
+      setIsAddCategoryOpen(false);
+    } catch (err: any) {
+      console.error("Failed to create category on backend:", err);
+      setCatError(err?.message || "Failed to create category on API.");
+    } finally {
+      setCatIsSubmitting(false);
+    }
   };
 
   const handleSaveEditCategory = (e: FormEvent) => {
@@ -406,6 +781,8 @@ export default function App() {
       ...c,
       name: catName.trim(),
       slug: cleanSlug,
+      description: catDesc.trim(),
+      imageUrl: catImageUrl.trim(),
       sort: Number(catSort),
       status: catStatus
     } : c));
@@ -418,14 +795,14 @@ export default function App() {
     setDeletingCategory(null);
   };
 
-  const handleToggleCategoryStatus = (id: number) => {
+  const handleToggleCategoryStatus = (id: number | string) => {
     setCategoriesList(prev => prev.map(c => c.id === id ? {
       ...c,
       status: c.status === "Active" ? "Inactive" : "Active"
     } : c));
   };
 
-  const handleMoveCategorySort = (id: number, direction: "up" | "down") => {
+  const handleMoveCategorySort = (id: number | string, direction: "up" | "down") => {
     setCategoriesList(prev => {
       // Create new shallow copies of objects sorted by current sort order
       const list = prev.map(item => ({ ...item })).sort((a, b) => a.sort - b.sort);
@@ -451,17 +828,12 @@ export default function App() {
     });
   };
 
-  const handleDirectSortChange = (id: number, newSort: number) => {
+  const handleDirectSortChange = (id: number | string, newSort: number) => {
     const val = Math.max(1, Math.floor(newSort) || 1);
     setCategoriesList(prev => {
       const updated = prev.map(c => c.id === id ? { ...c, sort: val } : { ...c });
       return updated.sort((a, b) => a.sort - b.sort);
     });
-  };
-
-  const getCategoryProductCount = (categoryName: string, fallbackCount: number) => {
-    const matchedCount = productsList.filter(p => p.category.toLowerCase() === categoryName.toLowerCase()).length;
-    return matchedCount > 0 ? matchedCount : fallbackCount;
   };
 
   const filteredCategories = categoriesList
@@ -648,7 +1020,7 @@ export default function App() {
       <div className="min-h-screen w-full flex items-center justify-center bg-[#FAF8F4] p-6 text-black font-manrope">
         <div className="w-full max-w-md bg-white border border-[#E5E5E5] rounded-xl p-8 shadow-lg">
           <div className="text-center mb-8">
-            <img src="/logo.jpg" alt="Shanthi Sivakasi Crackers Logo" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-md rounded-full" />
+            <img src="/logo-santhi.png" alt="Shanthi Sivakasi Crackers Logo" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-md rounded-2xl" />
             <h1 className="text-3xl font-bold text-black mb-2">Shanthi Sivakasi Crackers</h1>
             <p className="text-lg text-black font-semibold">Manage your store.</p>
           </div>
@@ -706,13 +1078,13 @@ export default function App() {
     <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
         <div className="flex items-center gap-3">
-          <img src="/logo.jpg" alt="Logo" className="w-12 h-12 object-contain rounded-full shadow-sm" />
+          <img src="/logo-santhi.png" alt="Logo" className="w-12 h-12 object-contain rounded-xl shadow-xs" />
           <div>
             <h2 className="font-bold text-lg text-black leading-tight">Shanthi Sivakasi</h2>
             <p className="text-sm font-semibold text-black">ADMIN</p>
           </div>
         </div>
-        <button className="lg:hidden p-2 text-black" onClick={() => setSidebarOpen(false)}>
+        <button className="lg:hidden p-2 text-black cursor-pointer" onClick={() => setSidebarOpen(false)}>
           <X size={24} />
         </button>
       </div>
@@ -720,19 +1092,38 @@ export default function App() {
       <div className="p-6">
         <p className="text-sm font-bold text-black uppercase tracking-wider mb-4">Workspace</p>
         <nav>
-          <NavItem icon={LayoutDashboard} label="Dashboard" path="/admin" />
-          <NavItem icon={Package} label="Products" path="/admin/products" />
-          <NavItem icon={ListTree} label="Categories" path="/admin/categories" />
-          <NavItem icon={ShoppingCart} label="Orders" path="/admin/orders" badge={24} />
+          <NavItem icon={LayoutDashboard} label={t("Dashboard")} path="/admin" />
+          <NavItem icon={Package} label={t("Products")} path="/admin/products" />
+          <NavItem icon={ListTree} label={t("Categories")} path="/admin/categories" />
+          <NavItem icon={ShoppingCart} label={t("Orders")} path="/admin/orders" badge={24} />
+          <NavItem icon={MessageSquare} label={t("Queries")} path="/admin/queries" badge={queriesList.length > 0 ? queriesList.length : undefined} />
         </nav>
 
         <div className="my-6 border-t border-gray-100"></div>
+
+        {/* Language switch toggle in sidebar */}
+        <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Language / மொழி</p>
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="w-full flex items-center justify-between px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 hover:border-blue-500 hover:text-blue-600 transition-all cursor-pointer shadow-2xs"
+          >
+            <span className="flex items-center gap-2">
+              <span>🌐</span>
+              <span>{language === "ta" ? "தமிழ் (Tamil)" : "English"}</span>
+            </span>
+            <span className="text-[11px] px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-extrabold">
+              {language === "ta" ? "English" : "தமிழ்"}
+            </span>
+          </button>
+        </div>
       </div>
 
       <div className="absolute bottom-0 w-full p-6 border-t border-gray-100 bg-white">
-        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-red-600 font-bold text-lg hover:bg-red-50 rounded-lg transition-colors">
+        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-red-600 font-bold text-lg hover:bg-red-50 rounded-lg transition-colors cursor-pointer">
           <LogOut size={24} />
-          <span>Log out</span>
+          <span>{t("Log out")}</span>
         </button>
       </div>
     </aside>
@@ -741,12 +1132,35 @@ export default function App() {
   const Header = ({ title, subtitle }: { title: string, subtitle?: string }) => (
     <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between shadow-2xs">
       <div className="flex items-center gap-4">
-        <button className="lg:hidden p-2 -ml-2 text-black hover:bg-slate-100 rounded-lg" onClick={() => setSidebarOpen(true)}>
+        <button className="lg:hidden p-2 -ml-2 text-black hover:bg-slate-100 rounded-lg cursor-pointer" onClick={() => setSidebarOpen(true)}>
           <Menu size={24} />
         </button>
-        <div>
-          <h1 className="text-xl font-extrabold text-black leading-tight">{title}</h1>
-          {subtitle && <p className="text-xs font-medium text-black">{subtitle}</p>}
+        <div className="flex items-center gap-3">
+          <img src="/logo-santhi.png" alt="Logo" className="w-9 h-9 object-contain rounded-lg lg:hidden" />
+          <div>
+            <h1 className="text-xl font-extrabold text-black leading-tight">{t(title)}</h1>
+            {subtitle && <p className="text-xs font-medium text-black">{t(subtitle)}</p>}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        {/* Language switch button */}
+        <button
+          type="button"
+          onClick={toggleLanguage}
+          id="admin-header-lang-btn"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs transition-all shadow-2xs cursor-pointer"
+          title={language === "en" ? "தமிழில் மாற்றவும்" : "Switch to English"}
+        >
+          <span className="text-sm">🌐</span>
+          <span>{language === "ta" ? "தமிழ்" : "English"}</span>
+          <span className="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">
+            {language === "ta" ? "TA" : "EN"}
+          </span>
+        </button>
+        <div className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-xl">
+          <img src="/logo-santhi.png" alt="Logo" className="w-6 h-6 object-contain" />
+          <span className="text-xs font-bold text-black">{t("Santhi Crackers Admin")}</span>
         </div>
       </div>
     </header>
@@ -767,22 +1181,23 @@ export default function App() {
         {/* Executive Banner */}
         <div className="bg-gradient-to-r from-blue-950 via-[#0000FF] to-blue-900 text-white p-8 rounded-2xl shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-2 max-w-2xl z-10">
-            <div className="inline-flex items-center gap-2 bg-blue-500/30 text-blue-200 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-blue-400/30">
-              <span>Shanthi Sivakasi Crackers Panel</span>
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xs text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/20">
+              <img src="/logo-santhi.png" alt="Logo" className="w-4 h-4 object-contain" />
+              <span>{t("Shanthi Sivakasi Crackers Panel")}</span>
             </div>
-            <h2 className="text-3xl font-extrabold text-white">Store Executive Overview</h2>
+            <h2 className="text-3xl font-extrabold text-white">{t("Store Executive Overview")}</h2>
             <p className="text-blue-100 text-base font-medium leading-relaxed">
-              Real-time metrics, live inventory monitoring, and customer order management for Shanthi Sivakasi Crackers.
+              {t("Real-time metrics, live inventory monitoring, and customer order management for Shanthi Sivakasi Crackers.")}
             </p>
           </div>
           <div className="flex flex-wrap gap-3 z-10">
             <button onClick={() => navigate("/admin/products")} className="px-5 py-2.5 bg-white text-[#0000FF] hover:bg-blue-50 font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2 cursor-pointer">
               <Package size={18} />
-              <span>Manage Catalog</span>
+              <span>{t("Manage Catalog")}</span>
             </button>
             <button onClick={() => navigate("/admin/orders")} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2 cursor-pointer">
               <ShoppingCart size={18} />
-              <span>View Orders</span>
+              <span>{t("View Orders")}</span>
             </button>
           </div>
         </div>
@@ -790,12 +1205,12 @@ export default function App() {
         {/* Dynamic Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
-            { label: "Total Products", value: totalProductsCount.toString(), sub: "In store catalog", bg: "bg-white" },
-            { label: "Active Products", value: activeProductsCount.toString(), sub: "Visible to customers", bg: "bg-white" },
-            { label: "Total Orders", value: totalOrdersCount.toString(), sub: "All time orders", bg: "bg-white" },
-            { label: "Pending Orders", value: pendingOrdersCount.toString(), sub: "Requires processing", bg: "bg-yellow-50 border-yellow-200" },
-            { label: "Total Sales Revenue", value: `₹${totalSalesRevenue.toLocaleString('en-IN')}`, sub: "From paid orders", bg: "bg-green-50 border-green-200" },
-            { label: "Out of Stock", value: outOfStockCount.toString(), sub: "Products need restocking", bg: "bg-red-50 border-red-200" }
+            { label: t("Total Products"), value: totalProductsCount.toString(), sub: t("In store catalog"), bg: "bg-white" },
+            { label: t("Active Products"), value: activeProductsCount.toString(), sub: t("Visible to customers"), bg: "bg-white" },
+            { label: t("Total Orders"), value: totalOrdersCount.toString(), sub: t("All time orders"), bg: "bg-white" },
+            { label: t("Pending Orders"), value: pendingOrdersCount.toString(), sub: t("Requires processing"), bg: "bg-yellow-50 border-yellow-200" },
+            { label: t("Total Sales Revenue"), value: `₹${totalSalesRevenue.toLocaleString('en-IN')}`, sub: t("From paid orders"), bg: "bg-green-50 border-green-200" },
+            { label: t("Out of Stock"), value: outOfStockCount.toString(), sub: t("Products need restocking"), bg: "bg-red-50 border-red-200" }
           ].map((stat, i) => (
             <div key={i} className={`p-6 rounded-xl border border-gray-200 shadow-sm ${stat.bg}`}>
               <p className="text-base font-bold text-black mb-2">{stat.label}</p>
@@ -811,21 +1226,21 @@ export default function App() {
           <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="text-xl font-bold text-black">Recent orders</h2>
-                <p className="text-base font-semibold text-black">The latest activity from your store</p>
+                <h2 className="text-xl font-bold text-black">{t("Recent orders")}</h2>
+                <p className="text-base font-semibold text-black">{t("The latest activity from your store")}</p>
               </div>
-              <button onClick={() => navigate("/admin/orders")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">View all orders →</button>
+              <button onClick={() => navigate("/admin/orders")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">{t("View all orders →")}</button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-gray-200 text-sm font-bold text-black uppercase">
-                    <th className="pb-3 px-2">Order</th>
-                    <th className="pb-3 px-2">Customer</th>
-                    <th className="pb-3 px-2">Total</th>
-                    <th className="pb-3 px-2">Status</th>
-                    <th className="pb-3 px-2">Date</th>
-                    <th className="pb-3 px-2 text-right">Action</th>
+                    <th className="pb-3 px-2">{t("Order")}</th>
+                    <th className="pb-3 px-2">{t("Customer")}</th>
+                    <th className="pb-3 px-2">{t("Total")}</th>
+                    <th className="pb-3 px-2">{t("Status")}</th>
+                    <th className="pb-3 px-2">{t("Date")}</th>
+                    <th className="pb-3 px-2 text-right">{t("Action")}</th>
                   </tr>
                 </thead>
                 <tbody className="text-base font-semibold text-black divide-y divide-gray-100">
@@ -840,10 +1255,10 @@ export default function App() {
                           o.status === 'Pending' ? 'bg-orange-50 text-orange-800 border-orange-200' :
                           o.status === 'Shipped' ? 'bg-blue-50 text-blue-800 border-blue-200' : 
                           o.status === 'Delivered' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'
-                        }`}>{o.status}</span>
+                        }`}>{t(o.status)}</span>
                       </td>
                       <td className="py-4 px-2 text-black text-sm">{o.date}</td>
-                      <td className="py-4 px-2 text-right text-[#0000FF] font-bold text-sm">View →</td>
+                      <td className="py-4 px-2 text-right text-[#0000FF] font-bold text-sm">{t("View")} →</td>
                     </tr>
                   ))}
                 </tbody>
@@ -854,13 +1269,13 @@ export default function App() {
           {/* Low Stock Products */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-black">Low stock products</h2>
-              <button onClick={() => navigate("/admin/products")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">Manage →</button>
+              <h2 className="text-xl font-bold text-black">{t("Low stock products")}</h2>
+              <button onClick={() => navigate("/admin/products")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">{t("Manage →")}</button>
             </div>
             <div className="space-y-4">
               {productsList.filter((p: Product) => p.stock < 10).length === 0 ? (
                 <div className="p-4 text-center text-black font-semibold text-sm">
-                  All products are well stocked!
+                  {t("All products are well stocked!")}
                 </div>
               ) : (
                 productsList.filter((p: Product) => p.stock < 10).slice(0, 5).map((p: Product) => (
@@ -870,13 +1285,16 @@ export default function App() {
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100 hover:bg-gray-100 transition-colors cursor-pointer"
                   >
                     <div>
-                      <p className="font-bold text-black text-base">{p.name}</p>
+                      <p className="font-bold text-black text-base">{tProduct(p.code, p.name)}</p>
+                      {isTamil && tProduct(p.code, p.name) !== p.name && (
+                        <p className="text-xs text-slate-500 font-normal">{p.name}</p>
+                      )}
                       <p className="text-xs font-mono text-black">{p.code}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-base text-black">{p.stock} pcs</p>
                       <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${p.stock === 0 ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-800 border-yellow-200'}`}>
-                        {p.stock === 0 ? 'Out of Stock' : 'Low Stock'}
+                        {p.stock === 0 ? t('Out of Stock') : t('Low Stock')}
                       </span>
                     </div>
                   </div>
@@ -891,17 +1309,34 @@ export default function App() {
 
   const renderProducts = () => (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
+      {/* Product Notification Toast */}
+      {prodNotification && (
+        <div className={`p-4 rounded-xl border flex items-center justify-between text-sm font-bold animate-in fade-in duration-200 ${
+          prodNotification.type === "success" 
+            ? "bg-emerald-50 border-emerald-200 text-emerald-800" 
+            : "bg-red-50 border-red-200 text-red-800"
+        }`}>
+          <div className="flex items-center gap-2">
+            <span>{prodNotification.type === "success" ? "✓" : "⚠️"}</span>
+            <span>{prodNotification.message}</span>
+          </div>
+          <button onClick={() => setProdNotification(null)} className="text-black hover:opacity-75 cursor-pointer">
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
       {/* Products Unified Single Card Container */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
         {/* Card Header & Filter Bar */}
         <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">Product Catalog</h2>
-              <p className="text-xs font-medium text-black">Manage fireworks items, inventory stock, and pricing</p>
+              <h2 className="text-lg font-extrabold text-black leading-tight">{t("Product Catalog")}</h2>
+              <p className="text-xs font-medium text-black">{t("Manage items, prices, inventory, and promotions")}</p>
             </div>
             <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
-              {filteredProducts.length} items
+              {filteredProducts.length} {t("items")}
             </span>
           </div>
 
@@ -913,7 +1348,7 @@ export default function App() {
                 type="text" 
                 value={productSearch}
                 onChange={(e) => { setProductSearch(e.target.value); setProductCurrentPage(1); }}
-                placeholder="Search name or code..." 
+                placeholder={t("Search by name or code...")} 
                 className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
               />
               {productSearch && (
@@ -930,9 +1365,9 @@ export default function App() {
                 onChange={(e) => { setProductCategoryFilter(e.target.value); setProductCurrentPage(1); }}
                 className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
               >
-                <option value="All">All Categories</option>
+                <option value="All">{t("All Categories")}</option>
                 {categoriesList.map(c => (
-                  <option key={c.id} value={c.name}>{c.name}</option>
+                  <option key={c.id} value={c.name}>{tCategory(c.slug, c.name)}</option>
                 ))}
               </select>
               <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
@@ -945,12 +1380,23 @@ export default function App() {
                 onChange={(e) => { setProductStatusFilter(e.target.value); setProductCurrentPage(1); }}
                 className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
               >
-                <option value="All">All Statuses</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option value="All">{t("All Status")}</option>
+                <option value="Active">{t("Active")}</option>
+                <option value="Inactive">{t("Inactive")}</option>
               </select>
               <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
+
+            {/* Refresh from API Button */}
+            <button
+              onClick={loadProductsFromApi}
+              disabled={isProductsLoading}
+              title="Reload products from localhost:3007/api/products"
+              className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
+            >
+              <RefreshCw size={14} className={isProductsLoading ? "animate-spin text-blue-600" : ""} />
+              <span>{isProductsLoading ? "Syncing..." : "Refresh"}</span>
+            </button>
 
             {/* Add Product Button */}
             <button 
@@ -958,7 +1404,7 @@ export default function App() {
               className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap"
             >
               <Plus size={16} />
-              <span>Add Product</span>
+              <span>{t("Add Product")}</span>
             </button>
           </div>
         </div>
@@ -968,12 +1414,12 @@ export default function App() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
-                <th className="py-3.5 px-5">Product Details</th>
-                <th className="py-3.5 px-5">Category</th>
-                <th className="py-3.5 px-5">Pricing</th>
-                <th className="py-3.5 px-5">Stock Level</th>
-                <th className="py-3.5 px-5">Status</th>
-                <th className="py-3.5 px-5 text-right">Actions</th>
+                <th className="py-3.5 px-5">{t("Product Details")}</th>
+                <th className="py-3.5 px-5">{t("Category")}</th>
+                <th className="py-3.5 px-5">{t("Pricing")}</th>
+                <th className="py-3.5 px-5">{t("Stock Level")}</th>
+                <th className="py-3.5 px-5">{t("Status")}</th>
+                <th className="py-3.5 px-5 text-right">{t("Actions")}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
@@ -982,7 +1428,7 @@ export default function App() {
                   <td colSpan={6} className="py-12 text-center">
                     <div className="max-w-md mx-auto space-y-2">
                       <Package size={40} className="mx-auto text-black" />
-                      <h3 className="text-base font-bold text-black">No products found</h3>
+                      <h3 className="text-base font-bold text-black">{t("No products found")}</h3>
                       <p className="text-xs text-black">
                         No items match your search or filter options. Try clearing filters or add a new product.
                       </p>
@@ -1007,25 +1453,56 @@ export default function App() {
                     <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 px-5">
                         <div className="flex items-center gap-3.5">
-                          <div className={`w-11 h-11 rounded-xl flex flex-shrink-0 items-center justify-center font-bold text-xs border ${categoryBadgeColor}`}>
-                            {p.name.slice(0, 2).toUpperCase()}
+                          <div className={`w-11 h-11 rounded-xl flex flex-shrink-0 items-center justify-center font-bold text-xs border overflow-hidden relative bg-slate-100 ${categoryBadgeColor}`}>
+                            <span className="text-slate-500">{p.name.slice(0, 2).toUpperCase()}</span>
+                            {p.imageUrl && (
+                              <img
+                                src={p.imageUrl}
+                                alt={p.name}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                onError={(e) => { e.currentTarget.style.display = "none"; }}
+                              />
+                            )}
                           </div>
                           <div>
-                            <p className="font-extrabold text-sm text-black leading-tight">{p.name}</p>
-                            <p className="text-[11px] text-black font-mono tracking-wide mt-0.5">{p.code}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-extrabold text-sm text-black leading-tight">
+                                {tProduct(p.code, p.name)}
+                              </p>
+                              {p.featured && (
+                                <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md">
+                                  <Star size={10} className="fill-amber-500 text-amber-500" />
+                                  <span>Featured</span>
+                                </span>
+                              )}
+                            </div>
+                            {isTamil && tProduct(p.code, p.name) !== p.name && (
+                              <p className="text-[11px] text-slate-500 font-normal mt-0.5">{p.name}</p>
+                            )}
+                            <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono tracking-wide mt-0.5">
+                              <span>{p.code}</span>
+                              {p.content && <span className="text-slate-400 font-sans">• {p.content}</span>}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td className="py-3.5 px-5">
                         <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold border ${categoryBadgeColor}`}>
-                          {p.category}
+                          {tCategory(p.categorySlug, p.category)}
                         </span>
                       </td>
                       <td className="py-3.5 px-5">
                         <div className="flex flex-col">
-                          <span className="font-extrabold text-sm text-black">₹{p.sellingPrice}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-extrabold text-sm text-black">₹{p.sellingPrice}</span>
+                            {p.discount ? (
+                              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1 rounded">
+                                {p.discount}% OFF
+                              </span>
+                            ) : null}
+                          </div>
                           {p.actualPrice > p.sellingPrice && (
-                            <span className="text-[11px] text-black line-through">₹{p.actualPrice}</span>
+                            <span className="text-[11px] text-slate-400 line-through">₹{p.actualPrice}</span>
                           )}
                         </div>
                       </td>
@@ -1037,7 +1514,7 @@ export default function App() {
                           <span className={`w-1.5 h-1.5 rounded-full ${
                             p.stock === 0 ? 'bg-rose-500' : p.stock < 10 ? 'bg-amber-500' : 'bg-emerald-500'
                           }`}></span>
-                          <span>{p.stock === 0 ? 'Out of Stock' : p.stock < 10 ? `Low Stock (${p.stock})` : `In Stock (${p.stock})`}</span>
+                          <span>{p.stock === 0 ? t('Out of Stock') : p.stock < 10 ? `${t('Low Stock')} (${p.stock})` : `${t('In Stock')} (${p.stock})`}</span>
                         </span>
                       </td>
                       <td className="py-3.5 px-5">
@@ -1051,28 +1528,28 @@ export default function App() {
                           }`}
                         >
                           <span className={`w-1.5 h-1.5 rounded-full ${p.status === "Active" ? "bg-emerald-500" : "bg-slate-400"}`}></span>
-                          <span>{p.status}</span>
+                          <span>{p.status === "Active" ? t("Active") : t("Inactive")}</span>
                         </button>
                       </td>
                       <td className="py-3.5 px-5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button 
                             onClick={() => setViewingProduct(p)}
-                            title="View Product Overview"
+                            title={t("View")}
                             className="p-1.5 text-black hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Eye size={16} />
                           </button>
                           <button 
                             onClick={() => handleOpenEditProduct(p)}
-                            title="Edit Product Details"
+                            title={t("Edit")}
                             className="p-1.5 text-black hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
                             onClick={() => setDeletingProduct(p)}
-                            title="Delete Product"
+                            title={t("Delete")}
                             className="p-1.5 text-black hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Trash2 size={16} />
@@ -1091,7 +1568,7 @@ export default function App() {
         {filteredProducts.length > 0 && (
           <div className="p-4 bg-slate-50/50 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
             <p className="text-xs font-semibold text-black">
-              Showing <span className="font-bold text-black">{(productCurrentPage - 1) * productsPerPage + 1}</span> to <span className="font-bold text-black">{Math.min(productCurrentPage * productsPerPage, filteredProducts.length)}</span> of <span className="font-bold text-black">{filteredProducts.length}</span> products
+              {t("Showing")} <span className="font-bold text-black">{(productCurrentPage - 1) * productsPerPage + 1}</span> {t("to")} <span className="font-bold text-black">{Math.min(productCurrentPage * productsPerPage, filteredProducts.length)}</span> {t("of")} <span className="font-bold text-black">{filteredProducts.length}</span> {t("products")}
             </p>
             <div className="flex items-center gap-1.5">
               <button 
@@ -1100,7 +1577,7 @@ export default function App() {
                 className="px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-all flex items-center gap-1 cursor-pointer"
               >
                 <ChevronLeft size={14} />
-                <span>Prev</span>
+                <span>{t("Prev")}</span>
               </button>
               {Array.from({ length: totalProductPages }, (_, i) => i + 1).map(page => (
                 <button
@@ -1116,7 +1593,7 @@ export default function App() {
                 onClick={() => setProductCurrentPage(p => Math.min(p + 1, totalProductPages))}
                 className="px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-bold text-black disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-all flex items-center gap-1 cursor-pointer"
               >
-                <span>Next</span>
+                <span>{t("Next")}</span>
                 <ChevronRight size={14} />
               </button>
             </div>
@@ -1126,16 +1603,28 @@ export default function App() {
 
       {/* ── Add Product Modal ─────────────────────────────────────────────────── */}
       {isAddProductOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-black">Add New Product</h3>
-              <button onClick={() => setIsAddProductOpen(false)} className="p-1 text-black hover:text-black rounded-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-xl max-h-[92vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="p-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between shrink-0">
+              <div>
+                <h3 className="text-lg font-bold text-black">Add New Product</h3>
+                <p className="text-xs text-blue-600 font-mono mt-0.5">POST http://localhost:3007/api/product</p>
+              </div>
+              <button onClick={() => setIsAddProductOpen(false)} className="p-1 text-black hover:text-black rounded-lg cursor-pointer">
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleSaveAddProduct} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            
+            <form onSubmit={handleSaveAddProduct} className="p-6 overflow-y-auto space-y-4">
+              {prodError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs font-bold flex items-center gap-2">
+                  <span>⚠️</span>
+                  <span>{prodError}</span>
+                </div>
+              )}
+
+              {/* Name & Code */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-black uppercase mb-1">Product Name *</label>
                   <input 
@@ -1143,8 +1632,8 @@ export default function App() {
                     required 
                     value={prodName}
                     onChange={(e) => setProdName(e.target.value)}
-                    placeholder="e.g. 1000 Wala Garland"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    placeholder="e.g. Deluxe Rocket"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
                 <div>
@@ -1153,84 +1642,195 @@ export default function App() {
                     type="text" 
                     required 
                     value={prodCode}
-                    onChange={(e) => setProdCode(e.target.value)}
-                    placeholder="e.g. GAR-1000-01"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    onChange={(e) => setProdCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. ROCKET-002"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Category</label>
-                <select 
-                  value={prodCategory}
-                  onChange={(e) => setProdCategory(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
-                >
-                  {categoriesList.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                </select>
+              {/* Category & Content */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Category (categorySlug)</label>
+                  <select 
+                    value={prodCategorySlug}
+                    onChange={(e) => handleCategorySelectChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
+                  >
+                    {categoriesList.map(c => (
+                      <option key={c.id} value={c.slug}>
+                        {c.name} (/{c.slug})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Packaging / Content</label>
+                  <input 
+                    type="text" 
+                    value={prodContent}
+                    onChange={(e) => setProdContent(e.target.value)}
+                    placeholder="e.g. Pack of 5"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Description */}
+              <div>
+                <label className="block text-xs font-bold text-black uppercase mb-1">Description</label>
+                <textarea 
+                  rows={2}
+                  value={prodDescription}
+                  onChange={(e) => setProdDescription(e.target.value)}
+                  placeholder="e.g. Colorful sky rocket for Diwali celebrations"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                />
+              </div>
+
+              {/* Pricing (Actual MRP, Selling Price, Discount) */}
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Actual Price (MRP) ₹</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Actual MRP (₹)</label>
                   <input 
                     type="number" 
                     min={0}
                     value={prodActualPrice}
-                    onChange={(e) => setProdActualPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    onChange={(e) => handleActualPriceChange(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Selling Price ₹</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Selling Price (₹)</label>
                   <input 
                     type="number" 
                     min={0}
                     value={prodSellingPrice}
-                    onChange={(e) => setProdSellingPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    onChange={(e) => handleSellingPriceChange(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Discount (%)</label>
+                  <input 
+                    type="number" 
+                    min={0}
+                    max={100}
+                    value={prodDiscount}
+                    onChange={(e) => handleDiscountChange(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold text-emerald-700 focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Stock, Min Qty, Max Qty */}
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Stock Quantity</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Stock Units</label>
                   <input 
                     type="number" 
                     min={0}
                     value={prodStock}
                     onChange={(e) => setProdStock(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Status</label>
-                  <select 
-                    value={prodStatus}
-                    onChange={(e) => setProdStatus(e.target.value as "Active" | "Inactive")}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Min Order Qty</label>
+                  <input 
+                    type="number" 
+                    min={1}
+                    value={prodMinOrderQty}
+                    onChange={(e) => setProdMinOrderQty(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Max Order Qty</label>
+                  <input 
+                    type="number" 
+                    min={1}
+                    value={prodMaxOrderQty}
+                    onChange={(e) => setProdMaxOrderQty(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-200 flex justify-end gap-3">
+              {/* Image URL */}
+              <div>
+                <label className="block text-xs font-bold text-black uppercase mb-1">Image URL</label>
+                <div className="flex gap-2 items-center">
+                  <input 
+                    type="url" 
+                    value={prodImageUrl}
+                    onChange={(e) => setProdImageUrl(e.target.value)}
+                    placeholder="https://example.com/images/sparklers.jpg"
+                    className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                  {prodImageUrl && (
+                    <img 
+                      src={prodImageUrl} 
+                      alt="Preview" 
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                      className="w-9 h-9 object-cover rounded-lg border border-gray-300 shrink-0" 
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Status and Featured toggle */}
+              <div className="grid grid-cols-2 gap-4 pt-1">
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Status (isActive)</label>
+                  <select 
+                    value={prodStatus}
+                    onChange={(e) => setProdStatus(e.target.value as "Active" | "Inactive")}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
+                  >
+                    <option value="Active">Active (isActive: true)</option>
+                    <option value="Inactive">Inactive (isActive: false)</option>
+                  </select>
+                </div>
+                <div className="flex items-center">
+                  <label className="flex items-center gap-2 cursor-pointer mt-5">
+                    <input 
+                      type="checkbox"
+                      checked={prodIsFeatured}
+                      onChange={(e) => setProdIsFeatured(e.target.checked)}
+                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
+                    />
+                    <span className="text-xs font-bold text-black flex items-center gap-1">
+                      <Star size={13} className={prodIsFeatured ? "fill-amber-500 text-amber-500" : "text-gray-400"} />
+                      <span>Featured (isFeatured)</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 flex justify-end gap-3 shrink-0">
                 <button 
                   type="button" 
+                  disabled={prodIsSubmitting}
                   onClick={() => setIsAddProductOpen(false)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
+                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
+                  disabled={prodIsSubmitting}
+                  className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-2"
                 >
-                  Save Product
+                  {prodIsSubmitting ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span>Creating...</span>
+                    </>
+                  ) : (
+                    <span>Create Product</span>
+                  )}
                 </button>
               </div>
             </form>
@@ -1241,15 +1841,21 @@ export default function App() {
       {/* ── Edit Product Modal ────────────────────────────────────────────────── */}
       {editingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-black">Edit Product</h3>
-              <button onClick={() => setEditingProduct(null)} className="p-1 text-black hover:text-black rounded-lg">
+          <div className="bg-white w-full max-w-xl max-h-[92vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="p-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between shrink-0">
+              <h3 className="text-lg font-bold text-black">Edit Product</h3>
+              <button onClick={() => setEditingProduct(null)} className="p-1 text-black hover:text-black rounded-lg cursor-pointer">
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleSaveEditProduct} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSaveEditProduct} className="p-6 overflow-y-auto space-y-4">
+              {prodError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs font-bold flex items-center gap-2">
+                  <span>⚠️</span>
+                  <span>{prodError}</span>
+                </div>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-black uppercase mb-1">Product Name *</label>
                   <input 
@@ -1257,7 +1863,7 @@ export default function App() {
                     required 
                     value={prodName}
                     onChange={(e) => setProdName(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
                 <div>
@@ -1266,83 +1872,183 @@ export default function App() {
                     type="text" 
                     required 
                     value={prodCode}
-                    onChange={(e) => setProdCode(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    onChange={(e) => setProdCode(e.target.value.toUpperCase())}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Category</label>
+                  <select 
+                    value={prodCategorySlug}
+                    onChange={(e) => handleCategorySelectChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
+                  >
+                    {categoriesList.map(c => <option key={c.id} value={c.slug}>{c.name} (/{c.slug})</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Packaging / Content</label>
+                  <input 
+                    type="text" 
+                    value={prodContent}
+                    onChange={(e) => setProdContent(e.target.value)}
+                    placeholder="e.g. Pack of 5"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Category</label>
-                <select 
-                  value={prodCategory}
-                  onChange={(e) => setProdCategory(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
-                >
-                  {categoriesList.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                </select>
+                <label className="block text-xs font-bold text-black uppercase mb-1">Description</label>
+                <textarea 
+                  rows={2}
+                  value={prodDescription}
+                  onChange={(e) => setProdDescription(e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Actual Price (MRP) ₹</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Actual MRP (₹)</label>
                   <input 
                     type="number" 
                     min={0}
                     value={prodActualPrice}
-                    onChange={(e) => setProdActualPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    onChange={(e) => handleActualPriceChange(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Selling Price ₹</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Selling Price (₹)</label>
                   <input 
                     type="number" 
                     min={0}
                     value={prodSellingPrice}
-                    onChange={(e) => setProdSellingPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    onChange={(e) => handleSellingPriceChange(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Discount (%)</label>
+                  <input 
+                    type="number" 
+                    min={0}
+                    max={100}
+                    value={prodDiscount}
+                    onChange={(e) => handleDiscountChange(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold text-emerald-700 focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Stock Quantity</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Stock Units</label>
                   <input 
                     type="number" 
                     min={0}
                     value={prodStock}
                     onChange={(e) => setProdStock(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Status</label>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Min Order Qty</label>
+                  <input 
+                    type="number" 
+                    min={1}
+                    value={prodMinOrderQty}
+                    onChange={(e) => setProdMinOrderQty(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Max Order Qty</label>
+                  <input 
+                    type="number" 
+                    min={1}
+                    value={prodMaxOrderQty}
+                    onChange={(e) => setProdMaxOrderQty(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-black uppercase mb-1">Image URL</label>
+                <div className="flex gap-2 items-center">
+                  <input 
+                    type="url" 
+                    value={prodImageUrl}
+                    onChange={(e) => setProdImageUrl(e.target.value)}
+                    placeholder="https://example.com/images/sparklers.jpg"
+                    className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                  {prodImageUrl && (
+                    <img 
+                      src={prodImageUrl} 
+                      alt="Preview" 
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                      className="w-9 h-9 object-cover rounded-lg border border-gray-300 shrink-0" 
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-1">
+                <div>
+                  <label className="block text-xs font-bold text-black uppercase mb-1">Status (isActive)</label>
                   <select 
                     value={prodStatus}
                     onChange={(e) => setProdStatus(e.target.value as "Active" | "Inactive")}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
                   >
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
                   </select>
                 </div>
+                <div className="flex items-center">
+                  <label className="flex items-center gap-2 cursor-pointer mt-5">
+                    <input 
+                      type="checkbox"
+                      checked={prodIsFeatured}
+                      onChange={(e) => setProdIsFeatured(e.target.checked)}
+                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 cursor-pointer"
+                    />
+                    <span className="text-xs font-bold text-black flex items-center gap-1">
+                      <Star size={13} className={prodIsFeatured ? "fill-amber-500 text-amber-500" : "text-gray-400"} />
+                      <span>Featured (isFeatured)</span>
+                    </span>
+                  </label>
+                </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-200 flex justify-end gap-3">
+              <div className="pt-4 border-t border-gray-200 flex justify-end gap-3 shrink-0">
                 <button 
                   type="button" 
+                  disabled={prodIsSubmitting}
                   onClick={() => setEditingProduct(null)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
+                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
+                  disabled={prodIsSubmitting}
+                  className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-2"
                 >
-                  Update Product
+                  {prodIsSubmitting ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span>Updating...</span>
+                    </>
+                  ) : (
+                    <span>Update Product</span>
+                  )}
                 </button>
               </div>
             </form>
@@ -1353,20 +2059,48 @@ export default function App() {
       {/* ── View Product Details Modal ────────────────────────────────────────── */}
       {viewingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
             <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-black">{viewingProduct.name}</h3>
-                <p className="text-xs text-black font-mono">{viewingProduct.code}</p>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-black">{tProduct(viewingProduct.code, viewingProduct.name)}</h3>
+                  {viewingProduct.featured && (
+                    <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md">
+                      <Star size={10} className="fill-amber-500 text-amber-500" />
+                      <span>Featured</span>
+                    </span>
+                  )}
+                </div>
+                {isTamil && tProduct(viewingProduct.code, viewingProduct.name) !== viewingProduct.name && (
+                  <p className="text-xs text-slate-500 font-normal mt-0.5">{viewingProduct.name}</p>
+                )}
+                <p className="text-xs text-black font-mono mt-0.5">{viewingProduct.code}</p>
               </div>
-              <button onClick={() => setViewingProduct(null)} className="p-1 text-black hover:text-black rounded-lg">
+              <button onClick={() => setViewingProduct(null)} className="p-1 text-black hover:text-black rounded-lg cursor-pointer">
                 <X size={20} />
               </button>
             </div>
             <div className="p-6 space-y-4">
-              <div className="w-full h-36 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center text-black">
-                <ImageIcon size={48} />
-              </div>
+              {viewingProduct.imageUrl ? (
+                <div className="w-full h-44 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
+                  <img 
+                    src={viewingProduct.imageUrl} 
+                    alt={viewingProduct.name} 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => { e.currentTarget.style.display = "none"; }} 
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-24 bg-gray-100 border border-gray-200 rounded-xl flex items-center justify-center text-black">
+                  <ImageIcon size={36} />
+                </div>
+              )}
+
+              {viewingProduct.description && (
+                <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  {viewingProduct.description}
+                </p>
+              )}
 
               <div className="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
                 <div>
@@ -1380,7 +2114,7 @@ export default function App() {
                 {viewingProduct.actualPrice > viewingProduct.sellingPrice && (
                   <div className="col-span-2 pt-2 border-t border-gray-200 flex justify-between text-xs font-bold text-green-700">
                     <span>Discount Offer:</span>
-                    <span>Save ₹{viewingProduct.actualPrice - viewingProduct.sellingPrice} ({Math.round(((viewingProduct.actualPrice - viewingProduct.sellingPrice) / viewingProduct.actualPrice) * 100)}% OFF)</span>
+                    <span>Save ₹{viewingProduct.actualPrice - viewingProduct.sellingPrice} ({viewingProduct.discount || Math.round(((viewingProduct.actualPrice - viewingProduct.sellingPrice) / viewingProduct.actualPrice) * 100)}% OFF)</span>
                   </div>
                 )}
               </div>
@@ -1388,16 +2122,26 @@ export default function App() {
               <div className="space-y-2 text-sm font-semibold">
                 <div className="flex justify-between py-1 border-b border-gray-100">
                   <span className="text-black">Category:</span>
-                  <span className="font-bold text-black">{viewingProduct.category}</span>
+                  <span className="font-bold text-black">{tCategory(viewingProduct.categorySlug, viewingProduct.category)}</span>
                 </div>
+                {viewingProduct.content && (
+                  <div className="flex justify-between py-1 border-b border-gray-100">
+                    <span className="text-black">Package / Content:</span>
+                    <span className="font-bold text-black">{viewingProduct.content}</span>
+                  </div>
+                )}
                 <div className="flex justify-between py-1 border-b border-gray-100">
                   <span className="text-black">Stock Quantity:</span>
                   <span className="font-bold text-black">{viewingProduct.stock} units</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-black">Order Limits (Min - Max):</span>
+                  <span className="font-bold text-black">{viewingProduct.minOrderQty ?? 1} - {viewingProduct.maxOrderQty ?? 10} units</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-gray-100">
                   <span className="text-black">Availability:</span>
                   <span className={`font-bold ${viewingProduct.stock === 0 ? 'text-red-600' : viewingProduct.stock < 10 ? 'text-yellow-600' : 'text-green-600'}`}>
-                    {viewingProduct.stock === 0 ? 'Out of Stock' : viewingProduct.stock < 10 ? 'Low Stock' : 'In Stock'}
+                    {viewingProduct.stock === 0 ? t('Out of Stock') : viewingProduct.stock < 10 ? t('Low Stock') : t('In Stock')}
                   </span>
                 </div>
                 <div className="flex justify-between py-1">
@@ -1409,7 +2153,7 @@ export default function App() {
               <div className="pt-2 flex justify-end">
                 <button 
                   onClick={() => setViewingProduct(null)}
-                  className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-lg transition-colors"
+                  className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-lg transition-colors cursor-pointer"
                 >
                   Close Overview
                 </button>
@@ -1432,16 +2176,27 @@ export default function App() {
             </p>
             <div className="pt-2 flex justify-center gap-3">
               <button 
+                type="button" 
+                disabled={prodIsSubmitting}
                 onClick={() => setDeletingProduct(null)}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
+                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button 
+                type="button" 
+                disabled={prodIsSubmitting}
                 onClick={handleConfirmDeleteProduct}
-                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
+                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-2"
               >
-                Delete Product
+                {prodIsSubmitting ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <span>Delete Product</span>
+                )}
               </button>
             </div>
           </div>
@@ -1452,17 +2207,34 @@ export default function App() {
 
   const renderCategories = () => (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
+      {/* Toast Notification */}
+      {catNotification && (
+        <div className={`p-4 rounded-xl text-sm font-bold flex items-center justify-between shadow-md transition-all ${
+          catNotification.type === "success" 
+            ? "bg-emerald-50 text-emerald-800 border border-emerald-300" 
+            : "bg-red-50 text-red-800 border border-red-300"
+        }`}>
+          <div className="flex items-center gap-2">
+            <span>{catNotification.type === "success" ? "✓" : "⚠️"}</span>
+            <span>{catNotification.message}</span>
+          </div>
+          <button onClick={() => setCatNotification(null)} className="text-black hover:opacity-75 cursor-pointer">
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
       {/* Categories Unified Single Card Container */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
         {/* Card Header & Filter Bar */}
         <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">Product Categories</h2>
-              <p className="text-xs font-medium text-black">Organize fireworks catalog into structured store categories</p>
+              <h2 className="text-lg font-extrabold text-black leading-tight">{t("Product Categories")}</h2>
+              <p className="text-xs font-medium text-black">{t("Organize fireworks catalog into structured store categories")}</p>
             </div>
             <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
-              {categoriesList.length} categories
+              {categoriesList.length} {t("categories")}
             </span>
           </div>
 
@@ -1474,7 +2246,7 @@ export default function App() {
                 type="text" 
                 value={categorySearch}
                 onChange={(e) => setCategorySearch(e.target.value)}
-                placeholder="Search category or slug..." 
+                placeholder={t("Search category or slug...")} 
                 className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
               />
               {categorySearch && (
@@ -1484,13 +2256,24 @@ export default function App() {
               )}
             </div>
 
+            {/* Refresh from API Button */}
+            <button
+              onClick={loadCategoriesFromApi}
+              disabled={isCategoriesLoading}
+              title="Reload categories from localhost:3007/api/categories"
+              className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
+            >
+              <RefreshCw size={14} className={isCategoriesLoading ? "animate-spin text-blue-600" : ""} />
+              <span>{isCategoriesLoading ? "Syncing..." : "Refresh"}</span>
+            </button>
+
             {/* Add Category Button */}
             <button 
               onClick={handleOpenAddCategory} 
               className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap"
             >
               <Plus size={16} />
-              <span>Add Category</span>
+              <span>{t("Add Category")}</span>
             </button>
           </div>
         </div>
@@ -1500,12 +2283,12 @@ export default function App() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
-                <th className="py-3.5 px-5">Category Name</th>
-                <th className="py-3.5 px-5">Slug Route</th>
-                <th className="py-3.5 px-5 text-center">Product Count</th>
-                <th className="py-3.5 px-5 text-center">Sort Order</th>
-                <th className="py-3.5 px-5 text-center">Status</th>
-                <th className="py-3.5 px-5 text-right">Actions</th>
+                <th className="py-3.5 px-5">{t("Category Name")}</th>
+                <th className="py-3.5 px-5">{t("Slug Route")}</th>
+                <th className="py-3.5 px-5 text-center">{t("Product Count")}</th>
+                <th className="py-3.5 px-5 text-center">{t("Sort Order")}</th>
+                <th className="py-3.5 px-5 text-center">{t("Status")}</th>
+                <th className="py-3.5 px-5 text-right">{t("Actions")}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
@@ -1514,21 +2297,55 @@ export default function App() {
                   <td colSpan={6} className="py-12 text-center">
                     <div className="max-w-md mx-auto space-y-2">
                       <Layers size={40} className="mx-auto text-black" />
-                      <h3 className="text-base font-bold text-black">No categories found</h3>
+                      <h3 className="text-base font-bold text-black">{t("No categories found")}</h3>
                       <p className="text-xs text-black font-medium">Try searching for a different keyword or create a new category.</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 filteredCategories.map((c, index) => {
-                  const count = getCategoryProductCount(c.name, c.count);
+                  const count = typeof c.count === "number" ? c.count : 0;
                   return (
                     <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-3.5 px-5 font-extrabold text-sm text-black">{c.name}</td>
+                      <td className="py-3.5 px-5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl border border-slate-200 shrink-0 overflow-hidden relative bg-slate-100 flex items-center justify-center">
+                            <span className="font-bold text-xs text-slate-500 uppercase select-none">
+                              {c.name.slice(0, 2)}
+                            </span>
+                            {c.imageUrl && (
+                              <img 
+                                src={c.imageUrl} 
+                                alt={c.name} 
+                                className="absolute inset-0 w-full h-full object-cover" 
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }} 
+                              />
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-extrabold text-sm text-black">{tCategory(c.slug, c.name)}</span>
+                              {typeof c.id === "string" && (
+                                <span className="font-mono text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title={`ID: ${c.id}`}>
+                                  {c.id.slice(0, 8)}...
+                                </span>
+                              )}
+                            </div>
+                            {isTamil && tCategory(c.slug, c.name) !== c.name && (
+                              <div className="text-[11px] text-slate-500 font-normal mt-0.5">{c.name}</div>
+                            )}
+                            {c.description && (
+                              <div className="text-xs text-slate-500 font-normal line-clamp-1 max-w-xs">{c.description}</div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
                       <td className="py-3.5 px-5 text-black font-mono text-xs">/{c.slug}</td>
                       <td className="py-3.5 px-5 text-center">
                         <span className="px-2.5 py-0.5 bg-slate-100 text-black text-xs font-bold rounded-full border border-slate-200">
-                          {count} products
+                          {count} {t("products")}
                         </span>
                       </td>
                       <td className="py-3.5 px-5 text-center">
@@ -1572,21 +2389,21 @@ export default function App() {
                           }`}
                         >
                           <span className={`w-1.5 h-1.5 rounded-full ${c.status === "Active" ? "bg-emerald-500" : "bg-slate-400"}`}></span>
-                          <span>{c.status}</span>
+                          <span>{c.status === "Active" ? t("Active") : t("Inactive")}</span>
                         </button>
                       </td>
                       <td className="py-3.5 px-5 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button 
                             onClick={() => handleOpenEditCategory(c)}
-                            title="Edit Category"
+                            title={t("Edit")}
                             className="p-1.5 text-black hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
                             onClick={() => setDeletingCategory(c)}
-                            title="Delete Category"
+                            title={t("Delete")}
                             className="p-1.5 text-black hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
                           >
                             <Trash2 size={16} />
@@ -1605,14 +2422,24 @@ export default function App() {
       {/* ── Add Category Modal ────────────────────────────────────────────────── */}
       {isAddCategoryOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-black">Add New Category</h3>
-              <button onClick={() => setIsAddCategoryOpen(false)} className="p-1 text-black hover:text-black rounded-lg">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="p-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-black">Add New Category</h3>
+                <p className="text-xs text-blue-600 font-mono mt-0.5">POST http://localhost:3007/api/categories</p>
+              </div>
+              <button onClick={() => setIsAddCategoryOpen(false)} className="p-1 text-black hover:text-black rounded-lg cursor-pointer">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleSaveAddCategory} className="p-6 space-y-4">
+              {catError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs font-bold flex items-center gap-2">
+                  <span>⚠️</span>
+                  <span>{catError}</span>
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-bold text-black mb-1">Category Name *</label>
                 <input 
@@ -1620,7 +2447,7 @@ export default function App() {
                   required 
                   value={catName}
                   onChange={(e) => handleCategoryNameChange(e.target.value)}
-                  placeholder="e.g. Combo Packs"
+                  placeholder="e.g. Sparklers"
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                 />
               </div>
@@ -1633,11 +2460,43 @@ export default function App() {
                     type="text" 
                     value={catSlug}
                     onChange={(e) => setCatSlug(e.target.value)}
-                    placeholder="combo-packs"
+                    placeholder="sparklers"
                     className="w-full pl-7 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
-                <p className="text-xs text-black mt-1 font-medium">Auto-generated slug used in store URLs</p>
+                <p className="text-xs text-black mt-1 font-medium">Auto-generated slug used in store URLs and API</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-black mb-1">Description</label>
+                <textarea 
+                  rows={2}
+                  value={catDesc}
+                  onChange={(e) => setCatDesc(e.target.value)}
+                  placeholder="Explore our collection of high-quality sparklers for festive celebrations."
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-black mb-1">Image URL</label>
+                <div className="flex gap-2 items-center">
+                  <input 
+                    type="url" 
+                    value={catImageUrl}
+                    onChange={(e) => setCatImageUrl(e.target.value)}
+                    placeholder="https://example.com/images/sparklers.jpg"
+                    className="flex-1 px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                  {catImageUrl && (
+                    <img 
+                      src={catImageUrl} 
+                      alt="Preview" 
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                      className="w-9 h-9 object-cover rounded-lg border border-gray-300 shrink-0" 
+                    />
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1659,8 +2518,8 @@ export default function App() {
                     onChange={(e) => setCatStatus(e.target.value as "Active" | "Inactive")}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-bold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
                   >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
+                    <option value="Active">Active (isActive: true)</option>
+                    <option value="Inactive">Inactive (isActive: false)</option>
                   </select>
                 </div>
               </div>
@@ -1668,16 +2527,25 @@ export default function App() {
               <div className="pt-4 border-t border-gray-200 flex justify-end gap-3">
                 <button 
                   type="button" 
+                  disabled={catIsSubmitting}
                   onClick={() => setIsAddCategoryOpen(false)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
+                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
+                  disabled={catIsSubmitting}
+                  className="px-6 py-2.5 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-2"
                 >
-                  Save Category
+                  {catIsSubmitting ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span>Creating...</span>
+                    </>
+                  ) : (
+                    <span>Save Category</span>
+                  )}
                 </button>
               </div>
             </form>
@@ -1688,10 +2556,10 @@ export default function App() {
       {/* ── Edit Category Modal ────────────────────────────────────────────────── */}
       {editingCategory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="p-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
               <h3 className="text-xl font-bold text-black">Edit Category</h3>
-              <button onClick={() => setEditingCategory(null)} className="p-1 text-black hover:text-black rounded-lg">
+              <button onClick={() => setEditingCategory(null)} className="p-1 text-black hover:text-black rounded-lg cursor-pointer">
                 <X size={20} />
               </button>
             </div>
@@ -1717,6 +2585,38 @@ export default function App() {
                     onChange={(e) => setCatSlug(e.target.value)}
                     className="w-full pl-7 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-black mb-1">Description</label>
+                <textarea 
+                  rows={2}
+                  value={catDesc}
+                  onChange={(e) => setCatDesc(e.target.value)}
+                  placeholder="Category description..."
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-black mb-1">Image URL</label>
+                <div className="flex gap-2 items-center">
+                  <input 
+                    type="url" 
+                    value={catImageUrl}
+                    onChange={(e) => setCatImageUrl(e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className="flex-1 px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                  />
+                  {catImageUrl && (
+                    <img 
+                      src={catImageUrl} 
+                      alt="Preview" 
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                      className="w-9 h-9 object-cover rounded-lg border border-gray-300 shrink-0" 
+                    />
+                  )}
                 </div>
               </div>
 
@@ -1804,11 +2704,11 @@ export default function App() {
         <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">Order Management</h2>
-              <p className="text-xs font-medium text-black">Track customer purchases, fulfillment status, and invoice summaries</p>
+              <h2 className="text-lg font-extrabold text-black leading-tight">{t("Order Management")}</h2>
+              <p className="text-xs font-medium text-black">{t("Track customer purchases, fulfillment status, and invoice summaries")}</p>
             </div>
             <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
-              {filteredOrders.length} orders
+              {filteredOrders.length} {t("orders")}
             </span>
           </div>
 
@@ -1820,7 +2720,7 @@ export default function App() {
                 type="text" 
                 value={orderSearch}
                 onChange={(e) => { setOrderSearch(e.target.value); setOrderCurrentPage(1); }}
-                placeholder="Search order, customer or phone..." 
+                placeholder={t("Search order, customer or phone...")} 
                 className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
               />
               {orderSearch && (
@@ -1837,13 +2737,13 @@ export default function App() {
                 onChange={(e) => { setOrderStatusFilter(e.target.value); setOrderCurrentPage(1); }}
                 className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
               >
-                <option value="All">All Order Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Processing">Processing</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">Delivered</option>
-                <option value="Cancelled">Cancelled</option>
+                <option value="All">{t("All Order Statuses")}</option>
+                <option value="Pending">{t("Pending")}</option>
+                <option value="Processing">{t("Processing")}</option>
+                <option value="Confirmed">{t("Confirmed")}</option>
+                <option value="Shipped">{t("Shipped")}</option>
+                <option value="Delivered">{t("Delivered")}</option>
+                <option value="Cancelled">{t("Cancelled")}</option>
               </select>
               <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
@@ -1855,11 +2755,11 @@ export default function App() {
                 onChange={(e) => { setPaymentStatusFilter(e.target.value); setOrderCurrentPage(1); }}
                 className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
               >
-                <option value="All">All Payment Statuses</option>
-                <option value="Paid">Paid</option>
-                <option value="Pending">Pending</option>
-                <option value="Failed">Failed</option>
-                <option value="Refunded">Refunded</option>
+                <option value="All">{t("All Payment Statuses")}</option>
+                <option value="Paid">{t("Paid")}</option>
+                <option value="Pending">{t("Pending")}</option>
+                <option value="Failed">{t("Failed")}</option>
+                <option value="Refunded">{t("Refunded")}</option>
               </select>
               <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
@@ -1871,14 +2771,14 @@ export default function App() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
-                <th className="py-3.5 px-5">Order ID</th>
-                <th className="py-3.5 px-5">Customer & Phone</th>
-                <th className="py-3.5 px-5 text-center">Items</th>
-                <th className="py-3.5 px-5">Total</th>
-                <th className="py-3.5 px-5">Payment</th>
-                <th className="py-3.5 px-5">Fulfillment Status</th>
-                <th className="py-3.5 px-5">Date</th>
-                <th className="py-3.5 px-5 text-right">Actions</th>
+                <th className="py-3.5 px-5">{t("Order")} ID</th>
+                <th className="py-3.5 px-5">{t("Customer")}</th>
+                <th className="py-3.5 px-5 text-center">{t("items")}</th>
+                <th className="py-3.5 px-5">{t("Total")}</th>
+                <th className="py-3.5 px-5">{t("Payment Method")}</th>
+                <th className="py-3.5 px-5">{t("Status")}</th>
+                <th className="py-3.5 px-5">{t("Date")}</th>
+                <th className="py-3.5 px-5 text-right">{t("Actions")}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
@@ -1919,7 +2819,7 @@ export default function App() {
                         o.payment === 'Paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
                         o.payment === 'Failed' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200'
                       }`}>
-                        {o.payment}
+                        {t(o.payment)}
                       </span>
                     </td>
                     <td className="py-3.5 px-5">
@@ -1935,12 +2835,12 @@ export default function App() {
                             o.status === 'Cancelled' ? 'bg-rose-50 text-rose-800 border-rose-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                           }`}
                         >
-                          <option value="Pending">Pending</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Confirmed">Confirmed</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Delivered">Delivered</option>
-                          <option value="Cancelled">Cancelled</option>
+                          <option value="Pending">{t("Pending")}</option>
+                          <option value="Processing">{t("Processing")}</option>
+                          <option value="Confirmed">{t("Confirmed")}</option>
+                          <option value="Shipped">{t("Shipped")}</option>
+                          <option value="Delivered">{t("Delivered")}</option>
+                          <option value="Cancelled">{t("Cancelled")}</option>
                         </select>
                         <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-current opacity-70" />
                       </div>
@@ -1951,7 +2851,7 @@ export default function App() {
                         onClick={() => setSelectedOrder(o)}
                         className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold text-xs rounded-xl border border-blue-200 transition-all cursor-pointer inline-flex items-center gap-1"
                       >
-                        <span>View Details</span>
+                        <span>{t("View Details")}</span>
                         <ChevronRight size={14} />
                       </button>
                     </td>
@@ -1966,7 +2866,7 @@ export default function App() {
         {filteredOrders.length > 0 && (
           <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4">
             <p className="text-sm font-bold text-black">
-              Showing <span className="text-black">{(orderCurrentPage - 1) * ordersPerPage + 1}</span> to <span className="text-black">{Math.min(orderCurrentPage * ordersPerPage, filteredOrders.length)}</span> of <span className="text-black">{filteredOrders.length}</span> orders
+              {t("Showing")} <span className="text-black">{(orderCurrentPage - 1) * ordersPerPage + 1}</span> {t("to")} <span className="text-black">{Math.min(orderCurrentPage * ordersPerPage, filteredOrders.length)}</span> {t("of")} <span className="text-black">{filteredOrders.length}</span> {t("orders")}
             </p>
             <div className="flex items-center gap-2">
               <button 
@@ -1975,7 +2875,7 @@ export default function App() {
                 className="p-2 border border-gray-300 rounded-lg text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-colors flex items-center gap-1 text-black"
               >
                 <ChevronLeft size={16} />
-                <span>Prev</span>
+                <span>{t("Prev")}</span>
               </button>
               {Array.from({ length: totalOrderPages }, (_, i) => i + 1).map(page => (
                 <button
@@ -1991,7 +2891,7 @@ export default function App() {
                 onClick={() => setOrderCurrentPage(p => Math.min(p + 1, totalOrderPages))}
                 className="p-2 border border-gray-300 rounded-lg text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-colors flex items-center gap-1 text-black"
               >
-                <span>Next</span>
+                <span>{t("Next")}</span>
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -2093,7 +2993,7 @@ export default function App() {
                 <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
                   <div className="flex items-center gap-2 text-[#0000FF] font-bold text-sm uppercase tracking-wider">
                     <User size={18} />
-                    <span>Customer Information</span>
+                    <span>{t("Customer Information")}</span>
                   </div>
                   <div>
                     <p className="text-lg font-bold text-black">{selectedOrder.customer}</p>
@@ -2139,7 +3039,10 @@ export default function App() {
                         <tr key={index} className="hover:bg-gray-50">
                           <td className="py-3 px-4 text-black font-bold">{index + 1}</td>
                           <td className="py-3 px-4">
-                            <p className="font-bold text-black">{item.name}</p>
+                            <p className="font-bold text-black">{tProduct(item.code, item.name)}</p>
+                            {isTamil && tProduct(item.code, item.name) !== item.name && (
+                              <p className="text-xs text-slate-500 font-normal">{item.name}</p>
+                            )}
                             <p className="text-xs text-black font-mono">{item.code}</p>
                           </td>
                           <td className="py-3 px-4 text-center font-bold">{item.qty}</td>
@@ -2157,28 +3060,28 @@ export default function App() {
                 <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-3">
                   <CreditCard size={24} className="text-[#0000FF]" />
                   <div>
-                    <p className="text-xs font-bold text-black uppercase">Payment Method</p>
+                    <p className="text-xs font-bold text-black uppercase">{t("Payment Method")}</p>
                     <p className="text-base font-bold text-black">{selectedOrder.paymentMethod}</p>
                   </div>
                 </div>
 
                 <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-2">
                   <div className="flex justify-between text-sm font-semibold text-black">
-                    <span>Items Subtotal</span>
+                    <span>{t("Items Subtotal")}</span>
                     <span className="text-black font-bold">₹{selectedOrder.subtotal}</span>
                   </div>
                   {selectedOrder.discount > 0 && (
                     <div className="flex justify-between text-sm font-semibold text-green-600">
-                      <span>Discount Applied</span>
+                      <span>{t("Discount Applied")}</span>
                       <span className="font-bold">-₹{selectedOrder.discount}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm font-semibold text-black">
-                    <span>Delivery Charges</span>
+                    <span>{t("Delivery Charges")}</span>
                     <span className="text-black font-bold">₹{selectedOrder.deliveryFee}</span>
                   </div>
                   <div className="pt-3 border-t border-gray-300 flex justify-between items-center text-lg font-extrabold text-black">
-                    <span>Grand Total</span>
+                    <span>{t("Grand Total")}</span>
                     <span className="text-2xl text-[#0000FF]">₹{selectedOrder.total}</span>
                   </div>
                 </div>
@@ -2200,6 +3103,264 @@ export default function App() {
     </div>
   );
 
+  // ── Customer Queries View ───────────────────────────────────────────────────
+  const renderQueries = () => (
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
+      {/* Queries Unified Single Card Container */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
+        {/* Card Header & Filter Bar */}
+        <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div>
+              <h2 className="text-lg font-extrabold text-black leading-tight">{t("Customer Queries")}</h2>
+              <p className="text-xs font-medium text-slate-500">
+                {t("Review customer inquiries and messages submitted from the store website")}
+              </p>
+            </div>
+            <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
+              {queriesList.length} {t("Queries")}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Live Search Input */}
+            <div className="relative flex-1 md:w-72 min-w-[200px]">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={queriesSearch}
+                onChange={(e) => {
+                  setQueriesSearch(e.target.value);
+                  setQueriesCurrentPage(1);
+                }}
+                placeholder={t("Search by mobile or message...") || "Search by mobile or message..."}
+                className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-slate-400"
+              />
+              {queriesSearch && (
+                <button
+                  onClick={() => setQueriesSearch("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-black cursor-pointer"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Refresh from API Button */}
+            <button
+              onClick={loadQueriesFromApi}
+              disabled={isQueriesLoading}
+              title="Reload queries from API"
+              className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
+            >
+              <RefreshCw size={14} className={isQueriesLoading ? "animate-spin text-blue-600" : ""} />
+              <span>{isQueriesLoading ? "Syncing..." : "Refresh"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Queries Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200/80 text-black font-extrabold uppercase tracking-wider text-[11px]">
+                <th className="py-3.5 px-4">#</th>
+                <th className="py-3.5 px-4">{t("Mobile Number")}</th>
+                <th className="py-3.5 px-4">{t("Inquiry Message") || "Message"}</th>
+                <th className="py-3.5 px-4">{t("Received Date") || "Date"}</th>
+                <th className="py-3.5 px-4">{t("Status")}</th>
+                <th className="py-3.5 px-4 text-right">{t("Action")}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+              {paginatedQueries.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-14 text-center text-slate-500">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <MessageSquare size={38} className="text-slate-300" />
+                      <p className="font-bold text-sm text-slate-800">{t("No queries found")}</p>
+                      <p className="text-xs text-slate-400 max-w-sm">
+                        Customer contact requests and messages submitted via the website will appear here in real time.
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                paginatedQueries.map((q, idx) => {
+                  const cleanPhone = q.mobileNumber.replace(/\D/g, "");
+                  const waLink = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent("வணக்கம்! சாந்தி சிவகாசி பட்டாசுகள் சார்பாக உங்களைத் தொடர்பு கொள்கிறோம்.")}`;
+                  const formattedDate = new Date(q.createdAt).toLocaleString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  });
+
+                  return (
+                    <tr key={q.id || idx} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400">
+                        {(queriesCurrentPage - 1) * queriesPerPage + idx + 1}
+                      </td>
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <span className="font-extrabold text-slate-900 text-sm">
+                            {q.mobileNumber}
+                          </span>
+                          <a
+                            href={`tel:${q.mobileNumber}`}
+                            title="Call customer directly"
+                            className="p-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors cursor-pointer"
+                          >
+                            <Phone size={13} />
+                          </a>
+                          <a
+                            href={waLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Open WhatsApp chat with customer"
+                            className="p-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors cursor-pointer"
+                          >
+                            <MessageSquare size={13} />
+                          </a>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 max-w-md">
+                        <p className="text-slate-800 line-clamp-2 text-xs leading-relaxed font-medium">
+                          {q.message}
+                        </p>
+                      </td>
+                      <td className="py-3.5 px-4 whitespace-nowrap text-slate-500 text-xs font-medium">
+                        {formattedDate}
+                      </td>
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-extrabold rounded-md uppercase tracking-wider">
+                          {q.status || "PENDING"}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                        <button
+                          onClick={() => setSelectedQuery(q)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-xs rounded-lg transition-all cursor-pointer shadow-2xs"
+                        >
+                          <Eye size={13} />
+                          <span>{t("View")}</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {totalQueryPages > 1 && (
+          <div className="p-4 bg-slate-50/50 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
+            <span>
+              Showing page <strong>{queriesCurrentPage}</strong> of <strong>{totalQueryPages}</strong> ({filteredQueries.length} total)
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setQueriesCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={queriesCurrentPage === 1}
+                className="p-1.5 rounded-lg border border-slate-200 hover:bg-white disabled:opacity-40 cursor-pointer"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={() => setQueriesCurrentPage((p) => Math.min(totalQueryPages, p + 1))}
+                disabled={queriesCurrentPage === totalQueryPages}
+                className="p-1.5 rounded-lg border border-slate-200 hover:bg-white disabled:opacity-40 cursor-pointer"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Selected Query Details Modal */}
+      {selectedQuery && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2">
+                <MessageSquare size={18} className="text-blue-600" />
+                <h3 className="font-extrabold text-base text-slate-900">{t("Customer Query Details")}</h3>
+              </div>
+              <button
+                onClick={() => setSelectedQuery(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 cursor-pointer transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
+                  {t("Mobile Number")}
+                </label>
+                <div className="flex items-center gap-3">
+                  <span className="text-lg font-bold text-slate-900">{selectedQuery.mobileNumber}</span>
+                  <a
+                    href={`tel:${selectedQuery.mobileNumber}`}
+                    className="px-2.5 py-1 rounded bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 hover:bg-blue-100 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Phone size={12} /> Call
+                  </a>
+                  <a
+                    href={`https://wa.me/91${selectedQuery.mobileNumber.replace(/\D/g, '')}?text=${encodeURIComponent("வணக்கம்! சாந்தி சிவகாசி பட்டாசுகள் சார்பாக உங்களைத் தொடர்பு கொள்கிறோம்.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 hover:bg-emerald-100 flex items-center gap-1 cursor-pointer"
+                  >
+                    <MessageSquare size={12} /> WhatsApp
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
+                  {t("Received Date") || "Date"}
+                </label>
+                <p className="text-xs text-slate-600 font-medium">
+                  {new Date(selectedQuery.createdAt).toLocaleString("en-IN", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
+                  {t("Inquiry Message") || "Message"}
+                </label>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-medium">
+                  {selectedQuery.message}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2">
+              <button
+                onClick={() => setSelectedQuery(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl cursor-pointer transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   // ── Render Switcher ──────────────────────────────────────────────────────────
   const renderContent = () => {
     switch (currentRoute) {
@@ -2207,6 +3368,7 @@ export default function App() {
       case "/admin/products": return renderProducts();
       case "/admin/categories": return renderCategories();
       case "/admin/orders": return renderOrders();
+      case "/admin/queries": return renderQueries();
       default: return (
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
@@ -2223,6 +3385,7 @@ export default function App() {
     if (currentRoute === "/admin/products") return { title: "Products", sub: "Admin / Products" };
     if (currentRoute === "/admin/categories") return { title: "Categories", sub: "Admin / Categories" };
     if (currentRoute === "/admin/orders") return { title: "Orders", sub: "Admin / Orders" };
+    if (currentRoute === "/admin/queries") return { title: "Customer Queries", sub: "Admin / Queries" };
     return { title: "Admin Portal", sub: "Admin" };
   };
 

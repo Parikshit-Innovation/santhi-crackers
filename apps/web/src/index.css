@@ -150,3 +150,28 @@ button, input, select, textarea {
 main {
   flex: 1;
 }
+
+/* Tamil Typography Enhancements when lang-ta is active */
+body.lang-ta {
+  font-family: var(--font-tamil), var(--font-body), sans-serif;
+}
+
+body.lang-ta button,
+body.lang-ta input,
+body.lang-ta select,
+body.lang-ta textarea,
+body.lang-ta .combo-heading,
+body.lang-ta .combo-discount-badge,
+body.lang-ta .store-brand-text,
+body.lang-ta .store-footer-brand-name,
+body.lang-ta .store-footer-brand-desc,
+body.lang-ta .about-hero-title,
+body.lang-ta .about-section-heading,
+body.lang-ta .contact-heading,
+body.lang-ta .about-why-title,
+body.lang-ta .about-why-name,
+body.lang-ta .about-why-desc,
+body.lang-ta .about-why-left .about-eyebrow {
+  font-family: var(--font-tamil), var(--font-body), sans-serif;
+}
+

@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect } from "react";
-import "./ComboPackTable.css";
+import React, { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import {
-  fetchBackendProducts,
   fetchBackendCategories,
+  fetchBackendProducts,
   mapBackendProductToComboItem,
 } from "../api/products";
+import { useLanguage } from "../context/LanguageContext";
+import "./ComboPackTable.css";
 
 export interface ComboItem {
   id: string;
@@ -17,467 +18,45 @@ export interface ComboItem {
   image: string;
 }
 
-const COMBO_DATA: ComboItem[] = [
-  {
-    id: "1",
-    code: "251",
-    name: "3000 COMBO PACK (kids pack)",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 3000,
-    price: 300,
-    image:
-      "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "2",
-    code: "252",
-    name: "15000 COMBO PACK (family combo pack)",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 15000,
-    price: 1500,
-    image:
-      "https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "3",
-    code: "253",
-    name: "Vinayagar chaturthi (15000 COMBO PACK )",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 15000,
-    price: 1500,
-    image:
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "4",
-    code: "0001.1",
-    name: "1999 combo pack -1",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 2000,
-    price: 200,
-    image:
-      "https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "5",
-    code: "0001.2",
-    name: "3000 combo pack -1",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 3000,
-    price: 300,
-    image:
-      "https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "6",
-    code: "0001.3",
-    name: "5000 combo pack -1",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 5000,
-    price: 500,
-    image:
-      "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "7",
-    code: "0001.5",
-    name: "10,000 combo pack -1",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 10000,
-    price: 1000,
-    image:
-      "https://images.unsplash.com/photo-1543257580-7269da773bf5?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "8",
-    code: "0002.1",
-    name: "Diwali Mega Gift Box (25 Items)",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 6000,
-    price: 600,
-    image:
-      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "9",
-    code: "0002.2",
-    name: "Sivakasi Royal Family Pack (35 Items)",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 12000,
-    price: 1200,
-    image:
-      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "10",
-    code: "0002.3",
-    name: "Grand Festival Fireworks Hamper",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 18000,
-    price: 1800,
-    image:
-      "https://images.unsplash.com/photo-1576085898323-218337e3e43c?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "11",
-    code: "0002.4",
-    name: "Chakkar & Flowerpot Special Combo",
-    category: "Ground Chakkars",
-    content: "box",
-    actualPrice: 2500,
-    price: 250,
-    image:
-      "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "12",
-    code: "0002.5",
-    name: "Night Sky Shot Special Pack (12 Pcs)",
-    category: "Rockets & Aerial Skyshots",
-    content: "box",
-    actualPrice: 4500,
-    price: 450,
-    image:
-      "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "13",
-    code: "0003.1",
-    name: "Golden Sparklers Assorted Box",
-    category: "Sparklers",
-    content: "box",
-    actualPrice: 1500,
-    price: 150,
-    image:
-      "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "14",
-    code: "0003.2",
-    name: "Children Delight Sparkler Pack",
-    category: "Sparklers",
-    content: "box",
-    actualPrice: 1200,
-    price: 120,
-    image:
-      "https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "15",
-    code: "0003.3",
-    name: "Thunder Flash Sound Crackers Combo",
-    category: "Sound Crackers",
-    content: "box",
-    actualPrice: 3500,
-    price: 350,
-    image:
-      "https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "16",
-    code: "0003.4",
-    name: "Multi-Color Fountain Mega Box",
-    category: "Flower Pots & Fountains",
-    content: "box",
-    actualPrice: 4000,
-    price: 400,
-    image:
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "17",
-    code: "0003.5",
-    name: "Sky Rocket Spectacular Pack",
-    category: "Rockets & Aerial Skyshots",
-    content: "box",
-    actualPrice: 3800,
-    price: 380,
-    image:
-      "https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "18",
-    code: "0004.1",
-    name: "Prestige VIP Celebration Hamper",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 22000,
-    price: 2200,
-    image:
-      "https://images.unsplash.com/photo-1543257580-7269da773bf5?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "19",
-    code: "0004.2",
-    name: "Classic 50 Items Festival Box",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 14000,
-    price: 1400,
-    image:
-      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "20",
-    code: "0004.3",
-    name: "Eco Green Crackers Family Pack",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 8000,
-    price: 800,
-    image:
-      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "21",
-    code: "0004.4",
-    name: "Twin Sparkler & Chakkars Wonder",
-    category: "Ground Chakkars",
-    content: "box",
-    actualPrice: 2200,
-    price: 220,
-    image:
-      "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "22",
-    code: "0004.5",
-    name: "7 Shot Aerial Repeater Combo",
-    category: "Rockets & Aerial Skyshots",
-    content: "box",
-    actualPrice: 5500,
-    price: 550,
-    image:
-      "https://images.unsplash.com/photo-1576085898323-218337e3e43c?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "23",
-    code: "0005.1",
-    name: "Peacock Feather Fountain Pack",
-    category: "Flower Pots & Fountains",
-    content: "box",
-    actualPrice: 3200,
-    price: 320,
-    image:
-      "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "24",
-    code: "0005.2",
-    name: "Deluxe Wedding Celebration Box",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 25000,
-    price: 2500,
-    image:
-      "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "25",
-    code: "0005.3",
-    name: "Deepavali Special Silver Pack",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 4800,
-    price: 480,
-    image:
-      "https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "26",
-    code: "0005.4",
-    name: "Deepavali Special Gold Pack",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 9500,
-    price: 950,
-    image:
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "27",
-    code: "0005.5",
-    name: "Deepavali Special Platinum Pack",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 16500,
-    price: 1650,
-    image:
-      "https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "28",
-    code: "0006.1",
-    name: "Mini Rockets & Whistling Bomb Pack",
-    category: "Rockets & Aerial Skyshots",
-    content: "box",
-    actualPrice: 2800,
-    price: 280,
-    image:
-      "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "29",
-    code: "0006.2",
-    name: "Twinkling Star Sparkler Assortment",
-    category: "Sparklers",
-    content: "box",
-    actualPrice: 1800,
-    price: 180,
-    image:
-      "https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "30",
-    code: "0006.3",
-    name: "Super Giant Wheel Chakkar Pack",
-    category: "Ground Chakkars",
-    content: "box",
-    actualPrice: 3600,
-    price: 360,
-    image:
-      "https://images.unsplash.com/photo-1543257580-7269da773bf5?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "31",
-    code: "0006.4",
-    name: "Colourful Aerial Drone Shots Box",
-    category: "Rockets & Aerial Skyshots",
-    content: "box",
-    actualPrice: 6200,
-    price: 620,
-    image:
-      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "32",
-    code: "0006.5",
-    name: "Royal Sound & Light Fusion Combo",
-    category: "Sound Crackers",
-    content: "box",
-    actualPrice: 11000,
-    price: 1100,
-    image:
-      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "33",
-    code: "0007.1",
-    name: "Diwali Budget Savings Box (15 Items)",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 2400,
-    price: 240,
-    image:
-      "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "34",
-    code: "0007.2",
-    name: "Kids Safe Ground Sparkler Box",
-    category: "Sparklers",
-    content: "box",
-    actualPrice: 1600,
-    price: 160,
-    image:
-      "https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "35",
-    code: "0007.3",
-    name: "Flowerpots Deluxe Trio (Tri-Color)",
-    category: "Flower Pots & Fountains",
-    content: "box",
-    actualPrice: 2900,
-    price: 290,
-    image:
-      "https://images.unsplash.com/photo-1576085898323-218337e3e43c?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "36",
-    code: "0007.4",
-    name: "Galaxy Star Aerial Symphony Hamper",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 13500,
-    price: 1350,
-    image:
-      "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "37",
-    code: "0007.5",
-    name: "Carnival Parachute Special Pack",
-    category: "Rockets & Aerial Skyshots",
-    content: "box",
-    actualPrice: 4200,
-    price: 420,
-    image:
-      "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "38",
-    code: "0008.1",
-    name: "Heritage Sivakasi Classic Cracker Pack",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 7500,
-    price: 750,
-    image:
-      "https://images.unsplash.com/photo-1498931299472-f7a63a5a1cfa?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "39",
-    code: "0008.2",
-    name: "Celebration Super Saver Box (40 Items)",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 15500,
-    price: 1550,
-    image:
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "40",
-    code: "0008.3",
-    name: "Ultimate Grand Finale Fireworks Mega Hamper",
-    category: "Combo Packs & Gift Boxes",
-    content: "box",
-    actualPrice: 30000,
-    price: 3000,
-    image:
-      "https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?auto=format&fit=crop&w=400&q=80",
-  },
-];
 
 interface ComboPackTableProps {
   onAddToCart?: (count: number, item: ComboItem) => void;
 }
 
 export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) => {
-  const [items, setItems] = useState<ComboItem[]>(COMBO_DATA);
+  const { t, tProduct, tCategory } = useLanguage();
+  const [items, setItems] = useState<ComboItem[]>([]);
   const [categoriesList, setCategoriesList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLiveBackend, setIsLiveBackend] = useState<boolean>(false);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("price-asc");
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const sortDropdownRef = useRef<HTMLDivElement>(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [addedItemNotice, setAddedItemNotice] = useState<string | null>(null);
   const [activePreview, setActivePreview] = useState<ComboItem | null>(null);
   const [addedItemIds, setAddedItemIds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sortDropdownRef.current &&
+        !sortDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsSortOpen(false);
+      }
+    };
+    if (isSortOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSortOpen]);
+
+  const loadCatalog = useCallback(() => {
     let isMounted = true;
     setIsLoading(true);
 
@@ -515,13 +94,16 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
             Array.from(new Set([...fetchedCatNames, ...productCategories])),
           );
         } else {
-          setCategoriesList(
-            Array.from(new Set(COMBO_DATA.map((it) => it.category))),
-          );
+          setItems([]);
+          setCategoriesList([]);
         }
       })
       .catch((err) => {
         console.warn("Failed to fetch backend products:", err);
+        if (isMounted) {
+          setItems([]);
+          setCategoriesList([]);
+        }
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -531,6 +113,10 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
       isMounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    return loadCatalog();
+  }, [loadCatalog]);
 
   const categoryOptions = useMemo(() => {
     const set = new Set<string>();
@@ -686,7 +272,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
     // Trigger flying animation to the cart in the footer
     triggerFlyToCart(item, qty, event?.currentTarget);
 
-    setAddedItemNotice("Item added to cart");
+    setAddedItemNotice(t("Item added to cart"));
     setTimeout(() => {
       setAddedItemNotice(null);
     }, 2000);
@@ -805,11 +391,14 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
         {/* Top Header & Toolbar Area */}
         <div className="combo-header-bar">
           <div className="combo-title-wrap">
-            <h2 className="combo-heading">Explore Crackers</h2>
-            <div className="combo-discount-badge">COMBO PACK (90% DISCOUNT)</div>
+            <h2 className="combo-heading">{t("Explore Crackers")}</h2>
+            {items.length > 0 && (
+              <div className="combo-discount-badge">{t("COMBO PACK (75% DISCOUNT)")}</div>
+            )}
           </div>
 
-          <div className="combo-controls">
+          {items.length > 0 && (
+            <div className="combo-controls">
             {/* Search Input */}
             <div className="combo-search-pill">
               <svg
@@ -826,26 +415,99 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
               </svg>
               <input
                 type="text"
-                placeholder="Search in this category..."
+                placeholder={t("Search in this category...")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="combo-search-field"
               />
             </div>
 
-            {/* Sort Select */}
-            <div className="combo-sort-pill">
-              <span className="combo-sort-label">Sort by</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="combo-sort-select"
-                aria-label="Sort products"
+            {/* Sort Dropdown */}
+            <div className="combo-sort-wrapper" ref={sortDropdownRef}>
+              <button
+                type="button"
+                className={`combo-sort-btn ${isSortOpen ? "active" : ""}`}
+                onClick={() => setIsSortOpen((prev) => !prev)}
+                aria-haspopup="listbox"
+                aria-expanded={isSortOpen}
+                aria-label={t("Sort products")}
+                title={t("Sort products")}
               >
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="name-asc">Name: A to Z</option>
-              </select>
+                <svg
+                  viewBox="0 0 24 24"
+                  width="17"
+                  height="17"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="combo-sort-icon"
+                  aria-hidden="true"
+                >
+                  <path d="m3 8 4-4 4 4" />
+                  <path d="M7 4v16" />
+                  <path d="m13 16 4 4 4-4" />
+                  <path d="M17 4v16" />
+                </svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  width="13"
+                  height="13"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`combo-sort-chevron ${isSortOpen ? "open" : ""}`}
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {isSortOpen && (
+                <div className="combo-sort-menu" role="listbox">
+                  <div className="combo-sort-menu-header">{t("Sort by")}</div>
+                  {[
+                    { value: "price-asc", label: t("Price: Low to High") },
+                    { value: "price-desc", label: t("Price: High to Low") },
+                    { value: "name-asc", label: t("Name: A to Z") },
+                  ].map((opt) => {
+                    const isSelected = sortBy === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        role="option"
+                        aria-selected={isSelected}
+                        className={`combo-sort-option ${isSelected ? "selected" : ""}`}
+                        onClick={() => {
+                          setSortBy(opt.value);
+                          setIsSortOpen(false);
+                        }}
+                      >
+                        <span>{opt.label}</span>
+                        {isSelected && (
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="14"
+                            height="14"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="combo-sort-check"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Category Select Pill */}
@@ -864,39 +526,229 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                 <rect x="14" y="14" width="7" height="7" rx="1" />
                 <rect x="3" y="14" width="7" height="7" rx="1" />
               </svg>
-              <span className="combo-sort-label">Category</span>
+              <span className="combo-sort-label">{t("Category")}</span>
               <select
                 value={selectedCategory}
                 onChange={(e) => {
                   setSelectedCategory(e.target.value);
                 }}
                 className="combo-sort-select"
-                aria-label="Category"
+                aria-label={t("Category")}
               >
-                <option value="all">All Categories</option>
+                <option value="all">{t("All Categories")}</option>
                 {categoryOptions.map((cat) => (
                   <option key={cat} value={cat}>
-                    {cat}
+                    {tCategory(cat, cat)}
                   </option>
                 ))}
               </select>
             </div>
           </div>
+          )}
         </div>
 
         {/* Data Table */}
         <div className="combo-table-card">
-          <div className="combo-table-responsive">
-            <table className="combo-data-table">
-              <thead>
-                <tr>
-                  <th className="th-product">Product</th>
-                  <th className="th-name">Product Name</th>
-                  <th className="th-content">Content</th>
-                  <th className="th-actual">Actual Price</th>
-                  <th className="th-price">Price</th>
-                  <th className="th-qty">Quantity</th>
-                  <th className="th-total">Total</th>
+          {isLoading ? (
+            <div className="combo-loading-box">
+              <div className="combo-loading-spinner" />
+              <p className="combo-loading-text">{t("Loading crackers catalog...")}</p>
+            </div>
+          ) : items.length === 0 ? (
+            <div className="combo-empty-bucket-box">
+              <div className="combo-empty-bucket-illustration">
+                <svg
+                  viewBox="0 0 200 200"
+                  width="180"
+                  height="180"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="combo-empty-bucket-svg"
+                >
+                  <defs>
+                    <linearGradient id="bucketGrad" x1="40" y1="60" x2="160" y2="180" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#f59e0b" />
+                      <stop offset="50%" stopColor="#ef4444" />
+                      <stop offset="100%" stopColor="#b91c1c" />
+                    </linearGradient>
+                    <linearGradient id="bucketRimGrad" x1="30" y1="60" x2="170" y2="76" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#fef08a" />
+                      <stop offset="50%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#d97706" />
+                    </linearGradient>
+                    <linearGradient id="bucketInnerGrad" x1="40" y1="65" x2="160" y2="75" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#78350f" />
+                      <stop offset="100%" stopColor="#451a03" />
+                    </linearGradient>
+                    <linearGradient id="sparkleGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#fde047" />
+                      <stop offset="100%" stopColor="#fbbf24" />
+                    </linearGradient>
+                    <filter id="bucketGlow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#ef4444" floodOpacity="0.25" />
+                    </filter>
+                  </defs>
+
+                  {/* Sparkles Floating Above */}
+                  <g className="combo-bucket-sparkles">
+                    <path
+                      d="M100 18 L103 27 L112 30 L103 33 L100 42 L97 33 L88 30 L97 27 Z"
+                      fill="url(#sparkleGrad)"
+                    />
+                    <path
+                      d="M52 35 L54 41 L60 43 L54 45 L52 51 L50 45 L44 43 L50 41 Z"
+                      fill="url(#sparkleGrad)"
+                    />
+                    <path
+                      d="M150 32 L152 39 L159 41 L152 43 L150 50 L148 43 L141 41 L148 39 Z"
+                      fill="url(#sparkleGrad)"
+                    />
+                    <circle cx="34" cy="58" r="2.5" fill="#fde047" opacity="0.9" />
+                    <circle cx="168" cy="55" r="3" fill="#fde047" opacity="0.9" />
+                  </g>
+
+                  {/* Bucket Handle */}
+                  <path
+                    d="M 38 72 C 38 24, 162 24, 162 72"
+                    stroke="#fbbf24"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                  <rect x="84" y="24" width="32" height="6" rx="3" fill="#d97706" stroke="#fbbf24" strokeWidth="1" />
+
+                  {/* Bucket Body with festive gradient & drop shadow */}
+                  <path
+                    d="M 44 70 L 62 168 C 64 175, 72 180, 80 180 L 120 180 C 128 180, 136 175, 138 168 L 156 70 Z"
+                    fill="url(#bucketGrad)"
+                    filter="url(#bucketGlow)"
+                  />
+
+                  {/* Bucket Inner Cavity Depth (showing empty interior) */}
+                  <ellipse cx="100" cy="70" rx="56" ry="12" fill="url(#bucketInnerGrad)" />
+
+                  {/* Bucket Rim (Front Lip) */}
+                  <path
+                    d="M 42 70 C 42 77, 158 77, 158 70 C 158 63, 42 63, 42 70 Z"
+                    fill="url(#bucketRimGrad)"
+                  />
+
+                  {/* Festive Ribs / Bands on Bucket */}
+                  <path
+                    d="M 50 102 C 65 110, 135 110, 150 102"
+                    stroke="#fbbf24"
+                    strokeWidth="2.5"
+                    strokeDasharray="4 2"
+                    fill="none"
+                    opacity="0.85"
+                  />
+                  <path
+                    d="M 56 136 C 70 144, 130 144, 144 136"
+                    stroke="#fbbf24"
+                    strokeWidth="2.5"
+                    strokeDasharray="4 2"
+                    fill="none"
+                    opacity="0.85"
+                  />
+
+                  {/* Festive Emblem / Diya Star Motif on Front */}
+                  <g transform="translate(100, 120)">
+                    <circle cx="0" cy="0" r="14" fill="#fbbf24" opacity="0.25" />
+                    <circle cx="0" cy="0" r="10" fill="#fde047" opacity="0.35" />
+                    <path
+                      d="M 0 -8 L 2 -2 L 8 0 L 2 2 L 0 8 L -2 2 L -8 0 L -2 -2 Z"
+                      fill="#fff"
+                    />
+                  </g>
+
+                  {/* Side Handle Hinges */}
+                  <circle cx="41" cy="71" r="5" fill="#d97706" stroke="#fbbf24" strokeWidth="1.5" />
+                  <circle cx="159" cy="71" r="5" fill="#d97706" stroke="#fbbf24" strokeWidth="1.5" />
+                </svg>
+              </div>
+
+              <div className="combo-empty-bucket-tag">
+                <span>🪔</span>
+                <span>{t("Festive Crackers Catalog")}</span>
+              </div>
+
+              <h3 className="combo-empty-bucket-title">
+                {t("Your Crackers Bucket is Empty")}
+              </h3>
+
+              <p className="combo-empty-bucket-desc">
+                {t(
+                  "No crackers are currently available in the catalog. New festival stock will be arriving soon!",
+                )}
+              </p>
+
+              <button
+                type="button"
+                className="combo-empty-refresh-btn"
+                onClick={loadCatalog}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 2v6h-6" />
+                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+                  <path d="M3 22v-6h6" />
+                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+                </svg>
+                <span>{t("Refresh Catalog")}</span>
+              </button>
+            </div>
+          ) : displayedItems.length === 0 ? (
+            <div className="combo-empty-search-box">
+              <svg
+                viewBox="0 0 24 24"
+                width="40"
+                height="40"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                className="combo-empty-search-icon"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <h4 className="combo-empty-search-title">
+                {t("No crackers match your search")}
+              </h4>
+              <p className="combo-empty-search-query">
+                &ldquo;{searchQuery}&rdquo;
+              </p>
+              <button
+                type="button"
+                className="combo-clear-search-btn"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                }}
+              >
+                {t("Clear Search")}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="combo-table-responsive">
+                <table className="combo-data-table">
+                  <thead>
+                    <tr>
+                      <th className="th-product">{t("Product")}</th>
+                  <th className="th-name">{t("Product Name")}</th>
+                  <th className="th-content">{t("Content")}</th>
+                  <th className="th-actual">{t("Actual Price")}</th>
+                  <th className="th-price">{t("Price")}</th>
+                  <th className="th-qty">{t("Quantity")}</th>
+                  <th className="th-total">{t("Total")}</th>
                   <th className="th-action"></th>
                 </tr>
               </thead>
@@ -906,9 +758,9 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                     <tr className="combo-category-header-row">
                       <td colSpan={8} className="combo-category-header-td">
                         <div className="combo-category-header">
-                          <span className="combo-category-title">{category}</span>
+                          <span className="combo-category-title">{tCategory(category, category)}</span>
                           <span className="combo-category-badge">
-                            {items.length} {items.length === 1 ? "Product" : "Products"}
+                            {items.length} {items.length === 1 ? t("Product") : t("Products")}
                           </span>
                         </div>
                       </td>
@@ -924,11 +776,11 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                             <div
                               className="combo-thumb-box"
                               onClick={() => setActivePreview(item)}
-                              title="Click to view packaging"
+                              title={t("Click to view packaging")}
                             >
                               <img
                                 src={item.image}
-                                alt={item.name}
+                                alt={tProduct(item.code, item.name)}
                                 className="combo-thumb-img"
                                 loading="lazy"
                               />
@@ -937,12 +789,12 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
 
                           {/* Product Name */}
                           <td className="td-name">
-                            <span className="combo-name-text">{item.name}</span>
+                            <span className="combo-name-text">{tProduct(item.code, item.name)}</span>
                           </td>
 
                           {/* Content */}
                           <td className="td-content">
-                            <span className="combo-content-text">{item.content}</span>
+                            <span className="combo-content-text">{t(item.content)}</span>
                           </td>
 
                           {/* Actual Price (Strikethrough) */}
@@ -965,7 +817,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                                 className="combo-qty-btn"
                                 onClick={() => handleQuantityChange(item.id, -1)}
                                 disabled={qty <= 0}
-                                aria-label="Decrease quantity"
+                                aria-label={t("Decrease quantity")}
                               >
                                 –
                               </button>
@@ -974,13 +826,13 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                                 className="combo-qty-input"
                                 value={qty}
                                 onChange={(e) => handleDirectQuantity(item.id, e.target.value)}
-                                aria-label="Item quantity"
+                                aria-label={t("Item quantity")}
                               />
                               <button
                                 type="button"
                                 className="combo-qty-btn"
                                 onClick={() => handleQuantityChange(item.id, 1)}
-                                aria-label="Increase quantity"
+                                aria-label={t("Increase quantity")}
                               >
                                 +
                               </button>
@@ -1011,7 +863,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                                   >
                                     <polyline points="20 6 9 17 4 12" />
                                   </svg>
-                                  <span>Added</span>
+                                  <span>{t("Added")}</span>
                                 </>
                               ) : (
                                 <>
@@ -1031,7 +883,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                                       strokeLinejoin="round"
                                     />
                                   </svg>
-                                  <span>Add</span>
+                                  <span>{t("Add")}</span>
                                 </>
                               )}
                             </button>
@@ -1058,9 +910,9 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
             {groupedCategories.map(({ category, items }) => (
               <div key={`m-cat-${category}`} className="combo-category-mobile-section">
                 <div className="combo-category-header">
-                  <span className="combo-category-title">{category}</span>
+                  <span className="combo-category-title">{tCategory(category, category)}</span>
                   <span className="combo-category-badge">
-                    {items.length} {items.length === 1 ? "Product" : "Products"}
+                    {items.length} {items.length === 1 ? t("Product") : t("Products")}
                   </span>
                 </div>
 
@@ -1075,23 +927,23 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                         <div
                           className="combo-m-thumb"
                           onClick={() => setActivePreview(item)}
-                          title="Click to view packaging"
+                          title={t("Click to view packaging")}
                         >
-                          <img src={item.image} alt={item.name} loading="lazy" />
+                          <img src={item.image} alt={tProduct(item.code, item.name)} loading="lazy" />
                         </div>
 
                         {/* Info */}
                         <div className="combo-m-info">
                           <div className="combo-m-meta">
-                            <span className="combo-m-content">{item.content}</span>
+                            <span className="combo-m-content">{t(item.content)}</span>
                           </div>
-                          <div className="combo-m-name">{item.name}</div>
+                          <div className="combo-m-name">{tProduct(item.code, item.name)}</div>
                           <div className="combo-m-prices">
                             <span className="combo-m-actual">{formatPrice(item.actualPrice)}</span>
                             <span className="combo-m-current">{formatPrice(item.price)}</span>
                             {qty > 0 && (
                               <span className="combo-m-total-badge">
-                                Total: {formatPrice(total)}
+                                {t("Total")}: {formatPrice(total)}
                               </span>
                             )}
                           </div>
@@ -1106,7 +958,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                             className="combo-qty-btn"
                             onClick={() => handleQuantityChange(item.id, -1)}
                             disabled={qty <= 0}
-                            aria-label="Decrease quantity"
+                            aria-label={t("Decrease quantity")}
                           >
                             –
                           </button>
@@ -1115,13 +967,13 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                             className="combo-qty-input"
                             value={qty}
                             onChange={(e) => handleDirectQuantity(item.id, e.target.value)}
-                            aria-label="Item quantity"
+                            aria-label={t("Item quantity")}
                           />
                           <button
                             type="button"
                             className="combo-qty-btn"
                             onClick={() => handleQuantityChange(item.id, 1)}
-                            aria-label="Increase quantity"
+                            aria-label={t("Increase quantity")}
                           >
                             +
                           </button>
@@ -1144,7 +996,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                               >
                                 <polyline points="20 6 9 17 4 12" />
                               </svg>
-                              <span>Added</span>
+                              <span>{t("Added")}</span>
                             </>
                           ) : (
                             <>
@@ -1164,7 +1016,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                                   strokeLinejoin="round"
                                 />
                               </svg>
-                              <span>Add</span>
+                              <span>{t("Add")}</span>
                             </>
                           )}
                         </button>
@@ -1174,12 +1026,10 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                 })}
               </div>
             ))}
-
-            {displayedItems.length === 0 && (
-              <div className="combo-empty-state">No crackers match your query "{searchQuery}".</div>
-            )}
           </div>
-        </div>
+        </>
+      )}
+    </div>
 
         {/* Image Preview Lightbox */}
         {activePreview && (
@@ -1188,19 +1038,19 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
               <button
                 className="combo-lightbox-close"
                 onClick={() => setActivePreview(null)}
-                aria-label="Close preview"
+                aria-label={t("Close preview")}
               >
                 ✕
               </button>
               <img
                 src={activePreview.image}
-                alt={activePreview.name}
+                alt={tProduct(activePreview.code, activePreview.name)}
                 className="combo-lightbox-img"
               />
               <div className="combo-lightbox-info">
-                <h3>{activePreview.name}</h3>
+                <h3>{tProduct(activePreview.code, activePreview.name)}</h3>
                 <p>
-                  Price: {formatPrice(activePreview.price)} • {activePreview.content}
+                  {t("Price")}: {formatPrice(activePreview.price)} • {t(activePreview.content)}
                 </p>
               </div>
             </div>

@@ -4,6 +4,7 @@ import { ComboItem, ComboPackTable } from "./components/ComboPackTable";
 import { ContactSection } from "./components/ContactSection";
 import { MarqueeBanner } from "./components/MarqueeBanner";
 import { CartEntry, StoreCartDrawer } from "./components/StoreCartDrawer";
+import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
 import { StoreFooter } from "./components/StoreFooter";
 import { StoreHero } from "./components/StoreHero";
 import { StoreNavbar } from "./components/StoreNavbar";
@@ -125,6 +126,8 @@ export default function App() {
           </>
         )}
       </main>
+
+      <FloatingWhatsApp />
 
       <StoreCartDrawer
         isOpen={isCartOpen}

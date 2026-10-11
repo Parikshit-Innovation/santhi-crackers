@@ -8,6 +8,7 @@ import type {
   CreateCategoryBody,
   CreateProductBody,
   GetCategoriesResponse,
+  UpdateProductBody,
 } from "./types.js";
 
 import {
@@ -18,6 +19,7 @@ import {
   isValidLimit,
   isValidPositiveInteger,
 } from "./utils.js";
+import { sendContactEmail } from "./mail.js";
 
 type ProductWithCategory = Prisma.ProductGetPayload<{
   include: {
@@ -147,6 +149,181 @@ export const createProduct = async (
 
     console.error("Failed to create product:", error);
     response.status(500).json({ error: "Failed to create product." });
+  }
+};
+
+export const updateProduct = async (
+  request: Request<{ id?: string }, unknown, UpdateProductBody>,
+  response: Response,
+): Promise<void> => {
+  const id = request.params.id;
+
+  if (!id || typeof id !== "string" || id.trim().length === 0) {
+    response.status(400).json({
+      error: "Product ID is required.",
+    });
+    return;
+  }
+
+  const cleanId = id.trim();
+  const {
+    code,
+    name,
+    description,
+    content,
+    actualPrice,
+    price,
+    discount,
+    stock,
+    minOrderQty,
+    maxOrderQty,
+    imageUrl,
+    categoryId,
+    categorySlug,
+    isActive,
+    isFeatured,
+  } = request.body;
+
+  try {
+    const existingProduct = await db.product.findUnique({
+      where: { id: cleanId },
+    });
+
+    if (!existingProduct) {
+      response.status(404).json({
+        error: "Product not found.",
+      });
+      return;
+    }
+
+    let resolvedCategoryId = categoryId;
+
+    if (categorySlug !== undefined) {
+      if (categorySlug && categorySlug.trim().length > 0) {
+        const category = await db.category.findUnique({
+          where: { slug: categorySlug.trim() },
+          select: { id: true },
+        });
+
+        if (!category) {
+          response.status(400).json({
+            error: `No category exists with slug "${categorySlug}".`,
+          });
+          return;
+        }
+
+        resolvedCategoryId = category.id;
+      } else {
+        resolvedCategoryId = null;
+      }
+    }
+
+    const data: Prisma.ProductUpdateInput = {};
+
+    if (code !== undefined) data.code = code.trim().toUpperCase();
+    if (name !== undefined) data.name = name.trim();
+    if (description !== undefined) data.description = description;
+    if (content !== undefined) data.content = content.trim();
+    if (actualPrice !== undefined) data.actualPrice = actualPrice;
+    if (price !== undefined) data.price = price;
+    if (discount !== undefined) data.discount = discount;
+    if (stock !== undefined) data.stock = stock;
+    if (minOrderQty !== undefined) data.minOrderQty = minOrderQty;
+    if (maxOrderQty !== undefined) data.maxOrderQty = maxOrderQty;
+    if (imageUrl !== undefined) data.imageUrl = imageUrl;
+    if (isActive !== undefined) data.isActive = Boolean(isActive);
+    if (isFeatured !== undefined) data.isFeatured = Boolean(isFeatured);
+
+    if (resolvedCategoryId !== undefined) {
+      if (resolvedCategoryId === null) {
+        data.category = { disconnect: true };
+      } else {
+        data.category = { connect: { id: resolvedCategoryId } };
+      }
+    }
+
+    const product = await db.product.update({
+      where: { id: cleanId },
+      data,
+      include: {
+        category: {
+          select: {
+            slug: true,
+          },
+        },
+      },
+    });
+
+    response.status(200).json({
+      status: true,
+      message: "Product updated successfully",
+      product: formatProduct(product),
+    });
+  } catch (error: any) {
+    if (error?.code === "P2002") {
+      response.status(409).json({ error: "A product with this code already exists." });
+      return;
+    }
+
+    if (error?.code === "P2025") {
+      response.status(404).json({ error: "Product not found." });
+      return;
+    }
+
+    console.error("Failed to update product:", error);
+    response.status(500).json({ error: "Failed to update product." });
+  }
+};
+
+export const deleteProduct = async (
+  request: Request<{ id?: string }>,
+  response: Response,
+): Promise<void> => {
+  const id = request.params.id;
+
+  if (!id || typeof id !== "string" || id.trim().length === 0) {
+    response.status(400).json({
+      error: "Product ID is required.",
+    });
+    return;
+  }
+
+  const cleanId = id.trim();
+
+  try {
+    const existing = await db.product.findUnique({
+      where: { id: cleanId },
+    });
+
+    if (!existing) {
+      response.status(404).json({
+        error: "Product not found.",
+      });
+      return;
+    }
+
+    // Clean up dependent cart items before deleting product
+    await db.cartItem.deleteMany({
+      where: { productId: cleanId },
+    });
+
+    await db.product.delete({
+      where: { id: cleanId },
+    });
+
+    response.status(200).json({
+      status: true,
+      message: "Product deleted successfully",
+      id: cleanId,
+    });
+  } catch (error: any) {
+    if (error?.code === "P2025") {
+      response.status(404).json({ error: "Product not found." });
+      return;
+    }
+
+    console.error("Failed to delete product:", error);
+    response.status(500).json({ error: "Failed to delete product." });
   }
 };
 
@@ -571,3 +748,113 @@ export const getCategoryBySlug = async (
     });
   }
 };
+
+export const handleContactForm = async (request: Request, response: Response): Promise<void> => {
+  try {
+    const { email, message, name, phone } = request.body ?? {};
+
+    if (!email || typeof email !== "string" || !email.trim()) {
+      response.status(400).json({ error: "A valid email address is required." });
+      return;
+    }
+
+    if (!message || typeof message !== "string" || !message.trim()) {
+      response.status(400).json({ error: "Message content is required." });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      response.status(400).json({ error: "Invalid email address format." });
+      return;
+    }
+
+    const result = await sendContactEmail({
+      email: email.trim(),
+      message: message.trim(),
+      name: typeof name === "string" ? name.trim() : undefined,
+      phone: typeof phone === "string" ? phone.trim() : undefined,
+    });
+
+    response.status(200).json({
+      message: "Your message has been sent successfully.",
+      ...result,
+    });
+  } catch (error) {
+    console.error("Failed to process contact email:", error);
+    response.status(500).json({
+      error: "Failed to send email. Please try again or reach out directly via WhatsApp.",
+    });
+  }
+};
+
+export const createQuery = async (request: Request, response: Response): Promise<void> => {
+  try {
+    const { mobileNumber, phone, message } = request.body ?? {};
+
+    const rawMobile = mobileNumber || phone;
+
+    if (!rawMobile || typeof rawMobile !== "string" || !rawMobile.trim()) {
+      response.status(400).json({ error: "Mobile number is required." });
+      return;
+    }
+
+    if (!message || typeof message !== "string" || !message.trim()) {
+      response.status(400).json({ error: "Message content is required." });
+      return;
+    }
+
+    const cleanMobile = rawMobile.trim();
+    const cleanMessage = message.trim();
+
+    // Store in database
+    const savedQuery = await db.query.create({
+      data: {
+        mobileNumber: cleanMobile,
+        message: cleanMessage,
+      },
+    });
+
+    // Also dispatch email notification to shanthicracker@gmail.com
+    try {
+      await sendContactEmail({
+        email: `mobile-${cleanMobile.replace(/\s+/g, "")}@santhicrackers.com`,
+        phone: cleanMobile,
+        message: cleanMessage,
+      });
+    } catch (mailErr) {
+      console.warn("Failed to dispatch email notification for query:", mailErr);
+    }
+
+    response.status(201).json({
+      success: true,
+      message: "Query submitted successfully.",
+      query: savedQuery,
+    });
+  } catch (error) {
+    console.error("Failed to create query:", error);
+    response.status(500).json({
+      error: "Failed to submit query. Please try again or reach out via WhatsApp.",
+    });
+  }
+};
+
+export const getQueries = async (_request: Request, response: Response): Promise<void> => {
+  try {
+    const queries = await db.query.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    response.status(200).json({
+      success: true,
+      queries,
+      total: queries.length,
+    });
+  } catch (error) {
+    console.error("Failed to retrieve queries:", error);
+    response.status(500).json({
+      error: "Failed to retrieve queries.",
+    });
+  }
+};
+

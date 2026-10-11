@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./StoreNavbar.css";
+import { useLanguage } from "../context/LanguageContext";
 
 interface StoreNavbarProps {
   cartCount?: number;
@@ -14,11 +15,11 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
   activePage = "home",
   onNavigate,
 }) => {
+  const { language, toggleLanguage, t } = useLanguage();
   const [activeTab, setActiveTab] = useState(
     activePage === "about" ? "About" : activePage === "contact" ? "Contact us" : "Home",
   );
   const [searchVal, setSearchVal] = useState("");
-  const [currentLang, setCurrentLang] = useState<"EN" | "தமிழ்">("EN");
 
   useEffect(() => {
     if (activePage === "about") {
@@ -93,14 +94,14 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
             onClick={() => handleTabClick("Home")}
             role="button"
             tabIndex={0}
-            aria-label="Santhi Sivakasi Crackers - Home"
+            aria-label={t("Santhi Sivakasi Crackers - Home")}
           >
             <img
               src="/home/logo-santhi.png"
-              alt="Santhi Sivakasi Crackers"
+              alt={t("Santhi Sivakasi Crackers")}
               className="store-brand-logo"
             />
-            <span className="store-brand-text">Santhi Sivakasi Crackers</span>
+            <span className="store-brand-text">{t("Santhi Sivakasi Crackers")}</span>
           </div>
 
           {/* Center: Desktop Nav Links */}
@@ -111,7 +112,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
                 className={`store-nav-item ${activeTab === link ? "active" : ""}`}
                 onClick={() => handleTabClick(link)}
               >
-                {link}
+                {t(link)}
               </button>
             ))}
           </nav>
@@ -134,7 +135,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
               </svg>
               <input
                 type="text"
-                placeholder="Search products"
+                placeholder={t("Search products")}
                 value={searchVal}
                 onChange={(e) => setSearchVal(e.target.value)}
                 className="store-search-input"
@@ -146,9 +147,9 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
               type="button"
               id="header-lang-btn"
               className="store-icon-btn store-lang-btn"
-              aria-label="Switch Language"
-              title={`Language: ${currentLang === "EN" ? "English" : "தமிழ்"}`}
-              onClick={() => setCurrentLang((prev) => (prev === "EN" ? "தமிழ்" : "EN"))}
+              aria-label={t("Language selection")}
+              title={language === "en" ? "Switch to தமிழ்" : "Switch to English"}
+              onClick={toggleLanguage}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -165,14 +166,14 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
                 <line x1="2" y1="12" x2="22" y2="12" />
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
-              <span className="store-lang-badge">{currentLang}</span>
+              <span className="store-lang-badge">{language === "ta" ? "தமிழ்" : "EN"}</span>
             </button>
 
             {/* Cart Icon (desktop & mobile header) */}
             <button
               id="header-cart-btn"
               className="store-icon-btn store-cart-btn"
-              aria-label="Cart"
+              aria-label={t("Cart")}
               onClick={() => handleTabClick("cart")}
             >
               <svg
@@ -198,13 +199,13 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
       </header>
 
       {/* Amazon-style Mobile Bottom Navigation Bar (Icons Alone) */}
-      <nav className="store-bottom-nav" aria-label="Mobile Navigation">
+      <nav className="store-bottom-nav" aria-label={t("Mobile navigation")}>
         {/* 1. Home Icon */}
         <button
           type="button"
           className={`store-bottom-btn ${activeTab === "home" || activeTab === "Home" || activeTab === "products" || activeTab === "All products" ? "active" : ""}`}
           onClick={() => handleTabClick("Home")}
-          aria-label="Home"
+          aria-label={t("Home")}
         >
           <svg
             viewBox="0 0 24 24"
@@ -226,7 +227,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
           type="button"
           className={`store-bottom-btn ${activeTab === "about" || activeTab === "About" ? "active" : ""}`}
           onClick={() => handleTabClick("About")}
-          aria-label="About"
+          aria-label={t("About")}
         >
           <svg
             viewBox="0 0 24 24"
@@ -250,7 +251,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
           id="footer-bottom-cart-btn"
           className={`store-bottom-btn ${activeTab === "cart" ? "active" : ""}`}
           onClick={() => handleTabClick("cart")}
-          aria-label="Cart"
+          aria-label={t("Cart")}
         >
           <div className="store-bottom-icon-wrap">
             <svg
@@ -276,7 +277,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
           type="button"
           className={`store-bottom-btn ${activeTab === "location" || activeTab === "Contact us" ? "active" : ""}`}
           onClick={() => handleTabClick("location")}
-          aria-label="Location"
+          aria-label={t("Location")}
         >
           <svg
             viewBox="0 0 24 24"
@@ -296,3 +297,4 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
     </>
   );
 };
+

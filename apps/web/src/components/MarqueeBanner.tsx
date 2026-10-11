@@ -1,5 +1,6 @@
 import React from "react";
 import "./MarqueeBanner.css";
+import { useLanguage } from "../context/LanguageContext";
 
 interface MarqueeItem {
   id: string;
@@ -31,15 +32,16 @@ const MARQUEE_ITEMS: MarqueeItem[] = [
 ];
 
 export const MarqueeBanner: React.FC = () => {
+  const { t } = useLanguage();
   // Duplicate array to ensure seamless infinite looping
   const duplicatedItems = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   return (
-    <div className="marquee-bar" role="region" aria-label="Announcements ticker">
+    <div className="marquee-bar" role="region" aria-label={t("Announcements ticker")}>
       <div className="marquee-track">
         {duplicatedItems.map((item, index) => (
           <div key={`${item.id}-${index}`} className="marquee-item">
-            <span className="marquee-title">{item.title}</span>
+            <span className="marquee-title">{t(item.title)}</span>
             <span className="marquee-icon" aria-hidden="true">
               <svg
                 viewBox="0 0 24 24"
@@ -57,10 +59,11 @@ export const MarqueeBanner: React.FC = () => {
                 <line x1="15" y1="9" x2="15.01" y2="9" strokeWidth="2.5" />
               </svg>
             </span>
-            <span className="marquee-text">{item.text}</span>
+            <span className="marquee-text">{t(item.text)}</span>
           </div>
         ))}
       </div>
     </div>
   );
 };
+

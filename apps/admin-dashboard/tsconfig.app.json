@@ -8,9 +8,12 @@
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
     "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@repo/crackers": ["../../packages/crackers/index.ts"],
+      "@repo/crackers/*": ["../../packages/crackers/*"],
+      "@crackers": ["../../packages/crackers/index.ts"],
+      "@crackers/*": ["../../packages/crackers/*"]
     },
 
     /* Bundler mode */

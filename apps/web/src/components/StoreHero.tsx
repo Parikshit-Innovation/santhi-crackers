@@ -1,11 +1,14 @@
 import React from "react";
 import "./StoreHero.css";
+import { useLanguage } from "../context/LanguageContext";
 
 interface StoreHeroProps {
   onAction?: () => void;
 }
 
 export const StoreHero: React.FC<StoreHeroProps> = ({ onAction }) => {
+  const { t } = useLanguage();
+
   const handleScrollToProducts = () => {
     if (onAction) {
       onAction();
@@ -29,11 +32,11 @@ export const StoreHero: React.FC<StoreHeroProps> = ({ onAction }) => {
             handleScrollToProducts();
           }
         }}
-        aria-label="Shanthi Sivakasi Crackers - Shop Now"
+        aria-label={t("Shanthi Sivakasi Crackers - Shop Now")}
       >
         <img
           src="/home/image.png"
-          alt="Shanthi Sivakasi Crackers Kalingiam 2026 - Direct Wholesale Depot"
+          alt={t("Shanthi Sivakasi Crackers Kalingiam 2026 - Direct Wholesale Depot")}
           className="store-hero-img"
           loading="eager"
           fetchPriority="high"
@@ -44,3 +47,4 @@ export const StoreHero: React.FC<StoreHeroProps> = ({ onAction }) => {
     </section>
   );
 };
+

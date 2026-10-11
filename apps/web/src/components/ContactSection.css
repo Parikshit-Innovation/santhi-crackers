@@ -13,7 +13,7 @@
 
 .contact-page-container {
   width: 100%;
-  max-width: 860px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -220,6 +220,20 @@
   animation: fadeIn 0.25s ease-out;
 }
 
+.contact-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background-color: #fee2e2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  color: #991b1b;
+  font-size: 14px;
+  font-weight: 600;
+  animation: fadeIn 0.25s ease-out;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -275,91 +289,149 @@
   line-height: 1.5;
 }
 
-/* Contact Info Grid - Luxury Cream Boxes */
+/* Contact Info Grid - Balanced 2-Card Layout (Branches vs Direct Contact) */
 .contact-info-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
   margin-top: 24px;
+  align-items: stretch;
 }
 
 .contact-info-card {
   background-color: var(--bg-box-cream, #fffdf7);
   border: 1.5px solid var(--border-cream, #e2d5c3);
-  border-radius: 16px;
-  padding: 24px 20px;
+  border-radius: 18px;
+  padding: 24px 22px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-sizing: border-box;
+  height: 100%;
 }
 
 .contact-info-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-  border-color: var(--primary-blue, #0433ff);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  border-color: #dfcfb5;
+}
+
+/* Card Header */
+.contact-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
 .contact-info-icon-wrap {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: 12px;
   background-color: #f5ebd7;
-  border: 1px solid var(--border-cream, #e2d5c3);
+  border: 1.5px solid var(--border-cream, #dfcfb5);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary-blue, #0433ff);
-  margin-bottom: 16px;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.contact-info-content {
+.contact-icon-phone {
+  background-color: #fef3c7;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.contact-card-title-group {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
 }
 
 .contact-info-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   color: #0f172a;
-  margin: 0 0 8px 0;
-}
-
-.contact-info-address {
-  font-style: normal;
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: #475569;
-  margin-bottom: 16px;
-  flex-grow: 1;
+  margin: 0 0 4px 0;
+  line-height: 1.3;
 }
 
 .contact-info-sub {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Branches Card Styling */
+.contact-branches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.contact-branch-box {
+  background-color: #faf6ed;
+  border: 1.5px solid #ebdcc6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.contact-branch-box:hover {
+  background-color: #f6efe1;
+  border-color: #dfcaa8;
+}
+
+.contact-branch-badge {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #b91c1c;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 2px 8px;
+  border-radius: 6px;
+  line-height: 1.3;
+}
+
+.contact-branch-text {
   font-size: 13.5px;
   line-height: 1.5;
-  color: #475569;
-  margin: 0 0 14px 0;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 500;
 }
 
 .contact-map-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 8px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--primary-blue, #0433ff);
   text-decoration: none;
-  padding: 9px 14px;
+  padding: 11px 18px;
   border-radius: 9999px;
   background-color: #fff8eb;
   border: 1.5px solid var(--border-cream, #dfcfb5);
   width: 100%;
   box-sizing: border-box;
   margin-top: auto;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .contact-map-link:hover,
@@ -367,82 +439,50 @@
 .contact-map-link:active {
   background-color: #fef0ce;
   border-color: var(--primary-blue, #0433ff);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(4, 51, 255, 0.15);
 }
 
-/* Phone list */
-.contact-phone-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* Card 2: Direct Contact (WhatsApp + Phone 2x2 + Email) */
+.contact-card-direct {
+  /* Inherits contact-info-card */
 }
 
-.contact-phone-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
-  width: 100%;
-}
-
-.contact-phone-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 14px;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--primary-blue, #0433ff);
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #dfcfb5);
-  border-radius: 9999px;
-  text-decoration: none;
-  width: 100%;
-  box-sizing: border-box;
-  transition: all 0.15s ease;
-}
-
-.contact-phone-pill:hover,
-.contact-phone-pill:active,
-.contact-phone-pill:focus {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
-}
-
+/* WhatsApp CTA Button */
 .contact-whatsapp-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  font-size: 13px;
+  gap: 10px;
+  padding: 12px 18px;
+  font-size: 13.5px;
   font-weight: 700;
   color: #ffffff;
-  background-color: #25d366;
-  border-radius: 9999px;
+  background: linear-gradient(135deg, #25d366 0%, #1ebd5b 100%);
+  border-radius: 12px;
   text-decoration: none;
-  margin-top: 6px;
   width: 100%;
   box-sizing: border-box;
-  white-space: nowrap;
-  transition: all 0.15s ease;
-  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+  transition: all 0.18s ease;
+  box-shadow: 0 3px 10px rgba(37, 211, 102, 0.32);
+  margin-bottom: 12px;
 }
 
 .contact-whatsapp-btn:hover {
-  background-color: #20bd5a;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  background: linear-gradient(135deg, #20bd5a 0%, #19a84f 100%);
+  box-shadow: 0 5px 16px rgba(37, 211, 102, 0.45);
   transform: translateY(-1px);
 }
 
 .contact-whatsapp-text {
-  white-space: nowrap;
+  font-size: 13.5px;
+  font-weight: 700;
   letter-spacing: -0.01em;
-  line-height: 1;
 }
 
 .contact-whatsapp-icon {
-  width: 17px;
-  height: 17px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   fill: #ffffff;
   display: block;
@@ -453,6 +493,7 @@
   height: 14px;
   flex-shrink: 0;
   stroke: #ffffff;
+  margin-left: auto;
   transition: transform 0.15s ease;
   display: block;
 }
@@ -461,13 +502,54 @@
   transform: translateX(3px);
 }
 
-/* Email badge - Cream Button */
+/* 2x2 Phone Numbers Grid */
+.contact-phone-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.contact-phone-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary-blue, #0433ff);
+  background-color: #fff8eb;
+  border: 1.5px solid var(--border-cream, #dfcfb5);
+  border-radius: 9999px;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.contact-phone-pill:hover,
+.contact-phone-pill:active,
+.contact-phone-pill:focus {
+  background-color: #fef0ce;
+  border-color: var(--primary-blue, #0433ff);
+  transform: translateY(-1px);
+}
+
+.contact-phone-primary {
+  background-color: #fffbeb;
+  border-color: #f59e0b;
+}
+
+/* Email Badge */
 .contact-email-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 11px 18px;
   font-size: 13px;
   font-weight: 700;
   color: var(--primary-blue, #0433ff);
@@ -478,8 +560,9 @@
   width: 100%;
   box-sizing: border-box;
   white-space: nowrap;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   margin-top: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .contact-email-badge:hover,
@@ -487,6 +570,8 @@
 .contact-email-badge:focus {
   background-color: #fef0ce;
   border-color: var(--primary-blue, #0433ff);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(4, 51, 255, 0.15);
 }
 
 .contact-email-icon {
@@ -495,6 +580,8 @@
 }
 
 .contact-email-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
   letter-spacing: -0.01em;
 }
@@ -563,7 +650,14 @@
   line-height: 1.55;
 }
 
-/* Mobile Responsiveness */
+/* Mobile & Tablet Responsiveness */
+@media (max-width: 840px) {
+  .contact-info-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
 @media (max-width: 768px) {
   .contact-page-wrapper {
     padding: 24px 16px 120px 16px;
@@ -602,30 +696,87 @@
 
   /* Store Details on Mobile */
   .contact-details-section {
-    padding: 24px 16px 28px;
+    padding: 24px 18px 28px;
     margin-bottom: 36px;
     border-radius: 16px;
   }
 
   .contact-store-name {
-    font-size: 21px;
-  }
-
-  .contact-info-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    font-size: 22px;
   }
 
   .contact-info-card {
-    padding: 18px 16px;
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-page-wrapper {
+    padding: 20px 12px 110px 12px;
   }
 
-  .contact-map-link {
-    width: 100%;
-    justify-content: center;
+  .contact-details-section {
+    padding: 20px 14px 24px;
+    border-radius: 16px;
+  }
+
+  .contact-store-name {
+    font-size: 20px;
+  }
+
+  .contact-info-card {
+    padding: 18px 14px;
+  }
+
+  .contact-card-header {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .contact-info-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .contact-info-title {
+    font-size: 16px;
+  }
+
+  .contact-whatsapp-btn {
+    padding: 11px 12px;
+    font-size: 12.5px;
+    gap: 8px;
+  }
+
+  .contact-whatsapp-text {
+    font-size: 12.5px;
+  }
+
+  .contact-phone-grid {
+    gap: 6px;
+  }
+
+  .contact-phone-pill {
+    padding: 8px 6px;
+    font-size: 11.5px;
+    gap: 4px;
   }
 
   .contact-email-badge {
-    justify-content: center;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .contact-phone-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-phone-pill {
+    font-size: 13px;
+    padding: 9px 12px;
   }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./StoreCartDrawer.css";
 import { ComboItem } from "./ComboPackTable";
+import { useLanguage } from "../context/LanguageContext";
 
 export interface CartEntry {
   item: ComboItem;
@@ -28,6 +29,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
   backendCartId,
   isLoading,
 }) => {
+  const { t, tProduct } = useLanguage();
   const [discountCode, setDiscountCode] = useState("");
   const [discountApplied, setDiscountApplied] = useState(false);
   const [discountError, setDiscountError] = useState("");
@@ -67,9 +69,9 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
       setDiscountApplied(true);
       setDiscountError("");
     } else if (!discountCode.trim()) {
-      setDiscountError("Please enter a code");
+      setDiscountError(t("Please enter a code"));
     } else {
-      setDiscountError("Invalid coupon code");
+      setDiscountError(t("Invalid coupon code"));
     }
   };
 
@@ -77,7 +79,10 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
     setIsCheckingOut(true);
     setTimeout(() => {
       alert(
-        `Order placed successfully for ${totalItemCount} items (${formatPrice(finalSubtotal)})! Thank you for shopping with us.`,
+        t(
+          "Order placed successfully for {count} items ({total})! Thank you for shopping with us.",
+          { count: totalItemCount, total: formatPrice(finalSubtotal) },
+        ),
       );
       if (onClearCart) onClearCart();
       setIsCheckingOut(false);
@@ -97,7 +102,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
       {/* Slide-over Right to Left Drawer Panel */}
       <aside
         className={`store-drawer-panel ${isOpen ? "open" : ""}`}
-        aria-label="Shopping Cart Drawer"
+        aria-label={t("Shopping Cart Drawer")}
         role="dialog"
         aria-modal="true"
       >
@@ -105,7 +110,8 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
         <div className="store-drawer-header">
           <div>
             <h2 className="store-drawer-title">
-              Your Cart {totalItemCount > 0 && `(${totalItemCount} items)`}
+              {t("Your Cart")}{" "}
+              {totalItemCount > 0 && `(${t("{count} items", { count: totalItemCount })})`}
             </h2>
             {backendCartId && (
               <span className="store-drawer-session-id" title={`Backend Session: ${backendCartId}`}>
@@ -117,7 +123,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
             type="button"
             className="store-drawer-close"
             onClick={onClose}
-            aria-label="Close cart"
+            aria-label={t("Close cart")}
           >
             <svg
               viewBox="0 0 24 24"
@@ -155,10 +161,10 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
             </div>
-            <h3 className="store-empty-title">Your cart is empty</h3>
-            <p className="store-empty-desc">Add some products to get started</p>
+            <h3 className="store-empty-title">{t("Your cart is empty")}</h3>
+            <p className="store-empty-desc">{t("Add some products to get started")}</p>
             <button type="button" className="store-empty-action-btn" onClick={onClose}>
-              Continue Shopping
+              {t("Continue Shopping")}
             </button>
           </div>
         ) : (
@@ -170,16 +176,16 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                 const lineTotal = item.price * quantity;
                 return (
                   <div key={item.id} className="store-drawer-item-row">
-                    <img src={item.image} alt={item.name} className="store-drawer-item-img" />
+                    <img src={item.image} alt={tProduct(item.code, item.name)} className="store-drawer-item-img" />
 
                     <div className="store-drawer-item-main">
                       <div className="store-drawer-item-top">
-                        <span className="store-drawer-item-title">{item.name}</span>
+                        <span className="store-drawer-item-title">{tProduct(item.code, item.name)}</span>
                         <button
                           type="button"
                           className="store-drawer-trash-btn"
                           onClick={() => onRemoveItem(item.id)}
-                          aria-label={`Remove ${item.name}`}
+                          aria-label={t("Remove {name}", { name: tProduct(item.code, item.name) })}
                         >
                           <svg
                             viewBox="0 0 24 24"
@@ -204,7 +210,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                             type="button"
                             className="store-drawer-stepper-btn"
                             onClick={() => onUpdateQuantity(item.id, Math.max(0, quantity - 1))}
-                            aria-label="Decrease quantity"
+                            aria-label={t("Decrease quantity")}
                           >
                             –
                           </button>
@@ -213,7 +219,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                             type="button"
                             className="store-drawer-stepper-btn"
                             onClick={() => onUpdateQuantity(item.id, quantity + 1)}
-                            aria-label="Increase quantity"
+                            aria-label={t("Increase quantity")}
                           >
                             +
                           </button>
@@ -233,7 +239,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
               <div className="store-discount-group">
                 <input
                   type="text"
-                  placeholder="Discount code"
+                  placeholder={t("Discount code")}
                   value={discountCode}
                   onChange={(e) => {
                     setDiscountCode(e.target.value);
@@ -248,22 +254,24 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                   onClick={handleApplyDiscount}
                   disabled={discountApplied}
                 >
-                  {discountApplied ? "Applied" : "Apply"}
+                  {discountApplied ? t("Applied") : t("Apply")}
                 </button>
               </div>
               {discountError && <span className="store-discount-error">{discountError}</span>}
               {discountApplied && (
-                <span className="store-discount-success">10% festive discount applied!</span>
+                <span className="store-discount-success">
+                  {t("10% festive discount applied!")}
+                </span>
               )}
 
               {/* Subtotal */}
               <div className="store-subtotal-row">
-                <span className="store-subtotal-label">Subtotal</span>
+                <span className="store-subtotal-label">{t("Subtotal")}</span>
                 <span className="store-subtotal-amount">{formatPrice(finalSubtotal)}</span>
               </div>
 
               {/* Note */}
-              <p className="store-shipping-note">Shipping calculated at checkout</p>
+              <p className="store-shipping-note">{t("Shipping calculated at checkout")}</p>
 
               {/* Checkout CTA */}
               <button
@@ -272,12 +280,12 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                 onClick={handleCheckout}
                 disabled={isCheckingOut}
               >
-                {isCheckingOut ? "Processing..." : "Checkout"}
+                {isCheckingOut ? t("Processing...") : t("Checkout")}
               </button>
 
               {/* Continue Shopping Link */}
               <button type="button" className="store-continue-shopping-link" onClick={onClose}>
-                Continue Shopping
+                {t("Continue Shopping")}
               </button>
             </div>
           </div>
@@ -286,3 +294,4 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
     </>
   );
 };
+

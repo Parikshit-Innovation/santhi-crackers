@@ -16,6 +16,8 @@ export type CreateProductBody = {
   isFeatured?: boolean;
 };
 
+export type UpdateProductBody = Partial<CreateProductBody>;
+
 export type CreateCategoryBody = {
   name: string;
   slug: string;

@@ -222,7 +222,127 @@
   box-shadow: 0 0 0 3px rgba(255, 253, 247, 0.4);
 }
 
-/* Sort pill - Cream Button Box */
+/* Sort Dropdown Button & Menu */
+.combo-sort-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.combo-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: #fff8eb; /* Cream button box */
+  border: 1.5px solid var(--border-cream, #e2d5c3);
+  border-radius: 9999px;
+  padding: 8px 14px;
+  min-height: 40px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.combo-sort-btn:hover,
+.combo-sort-btn.active {
+  background-color: #fef0ce;
+  border-color: var(--primary-blue, #0433ff);
+  box-shadow: 0 0 0 3px rgba(4, 51, 255, 0.15);
+}
+
+.combo-sort-icon {
+  color: var(--primary-blue, #0433ff);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.combo-sort-chevron {
+  color: var(--primary-blue, #0433ff);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.combo-sort-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Floating Selection Box */
+.combo-sort-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 210px;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: comboSortFadeIn 0.15s ease-out;
+}
+
+@keyframes comboSortFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.combo-sort-menu-header {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  padding: 6px 12px 4px 12px;
+}
+
+.combo-sort-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.combo-sort-option:hover {
+  background-color: #f1f5f9;
+  color: var(--primary-blue, #0433ff);
+}
+
+.combo-sort-option.selected {
+  background-color: #eff6ff;
+  color: var(--primary-blue, #0433ff);
+  font-weight: 700;
+}
+
+.combo-sort-check {
+  color: var(--primary-blue, #0433ff);
+  flex-shrink: 0;
+}
+
+/* Sort pill - Cream Button Box (used for category and legacy) */
 .combo-sort-pill {
   display: flex;
   align-items: center;
@@ -1484,5 +1604,202 @@
   }
 }
 
+/* ==========================================================================
+   Empty Bucket & Catalog State Styles
+   ========================================================================== */
+.combo-empty-bucket-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 68px 24px 76px;
+  max-width: 580px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
 
+.combo-empty-bucket-illustration {
+  position: relative;
+  margin-bottom: 24px;
+  animation: bucketGentleFloat 4s ease-in-out infinite;
+}
 
+.combo-empty-bucket-svg {
+  display: block;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45));
+}
+
+.combo-bucket-sparkles {
+  transform-origin: center;
+  animation: bucketSparklePulse 2.8s ease-in-out infinite;
+}
+
+@keyframes bucketGentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes bucketSparklePulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.combo-empty-bucket-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(254, 240, 138, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  color: #fef08a;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  margin-bottom: 16px;
+}
+
+.combo-empty-bucket-title {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 3.2vw, 32px);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+}
+
+.combo-empty-bucket-desc {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.8vw, 16px);
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0 0 28px 0;
+  max-width: 480px;
+}
+
+.combo-empty-refresh-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1.5px solid rgba(254, 240, 138, 0.45);
+  border-radius: 9999px;
+  padding: 12px 28px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.35);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.combo-empty-refresh-btn:hover {
+  background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(239, 68, 68, 0.55);
+}
+
+.combo-empty-refresh-btn:active {
+  transform: translateY(0);
+}
+
+/* Loading Box */
+.combo-loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  gap: 16px;
+  text-align: center;
+}
+
+.combo-loading-spinner {
+  width: 42px;
+  height: 42px;
+  border: 3.5px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #f59e0b;
+  border-radius: 50%;
+  animation: comboSpin 0.75s linear infinite;
+}
+
+@keyframes comboSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.combo-loading-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: #cbd5e1;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Search Empty State */
+.combo-empty-search-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px;
+  gap: 12px;
+}
+
+.combo-empty-search-icon {
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.combo-empty-search-title {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.combo-empty-search-query {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.combo-clear-search-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 22px;
+  border-radius: 9999px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.combo-clear-search-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
