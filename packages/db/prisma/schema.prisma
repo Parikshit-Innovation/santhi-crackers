@@ -8,40 +8,46 @@ datasource db {
 }
 
 model Product {
-  id            String   @id @default(cuid())
+  id             String    @id @default(cuid())
 
   // Product identification
-  code          String   @unique
-  name          String
-  description   String?
-  content       String   // box, piece, packet, etc.
+  code           String    @unique
+  name           String?
+  nameEng        String?
+  nameTam        String?
+  description    String?
+  descriptionEng String?
+  descriptionTam String?
+  content        String?   // box, piece, packet, etc.
+  contentEng     String?
+  contentTam     String?
 
   // Pricing
-  actualPrice   Decimal  @db.Decimal(10, 2)
-  price         Decimal  @db.Decimal(10, 2)
-  discount     Decimal? @db.Decimal(5, 2)
+  actualPrice    Decimal   @db.Decimal(10, 2)
+  price          Decimal   @db.Decimal(10, 2)
+  discount       Decimal?  @db.Decimal(5, 2)
 
   // Inventory
-  stock         Int      @default(0)
-  minOrderQty   Int      @default(1)
-  maxOrderQty   Int?
+  stock          Int       @default(0)
+  minOrderQty    Int       @default(1)
+  maxOrderQty    Int?
 
   // Product image
-  imageUrl      String?
+  imageUrl       String?
 
   // Category / grouping
-  categoryId    String?
-  category      Category? @relation(fields: [categoryId], references: [id])
+  categoryId     String?
+  category       Category? @relation(fields: [categoryId], references: [id])
 
   // Status
-  isActive      Boolean  @default(true)
-  isFeatured    Boolean  @default(false)
+  isActive       Boolean   @default(true)
+  isFeatured     Boolean   @default(false)
 
   // Metadata
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  cartItems     CartItem[]
+  cartItems      CartItem[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -49,18 +55,22 @@ model Product {
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
-  description String?
-  imageUrl    String?
-  sortOrder   Int       @default(0)
-  isActive    Boolean   @default(true)
+  id             String    @id @default(cuid())
+  name           String?
+  nameEng        String?
+  nameTam        String?
+  slug           String    @unique
+  description    String?
+  descriptionEng String?
+  descriptionTam String?
+  imageUrl       String?
+  sortOrder      Int       @default(0)
+  isActive       Boolean   @default(true)
 
-  products    Product[]
+  products       Product[]
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Cart {

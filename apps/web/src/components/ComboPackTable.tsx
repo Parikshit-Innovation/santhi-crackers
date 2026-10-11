@@ -11,8 +11,18 @@ export interface ComboItem {
   id: string;
   code: string;
   name: string;
+  nameEng?: string;
+  nameTam?: string | null;
   category: string;
+  categorySlug?: string;
+  categoryEng?: string;
+  categoryTam?: string | null;
   content: string;
+  contentEng?: string;
+  contentTam?: string | null;
+  description?: string;
+  descriptionEng?: string;
+  descriptionTam?: string | null;
   actualPrice: number;
   price: number;
   image: string;
@@ -24,7 +34,37 @@ interface ComboPackTableProps {
 }
 
 export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) => {
-  const { t, tProduct, tCategory } = useLanguage();
+  const { t, tProduct, tCategory, language } = useLanguage();
+
+  const getProductName = useCallback((item: ComboItem): string => {
+    if (language === "ta") {
+      return item.nameTam || tProduct(item.code, item.nameEng || item.name);
+    }
+    return item.nameEng || item.name;
+  }, [language, tProduct]);
+
+  const getProductContent = useCallback((item: ComboItem): string => {
+    if (language === "ta" && item.contentTam) {
+      return item.contentTam;
+    }
+    return item.contentEng || item.content;
+  }, [language]);
+
+  const getProductDesc = useCallback((item: ComboItem): string => {
+    if (language === "ta" && item.descriptionTam) {
+      return item.descriptionTam;
+    }
+    return item.descriptionEng || item.description || "";
+  }, [language]);
+
+  const getCategoryName = useCallback((category: string, catItems?: ComboItem[]): string => {
+    const item = catItems?.[0];
+    if (language === "ta" && item?.categoryTam) {
+      return item.categoryTam;
+    }
+    return tCategory(category, category);
+  }, [language, tCategory]);
+
   const [items, setItems] = useState<ComboItem[]>([]);
   const [categoriesList, setCategoriesList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -65,13 +105,18 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
         if (!isMounted) return;
 
         const categoryMap: Record<string, string> = {};
+        const categoryTamMap: Record<string, string> = {};
         const fetchedCatNames: string[] = [];
 
         if (categoriesRes.status === "fulfilled" && categoriesRes.value) {
           for (const cat of categoriesRes.value) {
-            categoryMap[cat.slug.toLowerCase()] = cat.name;
-            if (cat.name && !fetchedCatNames.includes(cat.name)) {
-              fetchedCatNames.push(cat.name);
+            const displayName = cat.nameEng || cat.name;
+            categoryMap[cat.slug.toLowerCase()] = displayName;
+            if (cat.nameTam) {
+              categoryTamMap[cat.slug.toLowerCase()] = cat.nameTam;
+            }
+            if (displayName && !fetchedCatNames.includes(displayName)) {
+              fetchedCatNames.push(displayName);
             }
           }
         }
@@ -82,7 +127,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
           productsRes.value.length > 0
         ) {
           const mapped = productsRes.value.map((prod) =>
-            mapBackendProductToComboItem(prod, categoryMap),
+            mapBackendProductToComboItem(prod, categoryMap, categoryTamMap),
           );
           setItems(mapped);
           setIsLiveBackend(true);
@@ -287,13 +332,33 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
-      result = result.filter(
-        (it) =>
-          it.name.toLowerCase().includes(q) ||
-          it.content.toLowerCase().includes(q) ||
-          it.code.toLowerCase().includes(q) ||
-          it.category.toLowerCase().includes(q),
-      );
+      result = result.filter((it) => {
+        const matchesName = Boolean(it.name && it.name.toLowerCase().includes(q));
+        const matchesNameEng = Boolean(it.nameEng && it.nameEng.toLowerCase().includes(q));
+        const matchesNameTam = Boolean(it.nameTam && it.nameTam.toLowerCase().includes(q));
+        const matchesContent = Boolean(it.content && it.content.toLowerCase().includes(q));
+        const matchesContentEng = Boolean(it.contentEng && it.contentEng.toLowerCase().includes(q));
+        const matchesContentTam = Boolean(it.contentTam && it.contentTam.toLowerCase().includes(q));
+        const matchesDescEng = Boolean(it.descriptionEng && it.descriptionEng.toLowerCase().includes(q));
+        const matchesDescTam = Boolean(it.descriptionTam && it.descriptionTam.toLowerCase().includes(q));
+        const matchesCode = Boolean(it.code && it.code.toLowerCase().includes(q));
+        const matchesCategory = Boolean(it.category && it.category.toLowerCase().includes(q));
+        const matchesCategoryTam = Boolean(it.categoryTam && it.categoryTam.toLowerCase().includes(q));
+
+        return (
+          matchesName ||
+          matchesNameEng ||
+          matchesNameTam ||
+          matchesContent ||
+          matchesContentEng ||
+          matchesContentTam ||
+          matchesDescEng ||
+          matchesDescTam ||
+          matchesCode ||
+          matchesCategory ||
+          matchesCategoryTam
+        );
+      });
     }
 
     result.sort((a, b) => {
@@ -303,7 +368,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
         case "price-desc":
           return b.price - a.price;
         case "name-asc":
-          return a.name.localeCompare(b.name);
+          return getProductName(a).localeCompare(getProductName(b));
         default:
           return 0;
       }
@@ -758,7 +823,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                     <tr className="combo-category-header-row">
                       <td colSpan={8} className="combo-category-header-td">
                         <div className="combo-category-header">
-                          <span className="combo-category-title">{tCategory(category, category)}</span>
+                          <span className="combo-category-title">{getCategoryName(category, items)}</span>
                           <span className="combo-category-badge">
                             {items.length} {items.length === 1 ? t("Product") : t("Products")}
                           </span>
@@ -780,7 +845,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                             >
                               <img
                                 src={item.image}
-                                alt={tProduct(item.code, item.name)}
+                                alt={getProductName(item)}
                                 className="combo-thumb-img"
                                 loading="lazy"
                               />
@@ -789,12 +854,12 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
 
                           {/* Product Name */}
                           <td className="td-name">
-                            <span className="combo-name-text">{tProduct(item.code, item.name)}</span>
+                            <span className="combo-name-text">{getProductName(item)}</span>
                           </td>
 
                           {/* Content */}
                           <td className="td-content">
-                            <span className="combo-content-text">{t(item.content)}</span>
+                            <span className="combo-content-text">{getProductContent(item)}</span>
                           </td>
 
                           {/* Actual Price (Strikethrough) */}
@@ -910,7 +975,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
             {groupedCategories.map(({ category, items }) => (
               <div key={`m-cat-${category}`} className="combo-category-mobile-section">
                 <div className="combo-category-header">
-                  <span className="combo-category-title">{tCategory(category, category)}</span>
+                  <span className="combo-category-title">{getCategoryName(category, items)}</span>
                   <span className="combo-category-badge">
                     {items.length} {items.length === 1 ? t("Product") : t("Products")}
                   </span>
@@ -929,15 +994,15 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
                           onClick={() => setActivePreview(item)}
                           title={t("Click to view packaging")}
                         >
-                          <img src={item.image} alt={tProduct(item.code, item.name)} loading="lazy" />
+                          <img src={item.image} alt={getProductName(item)} loading="lazy" />
                         </div>
 
                         {/* Info */}
                         <div className="combo-m-info">
                           <div className="combo-m-meta">
-                            <span className="combo-m-content">{t(item.content)}</span>
+                            <span className="combo-m-content">{getProductContent(item)}</span>
                           </div>
-                          <div className="combo-m-name">{tProduct(item.code, item.name)}</div>
+                          <div className="combo-m-name">{getProductName(item)}</div>
                           <div className="combo-m-prices">
                             <span className="combo-m-actual">{formatPrice(item.actualPrice)}</span>
                             <span className="combo-m-current">{formatPrice(item.price)}</span>
@@ -1044,13 +1109,18 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({ onAddToCart }) =
               </button>
               <img
                 src={activePreview.image}
-                alt={tProduct(activePreview.code, activePreview.name)}
+                alt={getProductName(activePreview)}
                 className="combo-lightbox-img"
               />
               <div className="combo-lightbox-info">
-                <h3>{tProduct(activePreview.code, activePreview.name)}</h3>
+                <h3>{getProductName(activePreview)}</h3>
+                {getProductDesc(activePreview) && (
+                  <p style={{ margin: "4px 0 8px", fontSize: "13px", color: "#64748b" }}>
+                    {getProductDesc(activePreview)}
+                  </p>
+                )}
                 <p>
-                  {t("Price")}: {formatPrice(activePreview.price)} • {t(activePreview.content)}
+                  {t("Price")}: {formatPrice(activePreview.price)} • {getProductContent(activePreview)}
                 </p>
               </div>
             </div>

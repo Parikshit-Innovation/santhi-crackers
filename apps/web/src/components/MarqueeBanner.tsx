@@ -10,6 +10,11 @@ interface MarqueeItem {
 
 const MARQUEE_ITEMS: MarqueeItem[] = [
   {
+    id: "diwali-festive",
+    title: "Diwali 2026 Special",
+    text: "Direct Sivakasi factory crackers & gift boxes",
+  },
+  {
     id: "1",
     title: "PESO Certified",
     text: "100% genuine green crackers",

@@ -43,7 +43,7 @@
 /* Bold prefix title */
 .marquee-title {
   font-weight: 700;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   letter-spacing: -0.01em;
 }
 

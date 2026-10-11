@@ -1,17 +1,38 @@
-import { useState, useEffect } from "react";
-import type { FormEvent } from "react";
-import { createCategoryApi, fetchCategoriesApi } from "./api/categories";
-import { createProductApi, fetchProductsApi, updateProductApi, deleteProductApi } from "./api/products";
-import { type CustomerQuery, fetchQueriesApi } from "./api/queries";
-import { 
-  LayoutDashboard, Package, ListTree, ShoppingCart, 
-  LogOut, Menu, Search, X, Edit, Eye, 
-  Trash2, Plus, ImageIcon, ChevronLeft, ChevronRight,
-  FileText, Printer, Truck, User, Phone, MapPin, CreditCard, ChevronDown,
-  ArrowUp, ArrowDown, Layers, RefreshCw, Star, MessageSquare
+import {
+    ArrowDown,
+    ArrowUp,
+    ChevronDown,
+    ChevronLeft, ChevronRight,
+    CreditCard,
+    Edit, Eye,
+    FileText,
+    ImageIcon,
+    Layers,
+    LayoutDashboard,
+    ListTree,
+    LogOut,
+    MapPin,
+    Menu,
+    MessageSquare,
+    Package,
+    Phone,
+    Plus,
+    Printer,
+    RefreshCw,
+    Search,
+    ShoppingCart,
+    Star,
+    Trash2,
+    Truck, User,
+    X
 } from "lucide-react";
-import { useLanguage } from "./context/LanguageContext";
+import type { FormEvent } from "react";
+import { useEffect, useState } from "react";
+import { createCategoryApi, fetchCategoriesApi, updateCategoryApi } from "./api/categories";
+import { createProductApi, deleteProductApi, fetchProductsApi, updateProductApi } from "./api/products";
+import { type CustomerQuery, fetchQueriesApi } from "./api/queries";
 import "./App.css";
+import { useLanguage } from "./context/LanguageContext";
 
 // ── Types & Data ─────────────────────────────────────────────────────────────
 export interface OrderItem {
@@ -48,8 +69,12 @@ export interface Order {
 export interface Category {
   id: number | string;
   name: string;
+  nameEng?: string;
+  nameTam?: string | null;
   slug: string;
   description?: string;
+  descriptionEng?: string | null;
+  descriptionTam?: string | null;
   imageUrl?: string;
   count: number;
   sort: number;
@@ -60,10 +85,16 @@ export interface Product {
   id: number | string;
   code: string;
   name: string;
+  nameEng?: string;
+  nameTam?: string | null;
   category: string;
   categorySlug?: string;
   description?: string;
+  descriptionEng?: string | null;
+  descriptionTam?: string | null;
   content?: string;
+  contentEng?: string | null;
+  contentTam?: string | null;
   actualPrice: number;
   sellingPrice: number;
   discount?: number;
@@ -271,11 +302,18 @@ export default function App() {
 
   // Product Form State
   const [prodName, setProdName] = useState("");
+  const [prodNameEng, setProdNameEng] = useState("");
+  const [prodNameTam, setProdNameTam] = useState("");
   const [prodCode, setProdCode] = useState("");
   const [prodCategory, setProdCategory] = useState("Rockets");
   const [prodCategorySlug, setProdCategorySlug] = useState("rockets");
   const [prodDescription, setProdDescription] = useState("");
+  const [prodDescEng, setProdDescEng] = useState("");
+  const [prodDescTam, setProdDescTam] = useState("");
   const [prodContent, setProdContent] = useState("Pack of 5");
+  const [prodContentEng, setProdContentEng] = useState("Pack of 5");
+  const [prodContentTam, setProdContentTam] = useState("");
+  const [prodLangTab, setProdLangTab] = useState<"en" | "ta">("en");
   const [prodActualPrice, setProdActualPrice] = useState<number>(500);
   const [prodSellingPrice, setProdSellingPrice] = useState<number>(425);
   const [prodDiscount, setProdDiscount] = useState<number>(15);
@@ -298,14 +336,23 @@ export default function App() {
       if (data && data.length > 0) {
         const mapped: Product[] = data.map((p) => {
           const cat = categoriesList.find(c => c.slug === p.categorySlug);
+          const nameEng = p.nameEng || p.name;
+          const descEng = p.descriptionEng || p.description || "";
+          const contentEng = p.contentEng || p.content || "";
           return {
             id: p.id,
             code: p.code,
-            name: p.name,
-            category: cat ? cat.name : (p.categorySlug || "Crackers"),
+            name: nameEng,
+            nameEng,
+            nameTam: p.nameTam || null,
+            category: cat ? (cat.nameEng || cat.name) : (p.categorySlug || "Crackers"),
             categorySlug: p.categorySlug,
-            description: p.description || "",
-            content: p.content || "",
+            description: descEng,
+            descriptionEng: descEng,
+            descriptionTam: p.descriptionTam || null,
+            content: contentEng,
+            contentEng: contentEng,
+            contentTam: p.contentTam || null,
             actualPrice: Number(p.actualPrice) || 0,
             sellingPrice: Number(p.price) || 0,
             discount: Number(p.discount) || 0,
@@ -360,12 +407,18 @@ export default function App() {
 
   const handleOpenAddProduct = () => {
     setProdName("");
+    setProdNameEng("");
+    setProdNameTam("");
     setProdCode("");
     const defaultCat = categoriesList.find(c => c.slug === "rockets") || categoriesList[0];
     setProdCategory(defaultCat?.name || "Rockets");
     setProdCategorySlug(defaultCat?.slug || "rockets");
-    setProdDescription("Colorful sky rocket for Diwali celebrations");
+    setProdDescription("");
+    setProdDescEng("");
+    setProdDescTam("");
     setProdContent("Pack of 5");
+    setProdContentEng("Pack of 5");
+    setProdContentTam("");
     setProdActualPrice(500);
     setProdSellingPrice(425);
     setProdDiscount(15);
@@ -376,17 +429,27 @@ export default function App() {
     setProdStatus("Active");
     setProdIsFeatured(true);
     setProdError(null);
+    setProdLangTab("en");
     setIsAddProductOpen(true);
   };
 
   const handleOpenEditProduct = (prod: Product) => {
     setEditingProduct(prod);
-    setProdName(prod.name);
+    const nEng = prod.nameEng || prod.name || "";
+    setProdName(nEng);
+    setProdNameEng(nEng);
+    setProdNameTam(prod.nameTam || "");
     setProdCode(prod.code);
     setProdCategory(prod.category);
     setProdCategorySlug(prod.categorySlug || "");
-    setProdDescription(prod.description || "");
-    setProdContent(prod.content || "");
+    const dEng = prod.descriptionEng || prod.description || "";
+    setProdDescription(dEng);
+    setProdDescEng(dEng);
+    setProdDescTam(prod.descriptionTam || "");
+    const cEng = prod.contentEng || prod.content || "";
+    setProdContent(cEng);
+    setProdContentEng(cEng);
+    setProdContentTam(prod.contentTam || "");
     setProdActualPrice(prod.actualPrice);
     setProdSellingPrice(prod.sellingPrice);
     setProdDiscount(prod.discount || 0);
@@ -397,12 +460,16 @@ export default function App() {
     setProdStatus(prod.status);
     setProdIsFeatured(prod.featured);
     setProdError(null);
+    setProdLangTab("en");
   };
 
   const handleSaveAddProduct = async (e: FormEvent) => {
     e.preventDefault();
-    if (!prodName.trim() || !prodCode.trim()) {
-      setProdError("Product Name and Code are required.");
+    const finalNameEng = prodNameEng.trim() || prodName.trim();
+    const finalNameTam = prodNameTam.trim();
+
+    if (!finalNameEng || !prodCode.trim()) {
+      setProdError("English Product Name and Product Code are required.");
       return;
     }
 
@@ -412,12 +479,23 @@ export default function App() {
     const targetCat = categoriesList.find(c => c.slug === prodCategorySlug || c.name === prodCategory);
     const resolvedCatSlug = targetCat?.slug || prodCategorySlug || "rockets";
 
+    const finalDescEng = prodDescEng.trim() || prodDescription.trim();
+    const finalDescTam = prodDescTam.trim();
+    const finalContentEng = prodContentEng.trim() || prodContent.trim();
+    const finalContentTam = prodContentTam.trim();
+
     try {
       const res = await createProductApi({
         code: prodCode.trim().toUpperCase(),
-        name: prodName.trim(),
-        description: prodDescription.trim(),
-        content: prodContent.trim(),
+        name: finalNameEng,
+        nameEng: finalNameEng,
+        nameTam: finalNameTam || null,
+        description: finalDescEng,
+        descriptionEng: finalDescEng,
+        descriptionTam: finalDescTam || null,
+        content: finalContentEng,
+        contentEng: finalContentEng,
+        contentTam: finalContentTam || null,
         actualPrice: Number(prodActualPrice) || 0,
         price: Number(prodSellingPrice) || 0,
         discount: Number(prodDiscount) || 0,
@@ -434,11 +512,17 @@ export default function App() {
       const newProd: Product = {
         id: bp?.id || Date.now(),
         code: bp?.code || prodCode.trim().toUpperCase(),
-        name: bp?.name || prodName.trim(),
+        name: bp?.nameEng || bp?.name || finalNameEng,
+        nameEng: bp?.nameEng || finalNameEng,
+        nameTam: bp?.nameTam !== undefined ? bp.nameTam : (finalNameTam || null),
         category: targetCat?.name || prodCategory,
         categorySlug: bp?.categorySlug || resolvedCatSlug,
-        description: bp?.description || prodDescription.trim(),
-        content: bp?.content || prodContent.trim(),
+        description: bp?.descriptionEng || bp?.description || finalDescEng,
+        descriptionEng: bp?.descriptionEng || finalDescEng,
+        descriptionTam: bp?.descriptionTam !== undefined ? bp.descriptionTam : (finalDescTam || null),
+        content: bp?.contentEng || bp?.content || finalContentEng,
+        contentEng: bp?.contentEng || finalContentEng,
+        contentTam: bp?.contentTam !== undefined ? bp.contentTam : (finalContentTam || null),
         actualPrice: Number(bp?.actualPrice ?? prodActualPrice),
         sellingPrice: Number(bp?.price ?? prodSellingPrice),
         discount: Number(bp?.discount ?? prodDiscount),
@@ -453,7 +537,7 @@ export default function App() {
       setProductsList(prev => [newProd, ...prev]);
       setProdNotification({
         type: "success",
-        message: `Product "${newProd.name}" (${newProd.code}) successfully created on API (localhost:3007/api/product)!`,
+        message: `Product "${newProd.name}" (${newProd.code}) created successfully with bilingual support!`,
       });
       setTimeout(() => setProdNotification(null), 4500);
       setIsAddProductOpen(false);
@@ -470,8 +554,13 @@ export default function App() {
 
   const handleSaveEditProduct = async (e: FormEvent) => {
     e.preventDefault();
-    if (!editingProduct || !prodName.trim() || !prodCode.trim()) {
-      setProdError("Product Name and Code are required.");
+    if (!editingProduct) return;
+
+    const finalNameEng = prodNameEng.trim() || prodName.trim();
+    const finalNameTam = prodNameTam.trim();
+
+    if (!finalNameEng || !prodCode.trim()) {
+      setProdError("English Product Name and Product Code are required.");
       return;
     }
 
@@ -481,12 +570,23 @@ export default function App() {
     const targetCat = categoriesList.find(c => c.slug === prodCategorySlug || c.name === prodCategory);
     const resolvedCatSlug = targetCat?.slug || prodCategorySlug || undefined;
 
+    const finalDescEng = prodDescEng.trim() || prodDescription.trim();
+    const finalDescTam = prodDescTam.trim();
+    const finalContentEng = prodContentEng.trim() || prodContent.trim();
+    const finalContentTam = prodContentTam.trim();
+
     try {
       const res = await updateProductApi(editingProduct.id, {
         code: prodCode.trim().toUpperCase(),
-        name: prodName.trim(),
-        description: prodDescription.trim(),
-        content: prodContent.trim(),
+        name: finalNameEng,
+        nameEng: finalNameEng,
+        nameTam: finalNameTam || null,
+        description: finalDescEng,
+        descriptionEng: finalDescEng,
+        descriptionTam: finalDescTam || null,
+        content: finalContentEng,
+        contentEng: finalContentEng,
+        contentTam: finalContentTam || null,
         actualPrice: Number(prodActualPrice) || 0,
         price: Number(prodSellingPrice) || 0,
         discount: Number(prodDiscount) || 0,
@@ -504,11 +604,17 @@ export default function App() {
         ...editingProduct,
         id: bp?.id || editingProduct.id,
         code: bp?.code || prodCode.trim().toUpperCase(),
-        name: bp?.name || prodName.trim(),
+        name: bp?.nameEng || bp?.name || finalNameEng,
+        nameEng: bp?.nameEng || finalNameEng,
+        nameTam: bp?.nameTam !== undefined ? bp.nameTam : (finalNameTam || null),
         category: targetCat?.name || prodCategory,
         categorySlug: bp?.categorySlug || resolvedCatSlug || prodCategorySlug,
-        description: bp?.description || prodDescription.trim(),
-        content: bp?.content || prodContent.trim(),
+        description: bp?.descriptionEng || bp?.description || finalDescEng,
+        descriptionEng: bp?.descriptionEng || finalDescEng,
+        descriptionTam: bp?.descriptionTam !== undefined ? bp.descriptionTam : (finalDescTam || null),
+        content: bp?.contentEng || bp?.content || finalContentEng,
+        contentEng: bp?.contentEng || finalContentEng,
+        contentTam: bp?.contentTam !== undefined ? bp.contentTam : (finalContentTam || null),
         actualPrice: Number(bp?.actualPrice ?? prodActualPrice),
         sellingPrice: Number(bp?.price ?? prodSellingPrice),
         discount: Number(bp?.discount ?? prodDiscount),
@@ -523,7 +629,7 @@ export default function App() {
       setProductsList(prev => prev.map(p => p.id === editingProduct.id ? updatedProduct : p));
       setProdNotification({
         type: "success",
-        message: `Product "${updatedProduct.name}" (${updatedProduct.code}) updated successfully!`,
+        message: `Product "${updatedProduct.name}" (${updatedProduct.code}) updated successfully with bilingual content!`,
       });
       setTimeout(() => setProdNotification(null), 4500);
       setEditingProduct(null);
@@ -617,8 +723,13 @@ export default function App() {
 
   // Form State
   const [catName, setCatName] = useState("");
+  const [catNameEng, setCatNameEng] = useState("");
+  const [catNameTam, setCatNameTam] = useState("");
   const [catSlug, setCatSlug] = useState("");
   const [catDesc, setCatDesc] = useState("");
+  const [catDescEng, setCatDescEng] = useState("");
+  const [catDescTam, setCatDescTam] = useState("");
+  const [catLangTab, setCatLangTab] = useState<"en" | "ta">("en");
   const [catImageUrl, setCatImageUrl] = useState("");
   const [catSort, setCatSort] = useState<number>(1);
   const [catStatus, setCatStatus] = useState<"Active" | "Inactive">("Active");
@@ -633,16 +744,24 @@ export default function App() {
     try {
       const data = await fetchCategoriesApi();
       if (data && data.length > 0) {
-        const mapped: Category[] = data.map((c, idx) => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug,
-          description: c.description || "",
-          imageUrl: c.imageUrl || "",
-          count: typeof c.productCount === "number" ? c.productCount : 0,
-          sort: c.sortOrder ?? idx + 1,
-          status: c.isActive === false ? "Inactive" : "Active",
-        }));
+        const mapped: Category[] = data.map((c, idx) => {
+          const nameEng = c.nameEng || c.name;
+          const descEng = c.descriptionEng || c.description || "";
+          return {
+            id: c.id,
+            name: nameEng,
+            nameEng,
+            nameTam: c.nameTam || null,
+            slug: c.slug,
+            description: descEng,
+            descriptionEng: descEng,
+            descriptionTam: c.descriptionTam || null,
+            imageUrl: c.imageUrl || "",
+            count: typeof c.productCount === "number" ? c.productCount : 0,
+            sort: c.sortOrder ?? idx + 1,
+            status: c.isActive === false ? "Inactive" : "Active",
+          };
+        });
         setCategoriesList(mapped);
       }
     } catch (err) {
@@ -698,8 +817,13 @@ export default function App() {
 
   const handleOpenAddCategory = () => {
     setCatName("");
+    setCatNameEng("");
+    setCatNameTam("");
     setCatSlug("");
     setCatDesc("");
+    setCatDescEng("");
+    setCatDescTam("");
+    setCatLangTab("en");
     setCatImageUrl("");
     setCatSort(categoriesList.length + 1);
     setCatStatus("Active");
@@ -709,9 +833,16 @@ export default function App() {
 
   const handleOpenEditCategory = (cat: Category) => {
     setEditingCategory(cat);
-    setCatName(cat.name);
+    const nEng = cat.nameEng || cat.name || "";
+    setCatName(nEng);
+    setCatNameEng(nEng);
+    setCatNameTam(cat.nameTam || "");
     setCatSlug(cat.slug);
-    setCatDesc(cat.description || "");
+    const dEng = cat.descriptionEng || cat.description || "";
+    setCatDesc(dEng);
+    setCatDescEng(dEng);
+    setCatDescTam(cat.descriptionTam || "");
+    setCatLangTab("en");
     setCatImageUrl(cat.imageUrl || "");
     setCatSort(cat.sort);
     setCatStatus(cat.status);
@@ -720,27 +851,41 @@ export default function App() {
 
   const handleCategoryNameChange = (val: string) => {
     setCatName(val);
+    setCatNameEng(val);
     const autoSlug = val.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     setCatSlug(autoSlug);
   };
 
   const handleSaveAddCategory = async (e: FormEvent) => {
     e.preventDefault();
-    if (!catName.trim()) return;
+    const finalNameEng = catNameEng.trim() || catName.trim();
+    const finalNameTam = catNameTam.trim();
+
+    if (!finalNameEng) {
+      setCatError("English Category Name is required.");
+      return;
+    }
 
     setCatIsSubmitting(true);
     setCatError(null);
 
-    const cleanSlug = catSlug.trim().replace(/^\//, '') || catName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const cleanSlug = catSlug.trim().replace(/^\//, '') || finalNameEng.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const sortNumber = Number(catSort) || categoriesList.length + 1;
     const isActive = catStatus === "Active";
+
+    const finalDescEng = catDescEng.trim() || catDesc.trim();
+    const finalDescTam = catDescTam.trim();
 
     try {
       // POST to backend localhost:3007/api/categories
       const response = await createCategoryApi({
-        name: catName.trim(),
+        name: finalNameEng,
+        nameEng: finalNameEng,
+        nameTam: finalNameTam || null,
         slug: cleanSlug,
-        description: catDesc.trim(),
+        description: finalDescEng,
+        descriptionEng: finalDescEng,
+        descriptionTam: finalDescTam || null,
         imageUrl: catImageUrl.trim() || undefined,
         sortOrder: sortNumber,
         isActive,
@@ -749,9 +894,13 @@ export default function App() {
       const backendCat = response.category;
       const newCat: Category = {
         id: backendCat?.id || Date.now(),
-        name: backendCat?.name || catName.trim(),
+        name: backendCat?.nameEng || backendCat?.name || finalNameEng,
+        nameEng: backendCat?.nameEng || finalNameEng,
+        nameTam: backendCat?.nameTam !== undefined ? backendCat.nameTam : (finalNameTam || null),
         slug: backendCat?.slug || cleanSlug,
-        description: backendCat?.description || catDesc.trim(),
+        description: backendCat?.descriptionEng || backendCat?.description || finalDescEng,
+        descriptionEng: backendCat?.descriptionEng || finalDescEng,
+        descriptionTam: backendCat?.descriptionTam !== undefined ? backendCat.descriptionTam : (finalDescTam || null),
         imageUrl: backendCat?.imageUrl || catImageUrl.trim(),
         sort: backendCat?.sortOrder ?? sortNumber,
         status: backendCat?.isActive === false ? "Inactive" : "Active",
@@ -761,7 +910,7 @@ export default function App() {
       setCategoriesList(prev => [...prev, newCat]);
       setCatNotification({
         type: "success",
-        message: `Category "${newCat.name}" successfully created on API (localhost:3007/api/categories)!`,
+        message: `Category "${newCat.name}" successfully created with bilingual support!`,
       });
       setTimeout(() => setCatNotification(null), 4500);
       setIsAddCategoryOpen(false);
@@ -773,20 +922,70 @@ export default function App() {
     }
   };
 
-  const handleSaveEditCategory = (e: FormEvent) => {
+  const handleSaveEditCategory = async (e: FormEvent) => {
     e.preventDefault();
-    if (!editingCategory || !catName.trim()) return;
-    const cleanSlug = catSlug.trim().replace(/^\//, '') || catName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    setCategoriesList(prev => prev.map(c => c.id === editingCategory.id ? {
-      ...c,
-      name: catName.trim(),
-      slug: cleanSlug,
-      description: catDesc.trim(),
-      imageUrl: catImageUrl.trim(),
-      sort: Number(catSort),
-      status: catStatus
-    } : c));
-    setEditingCategory(null);
+    if (!editingCategory) return;
+
+    const finalNameEng = catNameEng.trim() || catName.trim();
+    const finalNameTam = catNameTam.trim();
+
+    if (!finalNameEng) {
+      setCatError("Category Name is required.");
+      return;
+    }
+
+    setCatIsSubmitting(true);
+    setCatError(null);
+
+    const cleanSlug = catSlug.trim().replace(/^\//, '') || finalNameEng.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const sortNumber = Number(catSort) || editingCategory.sort;
+    const isActive = catStatus === "Active";
+
+    const finalDescEng = catDescEng.trim() || catDesc.trim();
+    const finalDescTam = catDescTam.trim();
+
+    try {
+      const response = await updateCategoryApi(editingCategory.id, {
+        name: finalNameEng,
+        nameEng: finalNameEng,
+        nameTam: finalNameTam || null,
+        slug: cleanSlug,
+        description: finalDescEng,
+        descriptionEng: finalDescEng,
+        descriptionTam: finalDescTam || null,
+        imageUrl: catImageUrl.trim() || undefined,
+        sortOrder: sortNumber,
+        isActive,
+      });
+
+      const backendCat = response.category;
+      const updatedCat: Category = {
+        ...editingCategory,
+        name: backendCat?.nameEng || backendCat?.name || finalNameEng,
+        nameEng: backendCat?.nameEng || finalNameEng,
+        nameTam: backendCat?.nameTam !== undefined ? backendCat.nameTam : (finalNameTam || null),
+        slug: backendCat?.slug || cleanSlug,
+        description: backendCat?.descriptionEng || backendCat?.description || finalDescEng,
+        descriptionEng: backendCat?.descriptionEng || finalDescEng,
+        descriptionTam: backendCat?.descriptionTam !== undefined ? backendCat.descriptionTam : (finalDescTam || null),
+        imageUrl: backendCat?.imageUrl || catImageUrl.trim(),
+        sort: backendCat?.sortOrder ?? sortNumber,
+        status: backendCat?.isActive === false ? "Inactive" : "Active",
+      };
+
+      setCategoriesList(prev => prev.map(c => c.id === editingCategory.id ? updatedCat : c));
+      setCatNotification({
+        type: "success",
+        message: `Category "${updatedCat.name}" updated successfully!`,
+      });
+      setTimeout(() => setCatNotification(null), 4500);
+      setEditingCategory(null);
+    } catch (err: any) {
+      console.error("Failed to update category on backend:", err);
+      setCatError(err?.message || "Failed to update category on API.");
+    } finally {
+      setCatIsSubmitting(false);
+    }
   };
 
   const handleConfirmDeleteCategory = () => {
@@ -1467,7 +1666,7 @@ export default function App() {
                           <div>
                             <div className="flex items-center gap-2">
                               <p className="font-extrabold text-sm text-black leading-tight">
-                                {tProduct(p.code, p.name)}
+                                {isTamil ? (p.nameTam || p.nameEng || p.name) : (p.nameEng || p.name)}
                               </p>
                               {p.featured && (
                                 <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md">
@@ -1476,12 +1675,18 @@ export default function App() {
                                 </span>
                               )}
                             </div>
-                            {isTamil && tProduct(p.code, p.name) !== p.name && (
-                              <p className="text-[11px] text-slate-500 font-normal mt-0.5">{p.name}</p>
-                            )}
+                            {!isTamil && p.nameTam ? (
+                              <p className="text-[11px] text-blue-700 font-medium mt-0.5">{p.nameTam}</p>
+                            ) : isTamil && (p.nameEng || p.name) ? (
+                              <p className="text-[11px] text-slate-500 font-normal mt-0.5">{p.nameEng || p.name}</p>
+                            ) : null}
                             <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono tracking-wide mt-0.5">
                               <span>{p.code}</span>
-                              {p.content && <span className="text-slate-400 font-sans">• {p.content}</span>}
+                              {(p.contentEng || p.content) && (
+                                <span className="text-slate-400 font-sans">
+                                  • {isTamil && p.contentTam ? p.contentTam : (p.contentEng || p.content)}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -1623,19 +1828,8 @@ export default function App() {
                 </div>
               )}
 
-              {/* Name & Code */}
+              {/* Code & Category */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Product Name *</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={prodName}
-                    onChange={(e) => setProdName(e.target.value)}
-                    placeholder="e.g. Deluxe Rocket"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
-                  />
-                </div>
                 <div>
                   <label className="block text-xs font-bold text-black uppercase mb-1">Product Code/SKU *</label>
                   <input 
@@ -1643,14 +1837,10 @@ export default function App() {
                     required 
                     value={prodCode}
                     onChange={(e) => setProdCode(e.target.value.toUpperCase())}
-                    placeholder="e.g. ROCKET-002"
+                    placeholder="e.g. SF2026-124"
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
-              </div>
-
-              {/* Category & Content */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-black uppercase mb-1">Category (categorySlug)</label>
                   <select 
@@ -1660,33 +1850,143 @@ export default function App() {
                   >
                     {categoriesList.map(c => (
                       <option key={c.id} value={c.slug}>
-                        {c.name} (/{c.slug})
+                        {c.nameEng || c.name} {c.nameTam ? `(${c.nameTam})` : ""} (/{c.slug})
                       </option>
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Packaging / Content</label>
-                  <input 
-                    type="text" 
-                    value={prodContent}
-                    onChange={(e) => setProdContent(e.target.value)}
-                    placeholder="e.g. Pack of 5"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
-                  />
-                </div>
               </div>
 
-              {/* Description */}
-              <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Description</label>
-                <textarea 
-                  rows={2}
-                  value={prodDescription}
-                  onChange={(e) => setProdDescription(e.target.value)}
-                  placeholder="e.g. Colorful sky rocket for Diwali celebrations"
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
-                />
+              {/* Bilingual Content Tabs */}
+              <div className="rounded-xl border border-gray-200 overflow-hidden bg-white shadow-xs">
+                <div className="flex border-b border-gray-200 bg-gray-50 p-1.5 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setProdLangTab("en")}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                      prodLangTab === "en"
+                        ? "bg-white text-blue-700 shadow-xs border border-gray-200"
+                        : "text-gray-600 hover:text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    <span>🇬🇧 English Content</span>
+                    {prodNameEng.trim() ? (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" title="English name entered" />
+                    ) : (
+                      <span className="text-[10px] text-amber-600 font-bold">*</span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProdLangTab("ta")}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                      prodLangTab === "ta"
+                        ? "bg-white text-blue-700 shadow-xs border border-gray-200"
+                        : "text-gray-600 hover:text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    <span>🇮🇳 Tamil Content (தமிழ்)</span>
+                    {prodNameTam.trim() ? (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" title="Tamil name entered" />
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-normal">Optional</span>
+                    )}
+                  </button>
+                </div>
+
+                <div className="p-4 space-y-3">
+                  {prodLangTab === "en" ? (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Product Name (English) *
+                        </label>
+                        <input 
+                          type="text" 
+                          value={prodNameEng}
+                          onChange={(e) => {
+                            setProdNameEng(e.target.value);
+                            setProdName(e.target.value);
+                          }}
+                          placeholder="e.g. Flower Pots Small (10 Pcs)"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Packaging / Content (English)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={prodContentEng}
+                          onChange={(e) => {
+                            setProdContentEng(e.target.value);
+                            setProdContent(e.target.value);
+                          }}
+                          placeholder="e.g. Small flower pot crackers (10 pieces)"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Description (English)
+                        </label>
+                        <textarea 
+                          rows={2}
+                          value={prodDescEng}
+                          onChange={(e) => {
+                            setProdDescEng(e.target.value);
+                            setProdDescription(e.target.value);
+                          }}
+                          placeholder="e.g. Small flower pot crackers, pack of 10."
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Product Name (Tamil - தமிழ்)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={prodNameTam}
+                          onChange={(e) => setProdNameTam(e.target.value)}
+                          placeholder="e.g. சிறிய பூந்தொட்டி (10 பீஸ்)"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Packaging / Content (Tamil - தமிழ்)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={prodContentTam}
+                          onChange={(e) => setProdContentTam(e.target.value)}
+                          placeholder="e.g. சிறிய பூந்தொட்டி பட்டாசுகள் (10 எண்ணிக்கை)"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Description (Tamil - தமிழ்)
+                        </label>
+                        <textarea 
+                          rows={2}
+                          value={prodDescTam}
+                          onChange={(e) => setProdDescTam(e.target.value)}
+                          placeholder="e.g. 10 எண்ணிக்கை கொண்ட சிறிய பூந்தொட்டி பட்டாசுகள்."
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                        />
+                      </div>
+                    </>
+                  )}
+                  <p className="text-[11px] text-gray-500 italic">
+                    💡 Both English and Tamil fields are preserved when switching tabs.
+                  </p>
+                </div>
               </div>
 
               {/* Pricing (Actual MRP, Selling Price, Discount) */}
@@ -1855,17 +2155,8 @@ export default function App() {
                   <span>{prodError}</span>
                 </div>
               )}
+              {/* Code & Category */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Product Name *</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={prodName}
-                    onChange={(e) => setProdName(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
-                  />
-                </div>
                 <div>
                   <label className="block text-xs font-bold text-black uppercase mb-1">Product Code/SKU *</label>
                   <input 
@@ -1876,9 +2167,6 @@ export default function App() {
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-black uppercase mb-1">Category</label>
                   <select 
@@ -1886,29 +2174,143 @@ export default function App() {
                     onChange={(e) => handleCategorySelectChange(e.target.value)}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none cursor-pointer"
                   >
-                    {categoriesList.map(c => <option key={c.id} value={c.slug}>{c.name} (/{c.slug})</option>)}
+                    {categoriesList.map(c => (
+                      <option key={c.id} value={c.slug}>
+                        {c.nameEng || c.name} {c.nameTam ? `(${c.nameTam})` : ""} (/{c.slug})
+                      </option>
+                    ))}
                   </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-black uppercase mb-1">Packaging / Content</label>
-                  <input 
-                    type="text" 
-                    value={prodContent}
-                    onChange={(e) => setProdContent(e.target.value)}
-                    placeholder="e.g. Pack of 5"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
-                  />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Description</label>
-                <textarea 
-                  rows={2}
-                  value={prodDescription}
-                  onChange={(e) => setProdDescription(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
-                />
+              {/* Bilingual Content Tabs */}
+              <div className="rounded-xl border border-gray-200 overflow-hidden bg-white shadow-xs">
+                <div className="flex border-b border-gray-200 bg-gray-50 p-1.5 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setProdLangTab("en")}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                      prodLangTab === "en"
+                        ? "bg-white text-blue-700 shadow-xs border border-gray-200"
+                        : "text-gray-600 hover:text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    <span>🇬🇧 English Content</span>
+                    {prodNameEng.trim() ? (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" title="English name set" />
+                    ) : (
+                      <span className="text-[10px] text-amber-600 font-bold">*</span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProdLangTab("ta")}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                      prodLangTab === "ta"
+                        ? "bg-white text-blue-700 shadow-xs border border-gray-200"
+                        : "text-gray-600 hover:text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    <span>🇮🇳 Tamil Content (தமிழ்)</span>
+                    {prodNameTam.trim() ? (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" title="Tamil name set" />
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-normal">Optional</span>
+                    )}
+                  </button>
+                </div>
+
+                <div className="p-4 space-y-3">
+                  {prodLangTab === "en" ? (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Product Name (English) *
+                        </label>
+                        <input 
+                          type="text" 
+                          value={prodNameEng}
+                          onChange={(e) => {
+                            setProdNameEng(e.target.value);
+                            setProdName(e.target.value);
+                          }}
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Packaging / Content (English)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={prodContentEng}
+                          onChange={(e) => {
+                            setProdContentEng(e.target.value);
+                            setProdContent(e.target.value);
+                          }}
+                          placeholder="e.g. Small flower pot crackers (10 pieces)"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Description (English)
+                        </label>
+                        <textarea 
+                          rows={2}
+                          value={prodDescEng}
+                          onChange={(e) => {
+                            setProdDescEng(e.target.value);
+                            setProdDescription(e.target.value);
+                          }}
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Product Name (Tamil - தமிழ்)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={prodNameTam}
+                          onChange={(e) => setProdNameTam(e.target.value)}
+                          placeholder="e.g. சிறிய பூந்தொட்டி (10 பீஸ்)"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Packaging / Content (Tamil - தமிழ்)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={prodContentTam}
+                          onChange={(e) => setProdContentTam(e.target.value)}
+                          placeholder="e.g. சிறிய பூந்தொட்டி பட்டாசுகள் (10 எண்ணிக்கை)"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Description (Tamil - தமிழ்)
+                        </label>
+                        <textarea 
+                          rows={2}
+                          value={prodDescTam}
+                          onChange={(e) => setProdDescTam(e.target.value)}
+                          placeholder="e.g. 10 எண்ணிக்கை கொண்ட சிறிய பூந்தொட்டி பட்டாசுகள்."
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                        />
+                      </div>
+                    </>
+                  )}
+                  <p className="text-[11px] text-gray-500 italic">
+                    💡 Both English and Tamil fields are preserved when switching tabs.
+                  </p>
+                </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
@@ -2063,7 +2465,7 @@ export default function App() {
             <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-bold text-black">{tProduct(viewingProduct.code, viewingProduct.name)}</h3>
+                  <h3 className="text-xl font-bold text-black">{viewingProduct.nameEng || viewingProduct.name}</h3>
                   {viewingProduct.featured && (
                     <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md">
                       <Star size={10} className="fill-amber-500 text-amber-500" />
@@ -2071,8 +2473,8 @@ export default function App() {
                     </span>
                   )}
                 </div>
-                {isTamil && tProduct(viewingProduct.code, viewingProduct.name) !== viewingProduct.name && (
-                  <p className="text-xs text-slate-500 font-normal mt-0.5">{viewingProduct.name}</p>
+                {viewingProduct.nameTam && (
+                  <p className="text-sm font-semibold text-blue-800 mt-0.5">{viewingProduct.nameTam}</p>
                 )}
                 <p className="text-xs text-black font-mono mt-0.5">{viewingProduct.code}</p>
               </div>
@@ -2096,10 +2498,22 @@ export default function App() {
                 </div>
               )}
 
-              {viewingProduct.description && (
-                <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                  {viewingProduct.description}
-                </p>
+              {/* Bilingual Descriptions */}
+              {(viewingProduct.descriptionEng || viewingProduct.description || viewingProduct.descriptionTam) && (
+                <div className="space-y-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs">
+                  {(viewingProduct.descriptionEng || viewingProduct.description) && (
+                    <div>
+                      <span className="font-bold text-slate-700 block text-[10px] uppercase">English Description:</span>
+                      <p className="text-slate-600 mt-0.5">{viewingProduct.descriptionEng || viewingProduct.description}</p>
+                    </div>
+                  )}
+                  {viewingProduct.descriptionTam && (
+                    <div className="pt-1.5 border-t border-slate-200">
+                      <span className="font-bold text-blue-900 block text-[10px] uppercase">Tamil Description (தமிழ்):</span>
+                      <p className="text-slate-700 mt-0.5">{viewingProduct.descriptionTam}</p>
+                    </div>
+                  )}
+                </div>
               )}
 
               <div className="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
@@ -2124,10 +2538,16 @@ export default function App() {
                   <span className="text-black">Category:</span>
                   <span className="font-bold text-black">{tCategory(viewingProduct.categorySlug, viewingProduct.category)}</span>
                 </div>
-                {viewingProduct.content && (
+                {(viewingProduct.contentEng || viewingProduct.content) && (
                   <div className="flex justify-between py-1 border-b border-gray-100">
-                    <span className="text-black">Package / Content:</span>
-                    <span className="font-bold text-black">{viewingProduct.content}</span>
+                    <span className="text-black">Packaging (English):</span>
+                    <span className="font-bold text-black">{viewingProduct.contentEng || viewingProduct.content}</span>
+                  </div>
+                )}
+                {viewingProduct.contentTam && (
+                  <div className="flex justify-between py-1 border-b border-gray-100">
+                    <span className="text-black">Packaging (Tamil):</span>
+                    <span className="font-bold text-blue-900">{viewingProduct.contentTam}</span>
                   </div>
                 )}
                 <div className="flex justify-between py-1 border-b border-gray-100">
@@ -2326,18 +2746,24 @@ export default function App() {
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="font-extrabold text-sm text-black">{tCategory(c.slug, c.name)}</span>
+                              <span className="font-extrabold text-sm text-black">
+                                {isTamil ? (c.nameTam || c.nameEng || c.name) : (c.nameEng || c.name)}
+                              </span>
                               {typeof c.id === "string" && (
                                 <span className="font-mono text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title={`ID: ${c.id}`}>
                                   {c.id.slice(0, 8)}...
                                 </span>
                               )}
                             </div>
-                            {isTamil && tCategory(c.slug, c.name) !== c.name && (
-                              <div className="text-[11px] text-slate-500 font-normal mt-0.5">{c.name}</div>
-                            )}
-                            {c.description && (
-                              <div className="text-xs text-slate-500 font-normal line-clamp-1 max-w-xs">{c.description}</div>
+                            {!isTamil && c.nameTam ? (
+                              <div className="text-[11px] text-blue-700 font-medium mt-0.5">{c.nameTam}</div>
+                            ) : isTamil && (c.nameEng || c.name) ? (
+                              <div className="text-[11px] text-slate-500 font-normal mt-0.5">{c.nameEng || c.name}</div>
+                            ) : null}
+                            {(c.descriptionEng || c.description || c.descriptionTam) && (
+                              <div className="text-xs text-slate-500 font-normal line-clamp-1 max-w-xs">
+                                {isTamil && c.descriptionTam ? c.descriptionTam : (c.descriptionEng || c.description)}
+                              </div>
                             )}
                           </div>
                         </div>
@@ -2441,19 +2867,7 @@ export default function App() {
               )}
 
               <div>
-                <label className="block text-sm font-bold text-black mb-1">Category Name *</label>
-                <input 
-                  type="text" 
-                  required 
-                  value={catName}
-                  onChange={(e) => handleCategoryNameChange(e.target.value)}
-                  placeholder="e.g. Sparklers"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-black mb-1">Category Slug</label>
+                <label className="block text-sm font-bold text-black mb-1">Category Slug *</label>
                 <div className="relative flex items-center">
                   <span className="absolute left-3 text-black font-bold font-mono">/</span>
                   <input 
@@ -2461,21 +2875,112 @@ export default function App() {
                     value={catSlug}
                     onChange={(e) => setCatSlug(e.target.value)}
                     placeholder="sparklers"
-                    className="w-full pl-7 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    className="w-full pl-7 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
-                <p className="text-xs text-black mt-1 font-medium">Auto-generated slug used in store URLs and API</p>
+                <p className="text-[11px] text-gray-500 mt-1 font-medium">Language-independent slug used for URLs, routing, and filtering</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-bold text-black mb-1">Description</label>
-                <textarea 
-                  rows={2}
-                  value={catDesc}
-                  onChange={(e) => setCatDesc(e.target.value)}
-                  placeholder="Explore our collection of high-quality sparklers for festive celebrations."
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
-                />
+              {/* Bilingual Category Tabs */}
+              <div className="rounded-xl border border-gray-200 overflow-hidden bg-white shadow-xs">
+                <div className="flex border-b border-gray-200 bg-gray-50 p-1.5 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setCatLangTab("en")}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                      catLangTab === "en"
+                        ? "bg-white text-blue-700 shadow-xs border border-gray-200"
+                        : "text-gray-600 hover:text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    <span>🇬🇧 English Content</span>
+                    {catNameEng.trim() ? (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" title="English name entered" />
+                    ) : (
+                      <span className="text-[10px] text-amber-600 font-bold">*</span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCatLangTab("ta")}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                      catLangTab === "ta"
+                        ? "bg-white text-blue-700 shadow-xs border border-gray-200"
+                        : "text-gray-600 hover:text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    <span>🇮🇳 Tamil Content (தமிழ்)</span>
+                    {catNameTam.trim() ? (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" title="Tamil name entered" />
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-normal">Optional</span>
+                    )}
+                  </button>
+                </div>
+
+                <div className="p-4 space-y-3">
+                  {catLangTab === "en" ? (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Category Name (English) *
+                        </label>
+                        <input 
+                          type="text" 
+                          value={catNameEng}
+                          onChange={(e) => handleCategoryNameChange(e.target.value)}
+                          placeholder="e.g. Flower Pots"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Description (English)
+                        </label>
+                        <textarea 
+                          rows={2}
+                          value={catDescEng}
+                          onChange={(e) => {
+                            setCatDescEng(e.target.value);
+                            setCatDesc(e.target.value);
+                          }}
+                          placeholder="e.g. Explore our flower pot collection."
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Category Name (Tamil - தமிழ்)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={catNameTam}
+                          onChange={(e) => setCatNameTam(e.target.value)}
+                          placeholder="e.g. பூந்தொட்டிகள்"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Description (Tamil - தமிழ்)
+                        </label>
+                        <textarea 
+                          rows={2}
+                          value={catDescTam}
+                          onChange={(e) => setCatDescTam(e.target.value)}
+                          placeholder="e.g. எங்கள் பூந்தொட்டி பட்டாசுகளின் தொகுப்பைப் பாருங்கள்."
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                        />
+                      </div>
+                    </>
+                  )}
+                  <p className="text-[11px] text-gray-500 italic">
+                    💡 English and Tamil values can be edited and saved independently.
+                  </p>
+                </div>
               </div>
 
               <div>
@@ -2565,38 +3070,121 @@ export default function App() {
             </div>
             <form onSubmit={handleSaveEditCategory} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-black mb-1">Category Name *</label>
-                <input 
-                  type="text" 
-                  required 
-                  value={catName}
-                  onChange={(e) => setCatName(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-black mb-1">Category Slug</label>
+                <label className="block text-sm font-bold text-black mb-1">Category Slug *</label>
                 <div className="relative flex items-center">
                   <span className="absolute left-3 text-black font-bold font-mono">/</span>
                   <input 
                     type="text" 
                     value={catSlug}
                     onChange={(e) => setCatSlug(e.target.value)}
-                    className="w-full pl-7 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-base font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                    className="w-full pl-7 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                 </div>
+                <p className="text-[11px] text-gray-500 mt-1 font-medium">Language-independent slug used for URLs, routing, and filtering</p>
               </div>
 
-              <div>
-                <label className="block text-sm font-bold text-black mb-1">Description</label>
-                <textarea 
-                  rows={2}
-                  value={catDesc}
-                  onChange={(e) => setCatDesc(e.target.value)}
-                  placeholder="Category description..."
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
-                />
+              {/* Bilingual Category Tabs */}
+              <div className="rounded-xl border border-gray-200 overflow-hidden bg-white shadow-xs">
+                <div className="flex border-b border-gray-200 bg-gray-50 p-1.5 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setCatLangTab("en")}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                      catLangTab === "en"
+                        ? "bg-white text-blue-700 shadow-xs border border-gray-200"
+                        : "text-gray-600 hover:text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    <span>🇬🇧 English Content</span>
+                    {catNameEng.trim() ? (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" title="English name set" />
+                    ) : (
+                      <span className="text-[10px] text-amber-600 font-bold">*</span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCatLangTab("ta")}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                      catLangTab === "ta"
+                        ? "bg-white text-blue-700 shadow-xs border border-gray-200"
+                        : "text-gray-600 hover:text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    <span>🇮🇳 Tamil Content (தமிழ்)</span>
+                    {catNameTam.trim() ? (
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" title="Tamil name set" />
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-normal">Optional</span>
+                    )}
+                  </button>
+                </div>
+
+                <div className="p-4 space-y-3">
+                  {catLangTab === "en" ? (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Category Name (English) *
+                        </label>
+                        <input 
+                          type="text" 
+                          value={catNameEng}
+                          onChange={(e) => {
+                            setCatNameEng(e.target.value);
+                            setCatName(e.target.value);
+                          }}
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Description (English)
+                        </label>
+                        <textarea 
+                          rows={2}
+                          value={catDescEng}
+                          onChange={(e) => {
+                            setCatDescEng(e.target.value);
+                            setCatDesc(e.target.value);
+                          }}
+                          placeholder="Category description in English..."
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Category Name (Tamil - தமிழ்)
+                        </label>
+                        <input 
+                          type="text" 
+                          value={catNameTam}
+                          onChange={(e) => setCatNameTam(e.target.value)}
+                          placeholder="e.g. பூந்தொட்டிகள்"
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-black uppercase mb-1">
+                          Description (Tamil - தமிழ்)
+                        </label>
+                        <textarea 
+                          rows={2}
+                          value={catDescTam}
+                          onChange={(e) => setCatDescTam(e.target.value)}
+                          placeholder="Category description in Tamil..."
+                          className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none resize-none"
+                        />
+                      </div>
+                    </>
+                  )}
+                  <p className="text-[11px] text-gray-500 italic">
+                    💡 English and Tamil values can be edited and saved independently.
+                  </p>
+                </div>
               </div>
 
               <div>

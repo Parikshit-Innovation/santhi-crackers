@@ -14,8 +14,23 @@ const API_BASE = process.env.API_BASE || "http://localhost:3007/api";
 const categoriesPath = path.join(__dirname, "data", "categories.json");
 const productsPath = path.join(__dirname, "data", "products.json");
 
+const crackersTaPath = path.join(__dirname, "..", "packages", "crackers", "ta.json");
+const crackersEnPath = path.join(__dirname, "..", "packages", "crackers", "en.json");
+
 const categories = JSON.parse(fs.readFileSync(categoriesPath, "utf-8"));
 const products = JSON.parse(fs.readFileSync(productsPath, "utf-8"));
+
+let taCategories = {};
+let taProducts = {};
+if (fs.existsSync(crackersTaPath)) {
+  try {
+    const taData = JSON.parse(fs.readFileSync(crackersTaPath, "utf-8"));
+    taCategories = taData.categories || {};
+    taProducts = taData.products || {};
+  } catch (e) {
+    console.warn("Could not load Tamil translations:", e.message);
+  }
+}
 
 async function postJson(url, data) {
   const response = await fetch(url, {
@@ -33,7 +48,7 @@ async function postJson(url, data) {
 
 async function main() {
   console.log("\n======================================================================");
-  console.log("   🎆 SANTHI CRACKERS - 100 CRACKERS & 10 CATEGORIES SEED SCRIPT 🎆   ");
+  console.log("   🎆 SANTHI CRACKERS - BILINGUAL CRACKERS & CATEGORIES SEED SCRIPT 🎆   ");
   console.log("======================================================================");
   console.log(`Target API Base : ${API_BASE}`);
   console.log(`Categories     : ${categories.length} entries`);
@@ -54,7 +69,7 @@ async function main() {
 
   // 1. Seed Categories
   console.log("----------------------------------------------------------------------");
-  console.log(" STEP 1: Seeding 10 Categories via POST " + `${API_BASE}/categories`);
+  console.log(" STEP 1: Seeding Categories with Bilingual Fields via " + `${API_BASE}/categories`);
   console.log("----------------------------------------------------------------------");
 
   let catCreated = 0;
@@ -64,16 +79,29 @@ async function main() {
   for (let i = 0; i < categories.length; i++) {
     const cat = categories[i];
     const prefix = ` [${String(i + 1).padStart(2, " ")}/${categories.length}]`;
+    const payload = {
+      name: cat.nameEng || cat.name,
+      nameEng: cat.nameEng || cat.name,
+      nameTam: cat.nameTam || taCategories[cat.slug] || null,
+      slug: cat.slug,
+      description: cat.descriptionEng || cat.description || null,
+      descriptionEng: cat.descriptionEng || cat.description || null,
+      descriptionTam: cat.descriptionTam || null,
+      imageUrl: cat.imageUrl || null,
+      sortOrder: cat.sortOrder !== undefined ? cat.sortOrder : i + 1,
+      isActive: cat.isActive !== undefined ? cat.isActive : true,
+    };
+
     try {
-      const res = await postJson(`${API_BASE}/categories`, cat);
+      const res = await postJson(`${API_BASE}/categories`, payload);
       if (res.status === 201 || res.status === 200) {
-        console.log(`${prefix} ✓ Created : ${cat.name} (${cat.slug})`);
+        console.log(`${prefix} ✓ Created : ${payload.nameEng} (${payload.slug}) [Ta: ${payload.nameTam || "None"}]`);
         catCreated++;
       } else if (res.status === 409) {
-        console.log(`${prefix} • Exists  : ${cat.name} (${cat.slug})`);
+        console.log(`${prefix} • Exists  : ${payload.nameEng} (${payload.slug})`);
         catExists++;
       } else {
-        console.error(`${prefix} ✗ Error (${res.status}): ${cat.name} -`, res.body?.error || res.body);
+        console.error(`${prefix} ✗ Error (${res.status}): ${payload.nameEng} -`, res.body?.error || res.body);
         catFailed++;
       }
     } catch (e) {
@@ -86,7 +114,7 @@ async function main() {
 
   // 2. Seed Products
   console.log("----------------------------------------------------------------------");
-  console.log(" STEP 2: Seeding 100 Crackers via POST " + `${API_BASE}/product`);
+  console.log(" STEP 2: Seeding Products with Bilingual Fields via " + `${API_BASE}/product`);
   console.log("----------------------------------------------------------------------");
 
   let prodCreated = 0;
@@ -96,16 +124,39 @@ async function main() {
   for (let i = 0; i < products.length; i++) {
     const prod = products[i];
     const prefix = ` [${String(i + 1).padStart(3, " ")}/${products.length}]`;
+    const payload = {
+      code: prod.code,
+      name: prod.nameEng || prod.name,
+      nameEng: prod.nameEng || prod.name,
+      nameTam: prod.nameTam || taProducts[prod.code] || null,
+      description: prod.descriptionEng || prod.description || null,
+      descriptionEng: prod.descriptionEng || prod.description || null,
+      descriptionTam: prod.descriptionTam || null,
+      content: prod.contentEng || prod.content || "1 Box",
+      contentEng: prod.contentEng || prod.content || "1 Box",
+      contentTam: prod.contentTam || null,
+      actualPrice: prod.actualPrice,
+      price: prod.price,
+      discount: prod.discount,
+      stock: prod.stock !== undefined ? prod.stock : 100,
+      minOrderQty: prod.minOrderQty !== undefined ? prod.minOrderQty : 1,
+      maxOrderQty: prod.maxOrderQty !== undefined ? prod.maxOrderQty : 50,
+      imageUrl: prod.imageUrl || null,
+      categorySlug: prod.categorySlug,
+      isActive: prod.isActive !== undefined ? prod.isActive : true,
+      isFeatured: prod.isFeatured !== undefined ? prod.isFeatured : false,
+    };
+
     try {
-      const res = await postJson(`${API_BASE}/product`, prod);
+      const res = await postJson(`${API_BASE}/product`, payload);
       if (res.status === 201 || res.status === 200) {
-        console.log(`${prefix} ✓ Created : ${prod.code} | ${prod.name} (₹${prod.price}, ${prod.categorySlug})`);
+        console.log(`${prefix} ✓ Created : ${payload.code} | ${payload.nameEng} [Ta: ${payload.nameTam || "None"}]`);
         prodCreated++;
       } else if (res.status === 409) {
-        console.log(`${prefix} • Exists  : ${prod.code} | ${prod.name}`);
+        console.log(`${prefix} • Exists  : ${payload.code} | ${payload.nameEng}`);
         prodExists++;
       } else {
-        console.error(`${prefix} ✗ Error (${res.status}): ${prod.code} -`, res.body?.error || res.body);
+        console.error(`${prefix} ✗ Error (${res.status}): ${payload.code} -`, res.body?.error || res.body);
         prodFailed++;
       }
     } catch (e) {

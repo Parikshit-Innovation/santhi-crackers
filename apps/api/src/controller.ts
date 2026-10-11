@@ -8,6 +8,7 @@ import type {
   CreateCategoryBody,
   CreateProductBody,
   GetCategoriesResponse,
+  UpdateCategoryBody,
   UpdateProductBody,
 } from "./types.js";
 
@@ -25,6 +26,10 @@ type ProductWithCategory = Prisma.ProductGetPayload<{
   include: {
     category: {
       select: {
+        id: true;
+        name: true;
+        nameEng: true;
+        nameTam: true;
         slug: true;
       };
     };
@@ -34,19 +39,81 @@ type ProductWithCategory = Prisma.ProductGetPayload<{
 const formatProduct = (product: ProductWithCategory) => {
   const { categoryId: _categoryId, category, ...productData } = product;
 
+  const nameEng = productData.nameEng || productData.name || "";
+  const nameTam = productData.nameTam || null;
+  const descriptionEng = productData.descriptionEng || productData.description || null;
+  const descriptionTam = productData.descriptionTam || null;
+  const contentEng = productData.contentEng || productData.content || "";
+  const contentTam = productData.contentTam || null;
+
   return {
     ...productData,
+    name: nameEng || nameTam || "",
+    nameEng: nameEng || null,
+    nameTam,
+    description: descriptionEng || descriptionTam || null,
+    descriptionEng,
+    descriptionTam,
+    content: contentEng || contentTam || "",
+    contentEng: contentEng || null,
+    contentTam,
     categorySlug: category?.slug ?? null,
+    category: category
+      ? {
+          id: category.id,
+          name: category.nameEng || category.name || "",
+          nameEng: category.nameEng || category.name || null,
+          nameTam: category.nameTam || null,
+          slug: category.slug,
+        }
+      : null,
   };
 };
 
-export const getCrackersData = async (_request: Request, response: Response): Promise<void> => {
+export const getCrackersData = async (request: Request, response: Response): Promise<void> => {
   try {
+    const { search, category, slug, code } = request.query;
+
+    const where: Prisma.ProductWhereInput = {};
+
+    if (typeof category === "string" && category.trim().length > 0) {
+      const catTrim = category.trim();
+      where.OR = [
+        { category: { slug: catTrim } },
+        { categoryId: catTrim },
+      ];
+    } else if (typeof slug === "string" && slug.trim().length > 0) {
+      where.category = { slug: slug.trim() };
+    }
+
+    if (typeof code === "string" && code.trim().length > 0) {
+      where.code = { equals: code.trim().toUpperCase(), mode: "insensitive" };
+    }
+
+    if (typeof search === "string" && search.trim().length > 0) {
+      const q = search.trim();
+      where.OR = [
+        ...(where.OR || []),
+        { name: { contains: q, mode: "insensitive" } },
+        { nameEng: { contains: q, mode: "insensitive" } },
+        { nameTam: { contains: q, mode: "insensitive" } },
+        { description: { contains: q, mode: "insensitive" } },
+        { descriptionEng: { contains: q, mode: "insensitive" } },
+        { descriptionTam: { contains: q, mode: "insensitive" } },
+        { code: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
     const items = await db.product.findMany({
+      where,
       orderBy: { createdAt: "desc" },
       include: {
         category: {
           select: {
+            id: true,
+            name: true,
+            nameEng: true,
+            nameTam: true,
             slug: true,
           },
         },
@@ -69,8 +136,14 @@ export const createProduct = async (
   const {
     code,
     name,
+    nameEng,
+    nameTam,
     description,
+    descriptionEng,
+    descriptionTam,
     content,
+    contentEng,
+    contentTam,
     actualPrice,
     price,
     discount,
@@ -85,6 +158,18 @@ export const createProduct = async (
   } = request.body;
 
   try {
+    const finalNameEng = nameEng?.trim() || name?.trim() || "";
+    const finalNameTam = nameTam?.trim() || null;
+    const finalName = finalNameEng || finalNameTam || "";
+
+    const finalDescEng = descriptionEng !== undefined ? descriptionEng?.trim() : (description ? description.trim() : null);
+    const finalDescTam = descriptionTam !== undefined ? descriptionTam?.trim() : null;
+    const finalDesc = finalDescEng || finalDescTam || null;
+
+    const finalContentEng = contentEng !== undefined ? contentEng.trim() : (content ? content.trim() : "");
+    const finalContentTam = contentTam !== undefined ? contentTam?.trim() : null;
+    const finalContent = finalContentEng || finalContentTam || "";
+
     let resolvedCategoryId = categoryId;
 
     if (categorySlug) {
@@ -105,16 +190,22 @@ export const createProduct = async (
 
     const product = await db.product.create({
       data: {
-        code,
-        name,
-        description,
-        content,
+        code: code.trim().toUpperCase(),
+        name: finalName,
+        nameEng: finalNameEng || finalName,
+        nameTam: finalNameTam,
+        description: finalDesc,
+        descriptionEng: finalDescEng,
+        descriptionTam: finalDescTam,
+        content: finalContent,
+        contentEng: finalContentEng || finalContent,
+        contentTam: finalContentTam,
         actualPrice,
         price,
         discount,
         stock,
-        minOrderQty,
-        maxOrderQty,
+        minOrderQty: minOrderQty !== undefined ? minOrderQty : 1,
+        maxOrderQty: maxOrderQty !== undefined ? maxOrderQty : 10,
         imageUrl,
         categoryId: resolvedCategoryId,
         isActive: isActive === undefined ? true : Boolean(isActive),
@@ -123,6 +214,10 @@ export const createProduct = async (
       include: {
         category: {
           select: {
+            id: true,
+            name: true,
+            nameEng: true,
+            nameTam: true,
             slug: true,
           },
         },
@@ -169,8 +264,14 @@ export const updateProduct = async (
   const {
     code,
     name,
+    nameEng,
+    nameTam,
     description,
+    descriptionEng,
+    descriptionTam,
     content,
+    contentEng,
+    contentTam,
     actualPrice,
     price,
     discount,
@@ -185,8 +286,10 @@ export const updateProduct = async (
   } = request.body;
 
   try {
-    const existingProduct = await db.product.findUnique({
-      where: { id: cleanId },
+    const existingProduct = await db.product.findFirst({
+      where: {
+        OR: [{ id: cleanId }, { code: cleanId.toUpperCase() }],
+      },
     });
 
     if (!existingProduct) {
@@ -221,9 +324,48 @@ export const updateProduct = async (
     const data: Prisma.ProductUpdateInput = {};
 
     if (code !== undefined) data.code = code.trim().toUpperCase();
-    if (name !== undefined) data.name = name.trim();
-    if (description !== undefined) data.description = description;
-    if (content !== undefined) data.content = content.trim();
+    if (nameEng !== undefined) {
+      data.nameEng = nameEng.trim();
+      data.name = nameEng.trim();
+    }
+    if (nameTam !== undefined) {
+      data.nameTam = nameTam ? nameTam.trim() : null;
+    }
+    if (name !== undefined && nameEng === undefined) {
+      data.name = name.trim();
+      if (!existingProduct.nameEng) {
+        data.nameEng = name.trim();
+      }
+    }
+
+    if (descriptionEng !== undefined) {
+      data.descriptionEng = descriptionEng;
+      data.description = descriptionEng;
+    }
+    if (descriptionTam !== undefined) {
+      data.descriptionTam = descriptionTam;
+    }
+    if (description !== undefined && descriptionEng === undefined) {
+      data.description = description;
+      if (!existingProduct.descriptionEng) {
+        data.descriptionEng = description;
+      }
+    }
+
+    if (contentEng !== undefined) {
+      data.contentEng = contentEng.trim();
+      data.content = contentEng.trim();
+    }
+    if (contentTam !== undefined) {
+      data.contentTam = contentTam ? contentTam.trim() : null;
+    }
+    if (content !== undefined && contentEng === undefined) {
+      data.content = content.trim();
+      if (!existingProduct.contentEng) {
+        data.contentEng = content.trim();
+      }
+    }
+
     if (actualPrice !== undefined) data.actualPrice = actualPrice;
     if (price !== undefined) data.price = price;
     if (discount !== undefined) data.discount = discount;
@@ -243,11 +385,15 @@ export const updateProduct = async (
     }
 
     const product = await db.product.update({
-      where: { id: cleanId },
+      where: { id: existingProduct.id },
       data,
       include: {
         category: {
           select: {
+            id: true,
+            name: true,
+            nameEng: true,
+            nameTam: true,
             slug: true,
           },
         },
@@ -291,8 +437,10 @@ export const deleteProduct = async (
   const cleanId = id.trim();
 
   try {
-    const existing = await db.product.findUnique({
-      where: { id: cleanId },
+    const existing = await db.product.findFirst({
+      where: {
+        OR: [{ id: cleanId }, { code: cleanId.toUpperCase() }],
+      },
     });
 
     if (!existing) {
@@ -304,17 +452,17 @@ export const deleteProduct = async (
 
     // Clean up dependent cart items before deleting product
     await db.cartItem.deleteMany({
-      where: { productId: cleanId },
+      where: { productId: existing.id },
     });
 
     await db.product.delete({
-      where: { id: cleanId },
+      where: { id: existing.id },
     });
 
     response.status(200).json({
       status: true,
       message: "Product deleted successfully",
-      id: cleanId,
+      id: existing.id,
     });
   } catch (error: any) {
     if (error?.code === "P2025") {
@@ -331,24 +479,60 @@ export const createCategory = async (
   request: Request<Record<string, string>, unknown, CreateCategoryBody>,
   response: Response,
 ): Promise<void> => {
-  const { name, slug, description, imageUrl, sortOrder, isActive } = request.body;
+  const {
+    name,
+    nameEng,
+    nameTam,
+    slug,
+    description,
+    descriptionEng,
+    descriptionTam,
+    imageUrl,
+    sortOrder,
+    isActive,
+  } = request.body;
 
   try {
+    const finalNameEng = nameEng?.trim() || name?.trim() || "";
+    const finalNameTam = nameTam?.trim() || null;
+    const finalName = finalNameEng || finalNameTam || "";
+
+    const finalDescEng = descriptionEng !== undefined ? descriptionEng : (description || null);
+    const finalDescTam = descriptionTam !== undefined ? descriptionTam : null;
+    const finalDesc = finalDescEng || finalDescTam || null;
+
     const category = await db.category.create({
       data: {
-        name,
-        slug,
-        description,
-        imageUrl,
-        sortOrder,
+        name: finalName,
+        nameEng: finalNameEng || finalName,
+        nameTam: finalNameTam,
+        slug: slug.trim().toLowerCase(),
+        description: finalDesc,
+        descriptionEng: finalDescEng,
+        descriptionTam: finalDescTam,
+        imageUrl: imageUrl || null,
+        sortOrder: sortOrder !== undefined ? Number(sortOrder) : 1,
         isActive: isActive === undefined ? true : Boolean(isActive),
       },
     });
 
-    response
-      .status(201)
-      .json({ status: true, message: "Category Created Successfully ", category });
-
+    response.status(201).json({
+      status: true,
+      message: "Category Created Successfully",
+      category: {
+        id: category.id,
+        name: category.nameEng || category.name || "",
+        nameEng: category.nameEng || category.name || null,
+        nameTam: category.nameTam || null,
+        slug: category.slug,
+        description: category.descriptionEng || category.description || null,
+        descriptionEng: category.descriptionEng || category.description || null,
+        descriptionTam: category.descriptionTam || null,
+        imageUrl: category.imageUrl,
+        sortOrder: category.sortOrder,
+        isActive: category.isActive,
+      },
+    });
   } catch (error: any) {
     if (error?.code === "P2002") {
       response.status(409).json({
@@ -359,6 +543,120 @@ export const createCategory = async (
 
     console.error("Failed to create category:", error);
     response.status(500).json({ error: "Failed to create category." });
+  }
+};
+
+export const updateCategory = async (
+  request: Request<{ id?: string }, unknown, UpdateCategoryBody>,
+  response: Response,
+): Promise<void> => {
+  const idOrSlug = request.params.id;
+
+  if (!idOrSlug || typeof idOrSlug !== "string" || idOrSlug.trim().length === 0) {
+    response.status(400).json({
+      error: "Category ID or slug is required.",
+    });
+    return;
+  }
+
+  const cleanParam = idOrSlug.trim();
+  const {
+    name,
+    nameEng,
+    nameTam,
+    slug,
+    description,
+    descriptionEng,
+    descriptionTam,
+    imageUrl,
+    sortOrder,
+    isActive,
+  } = request.body;
+
+  try {
+    const existingCategory = await db.category.findFirst({
+      where: {
+        OR: [{ id: cleanParam }, { slug: cleanParam }],
+      },
+    });
+
+    if (!existingCategory) {
+      response.status(404).json({
+        error: "Category not found.",
+      });
+      return;
+    }
+
+    const data: Prisma.CategoryUpdateInput = {};
+
+    if (nameEng !== undefined) {
+      data.nameEng = nameEng.trim();
+      data.name = nameEng.trim();
+    }
+    if (nameTam !== undefined) {
+      data.nameTam = nameTam ? nameTam.trim() : null;
+    }
+    if (name !== undefined && nameEng === undefined) {
+      data.name = name.trim();
+      if (!existingCategory.nameEng) {
+        data.nameEng = name.trim();
+      }
+    }
+
+    if (slug !== undefined) {
+      data.slug = slug.trim().toLowerCase();
+    }
+
+    if (descriptionEng !== undefined) {
+      data.descriptionEng = descriptionEng;
+      data.description = descriptionEng;
+    }
+    if (descriptionTam !== undefined) {
+      data.descriptionTam = descriptionTam;
+    }
+    if (description !== undefined && descriptionEng === undefined) {
+      data.description = description;
+      if (!existingCategory.descriptionEng) {
+        data.descriptionEng = description;
+      }
+    }
+
+    if (imageUrl !== undefined) data.imageUrl = imageUrl;
+    if (sortOrder !== undefined) data.sortOrder = Number(sortOrder);
+    if (isActive !== undefined) data.isActive = Boolean(isActive);
+
+    const updated = await db.category.update({
+      where: { id: existingCategory.id },
+      data,
+    });
+
+    response.status(200).json({
+      status: true,
+      message: "Category updated successfully",
+      category: {
+        id: updated.id,
+        name: updated.nameEng || updated.name || "",
+        nameEng: updated.nameEng || updated.name || null,
+        nameTam: updated.nameTam || null,
+        slug: updated.slug,
+        description: updated.descriptionEng || updated.description || null,
+        descriptionEng: updated.descriptionEng || updated.description || null,
+        descriptionTam: updated.descriptionTam || null,
+        imageUrl: updated.imageUrl,
+        sortOrder: updated.sortOrder,
+        isActive: updated.isActive,
+      },
+    });
+  } catch (error: any) {
+    if (error?.code === "P2002") {
+      response.status(409).json({
+        error: "A category with this slug already exists.",
+      });
+      return;
+    }
+
+    console.error("Failed to update category:", error);
+    response.status(500).json({ error: "Failed to update category." });
   }
 };
 
@@ -562,11 +860,14 @@ export const getProductById = async (
       return;
     }
 
-    const product = await db.product.findUnique({
-      where: { id: id.trim() },
+    const cleanId = id.trim();
+    const product = await db.product.findFirst({
+      where: {
+        OR: [{ id: cleanId }, { code: cleanId.toUpperCase() }],
+      },
       include: {
         category: {
-          select: { id: true, name: true, slug: true, isActive: true },
+          select: { id: true, name: true, nameEng: true, nameTam: true, slug: true, isActive: true },
         },
       },
     });
@@ -578,12 +879,25 @@ export const getProductById = async (
       return;
     }
 
+    const nameEng = product.nameEng || product.name || "";
+    const nameTam = product.nameTam || null;
+    const descriptionEng = product.descriptionEng || product.description || null;
+    const descriptionTam = product.descriptionTam || null;
+    const contentEng = product.contentEng || product.content || "";
+    const contentTam = product.contentTam || null;
+
     const item: CatalogProductResponse = {
       id: product.id,
       code: product.code,
-      name: product.name,
-      description: product.description,
-      content: product.content,
+      name: nameEng || nameTam || "",
+      nameEng: nameEng || null,
+      nameTam,
+      description: descriptionEng || descriptionTam || null,
+      descriptionEng,
+      descriptionTam,
+      content: contentEng || contentTam || "",
+      contentEng: contentEng || null,
+      contentTam,
       actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
       price: formatDecimalPrice(product.price) ?? "0.00",
       discount: formatDecimalPrice(product.discount),
@@ -591,8 +905,15 @@ export const getProductById = async (
       imageUrl: product.imageUrl,
       category:
         product.category && product.category.isActive
-          ? { id: product.category.id, name: product.category.name, slug: product.category.slug }
+          ? {
+              id: product.category.id,
+              name: product.category.nameEng || product.category.name || "",
+              nameEng: product.category.nameEng || product.category.name || null,
+              nameTam: product.category.nameTam || null,
+              slug: product.category.slug,
+            }
           : null,
+      categorySlug: product.category?.slug ?? null,
       isActive: product.isActive,
       isFeatured: product.isFeatured,
     };
@@ -626,11 +947,16 @@ export const getCategories = async (
     const result: CategoryListItemResponse[] = categories.map(
       (cat: (typeof categories)[number]) => ({
         id: cat.id,
-        name: cat.name,
+        name: cat.nameEng || cat.name || "",
+        nameEng: cat.nameEng || cat.name || null,
+        nameTam: cat.nameTam || null,
         slug: cat.slug,
-        description: cat.description,
+        description: cat.descriptionEng || cat.description || null,
+        descriptionEng: cat.descriptionEng || cat.description || null,
+        descriptionTam: cat.descriptionTam || null,
         imageUrl: cat.imageUrl,
         sortOrder: cat.sortOrder,
+        isActive: cat.isActive,
         productCount: cat._count.products,
       }),
     );
@@ -706,7 +1032,7 @@ export const getCategoryBySlug = async (
         orderBy: [{ createdAt: "desc" }, { id: "asc" }],
         include: {
           category: {
-            select: { id: true, name: true, slug: true, isActive: true },
+            select: { id: true, name: true, nameEng: true, nameTam: true, slug: true, isActive: true },
           },
         },
       }),
@@ -716,28 +1042,59 @@ export const getCategoryBySlug = async (
     const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / limitNumber);
 
     const items: CatalogProductResponse[] = products.map(
-      (product: (typeof products)[number]) => ({
-        id: product.id,
-        code: product.code,
-        name: product.name,
-        description: product.description,
-        content: product.content,
-        actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
-        price: formatDecimalPrice(product.price) ?? "0.00",
-        discount: formatDecimalPrice(product.discount),
-        stock: product.stock,
-        imageUrl: product.imageUrl,
-        category:
-          product.category && product.category.isActive
-            ? { id: product.category.id, name: product.category.name, slug: product.category.slug }
-            : null,
-        isActive: product.isActive,
-        isFeatured: product.isFeatured,
-      }),
+      (product: (typeof products)[number]) => {
+        const nameEng = product.nameEng || product.name || "";
+        const nameTam = product.nameTam || null;
+        const descriptionEng = product.descriptionEng || product.description || null;
+        const descriptionTam = product.descriptionTam || null;
+        const contentEng = product.contentEng || product.content || "";
+        const contentTam = product.contentTam || null;
+
+        return {
+          id: product.id,
+          code: product.code,
+          name: nameEng || nameTam || "",
+          nameEng: nameEng || null,
+          nameTam,
+          description: descriptionEng || descriptionTam || null,
+          descriptionEng,
+          descriptionTam,
+          content: contentEng || contentTam || "",
+          contentEng: contentEng || null,
+          contentTam,
+          actualPrice: formatDecimalPrice(product.actualPrice) ?? "0.00",
+          price: formatDecimalPrice(product.price) ?? "0.00",
+          discount: formatDecimalPrice(product.discount),
+          stock: product.stock,
+          imageUrl: product.imageUrl,
+          category:
+            product.category && product.category.isActive
+              ? {
+                  id: product.category.id,
+                  name: product.category.nameEng || product.category.name || "",
+                  nameEng: product.category.nameEng || product.category.name || null,
+                  nameTam: product.category.nameTam || null,
+                  slug: product.category.slug,
+                }
+              : null,
+          categorySlug: product.category?.slug ?? null,
+          isActive: product.isActive,
+          isFeatured: product.isFeatured,
+        };
+      },
     );
 
     response.status(200).json({
-      category: { id: category.id, name: category.name, slug: category.slug },
+      category: {
+        id: category.id,
+        name: category.nameEng || category.name || "",
+        nameEng: category.nameEng || category.name || null,
+        nameTam: category.nameTam || null,
+        slug: category.slug,
+        description: category.descriptionEng || category.description || null,
+        descriptionEng: category.descriptionEng || category.description || null,
+        descriptionTam: category.descriptionTam || null,
+      },
       items,
       pagination: { page: pageNumber, limit: limitNumber, totalItems, totalPages },
     });

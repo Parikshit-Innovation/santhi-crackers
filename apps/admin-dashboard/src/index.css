@@ -1,8 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
-@import url('https://cdn.jsdelivr.net/npm/@fontsource/geist-sans@5.0.1/400.css');
 
 :root {
-  --font-geist: 'Geist Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-geist: 'Geist', 'Geist Sans', 'Noto Sans Tamil', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bg-gradient-blue: linear-gradient(90deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%);
 }
 
 * {
@@ -15,4 +16,6 @@ body {
   min-height: 100vh;
   background-color: #FAF8F4;
   color: #000000;
+  font-family: var(--font-geist);
+  font-weight: 400;
 }

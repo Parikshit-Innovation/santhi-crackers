@@ -1,0 +1,194 @@
+/* =========================================================
+   Simplified, Non-Intrusive Diwali Festive Background
+   - Clean, lightweight, ambient Diwali aura
+   - MOBILE: 100% unobtrusive (all overlays hidden so NO buttons are ever covered)
+   - DESKTOP: Tasteful gutter deepams and soft ambient golden glows
+   - STRICTLY pointer-events: none (zero hover interference)
+   ========================================================= */
+
+.diwali-festive-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none !important;
+  user-select: none;
+  overflow: hidden;
+  z-index: 0; /* Stays in background - never covers buttons or cards */
+}
+
+/* Ambient Warm Golden Glow Aura in Corners (Soft Diwali Night Warmth) */
+.diwali-aura-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.2;
+  animation: diwaliAuraPulse 7s ease-in-out infinite alternate;
+}
+
+.diwali-aura-top-left {
+  top: -80px;
+  left: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #f59e0b 0%, #ea580c 45%, transparent 70%);
+}
+
+.diwali-aura-top-right {
+  top: -80px;
+  right: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #fbbf24 0%, #d97706 45%, transparent 70%);
+  animation-delay: 2.5s;
+}
+
+.diwali-aura-bottom-left {
+  bottom: -100px;
+  left: -80px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, #fde047 0%, #ea580c 40%, transparent 70%);
+  animation-delay: 4s;
+}
+
+.diwali-aura-bottom-right {
+  bottom: -100px;
+  right: -80px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, #f59e0b 0%, #b45309 40%, transparent 70%);
+  animation-delay: 1.5s;
+}
+
+@keyframes diwaliAuraPulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.16;
+  }
+  100% {
+    transform: scale(1.08);
+    opacity: 0.26;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Desktop-Only Outer Gutter Deepams (Diyas)
+   Positioned in the far left/right gutters on wide desktop screens only.
+   Completely hidden on tablets and mobile screens to keep buttons clear.
+   ───────────────────────────────────────────────────────────── */
+.diwali-gutter-container {
+  display: block;
+}
+
+.diwali-gutter-diya {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 4px 14px rgba(251, 191, 36, 0.55));
+  animation: diyaGentleFloat 5s ease-in-out infinite alternate;
+}
+
+.diya-gutter-left {
+  top: 38%;
+  left: 20px;
+  width: 44px;
+  height: 44px;
+}
+
+.diya-gutter-right {
+  top: 38%;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  animation-delay: 2.5s;
+}
+
+@keyframes diyaGentleFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Organic Flame Flicker */
+.diya-flame-flicker {
+  transform-origin: 50% 90%;
+  animation: flameFlicker 2.4s ease-in-out infinite alternate;
+}
+
+.diya-flame-flicker-alt {
+  transform-origin: 50% 90%;
+  animation: flameFlicker 2.8s ease-in-out 0.8s infinite alternate;
+}
+
+@keyframes flameFlicker {
+  0% {
+    transform: scale(0.96) skewX(-1.5deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.04) skewX(1.5deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 8px #f59e0b);
+  }
+  100% {
+    transform: scale(1) skewX(0deg);
+    opacity: 0.94;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Desktop-Only Subtle Sparkle Stars in Outer Margins
+   ───────────────────────────────────────────────────────────── */
+.diwali-gutter-star {
+  position: absolute;
+  pointer-events: none;
+  color: #fde047;
+  filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.8));
+  animation: starGlint 3.5s ease-in-out infinite;
+}
+
+@keyframes starGlint {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.15) rotate(45deg);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE RULES:
+   On screens < 1280px (tablets, mobile, laptops):
+   HIDE all gutter diyas and star overlays completely!
+   Only the subtle, non-intrusive ambient background glow remains.
+   This guarantees that NO mobile buttons, navigation bars,
+   cart counters, or inputs are EVER hidden or cluttered!
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 1279px) {
+  .diwali-gutter-container {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .diwali-festive-overlay {
+    z-index: 0 !important;
+  }
+
+  .diwali-aura-top-left,
+  .diwali-aura-top-right,
+  .diwali-aura-bottom-left,
+  .diwali-aura-bottom-right {
+    width: 200px;
+    height: 200px;
+    filter: blur(60px);
+    opacity: 0.15;
+  }
+}

@@ -78,7 +78,7 @@ export async function sendContactEmail(params: SendContactEmailParams) {
           <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <tr>
               <td style="padding: 6px 0; color: #64748b; width: 100px;"><strong>Email:</strong></td>
-              <td style="padding: 6px 0;"><a href="mailto:${email}" style="color: #0433ff; font-weight: 600; text-decoration: none;">${email}</a></td>
+              <td style="padding: 6px 0;"><a href="mailto:${email}" style="color: #0036f5; font-weight: 600; text-decoration: none;">${email}</a></td>
             </tr>
             ${
               name
@@ -92,7 +92,7 @@ export async function sendContactEmail(params: SendContactEmailParams) {
               phone
                 ? `<tr>
               <td style="padding: 6px 0; color: #64748b;"><strong>Phone:</strong></td>
-              <td style="padding: 6px 0; color: #1e293b; font-weight: 600;"><a href="tel:${phone}" style="color: #0433ff;">${phone}</a></td>
+              <td style="padding: 6px 0; color: #1e293b; font-weight: 600;"><a href="tel:${phone}" style="color: #0036f5;">${phone}</a></td>
             </tr>`
                 : ""
             }

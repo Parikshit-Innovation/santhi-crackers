@@ -1,34 +1,35 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-body);
-}
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
 
 :root {
   /* =========================================================
      Centralized Typography System
+     Font Family: Geist Sans (Vercel & Basement Studio) paired with Noto Sans Tamil
+     Weight: Regular / Normal (font-weight: 400)
      ========================================================= */
-  --font-display: 'Bebas Neue', cursive, sans-serif;
-  --font-promo: 'Anton', sans-serif;
-  --font-heading: 'Barlow Condensed', sans-serif;
-  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-tamil: 'Noto Sans Tamil', sans-serif;
-  --font-premium: 'Cinzel', Georgia, serif;
+  --font-geist: 'Geist', 'Geist Sans', 'Noto Sans Tamil', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-geist);
+  --font-promo: var(--font-geist);
+  --font-heading: var(--font-geist);
+  --font-body: var(--font-geist);
+  --font-tamil: var(--font-geist);
+  --font-premium: var(--font-geist);
 
-  /* Site-wide Brand Color Palette - Blue Background & Luxury Cream Boxes/Buttons */
-  --primary-blue: #0433ff;          /* Vibrant royal blue requested by user */
-  --primary-blue-deep: #0324b8;     /* Rich saturated royal blue */
-  --primary-blue-dark: #021a8c;     /* Dark navy blue */
+  /* Site-wide Brand Color Palette - Gradient Blue & Luxury Cream System */
+  --bg-gradient-blue: linear-gradient(135deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%);
+  --bg-gradient-blue-h: linear-gradient(90deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%);
+  --primary-blue: #0036f5;          /* Vivid electric royal blue */
+  --primary-blue-deep: #0a2abf;     /* Rich saturated royal blue */
+  --primary-blue-dark: #0e1a47;     /* Deep navy blue */
+  --primary-blue-accent: #1c62ff;   /* Clean button blue */
   --alert-red: #ef4444;             /* Vibrant crimson red */
   --alert-red-dark: #dc2626;        /* Deep festive red */
   --warning-yellow: #fbbf24;        /* Golden festival spark */
   --success-green: #22c55e;         /* Pure festive emerald */
 
   /* Blue Background Canvas System */
-  --bg-canvas: #0433ff;             /* Blue background requested by user */
-  --bg-canvas-deep: #0226c4;        /* Deep rich royal blue */
-  --bg-surface: #0328cc;            /* Elevated royal surface */
+  --bg-canvas: #0e1a47;             /* Dark navy blue fallback */
+  --bg-canvas-deep: #0a2abf;        /* Deep rich royal blue */
+  --bg-surface: #0a2abf;            /* Elevated royal surface */
 
   /* Luxury Cream Boxes & Cards System */
   --bg-box-cream: #fffdf7;          /* Pure warm ivory cream box */
@@ -48,7 +49,7 @@
   --btn-cream-hover: #fef0ce;       /* Rich cream hover */
   --btn-cream-active: #fce5b2;      /* Active pressed cream */
   --btn-cream-border: #dfcfb5;      /* Refined button border */
-  --btn-cream-text: #0433ff;        /* Royal blue text on cream button */
+  --btn-cream-text: #0036f5;        /* Royal blue text on cream button */
 
   /* Text Colors */
   --text-main: #ffffff;             /* White text for blue canvas */
@@ -60,8 +61,8 @@
 
   /* Harmonized helper shades */
   --primary-blue-hover: #2651ff;
-  --primary-blue-light: rgba(4, 51, 255, 0.16);
-  --primary-blue-glow: rgba(4, 51, 255, 0.45);
+  --primary-blue-light: rgba(0, 54, 245, 0.16);
+  --primary-blue-glow: rgba(0, 54, 245, 0.45);
 
   --alert-red-hover: #f87171;
   --alert-red-light: rgba(239, 68, 68, 0.18);
@@ -74,6 +75,13 @@
   --success-green-light: rgba(34, 197, 94, 0.15);
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-geist);
+}
+
 ::selection {
   background-color: var(--alert-red);
   color: #ffffff;
@@ -81,16 +89,21 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: var(--bg-canvas, #0433ff);
+  background: var(--bg-gradient-blue) fixed;
+  background-color: #0e1a47;
   color: var(--text-main, #ffffff);
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
+  font-family: var(--font-geist);
+  font-weight: 400;
 }
 
 body {
-  font-family: var(--font-body);
-  background-color: var(--bg-canvas, #0433ff);
+  font-family: var(--font-geist);
+  font-weight: 400;
+  background: var(--bg-gradient-blue) fixed;
+  background-color: #0e1a47;
   color: var(--text-main, #ffffff);
   min-height: 100vh;
   margin: 0;
@@ -105,40 +118,44 @@ body {
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: var(--bg-canvas, #0433ff);
+  background: transparent;
 }
 
 button, input, select, textarea {
-  font-family: var(--font-body);
+  font-family: var(--font-geist);
 }
 
 /* Typography Utility Classes */
 .font-display {
-  font-family: var(--font-display) !important;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.font-promo {
-  font-family: var(--font-promo) !important;
+  font-family: var(--font-geist) !important;
+  font-weight: 400;
   letter-spacing: 0.02em;
 }
 
+.font-promo {
+  font-family: var(--font-geist) !important;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
 .font-heading {
-  font-family: var(--font-heading) !important;
+  font-family: var(--font-geist) !important;
+  font-weight: 400;
 }
 
 .font-body {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-geist) !important;
+  font-weight: 400;
 }
 
 .font-tamil {
-  font-family: var(--font-tamil) !important;
+  font-family: var(--font-geist) !important;
+  font-weight: 400;
 }
 
 .font-premium {
-  font-family: var(--font-premium) !important;
-  letter-spacing: 0.06em;
+  font-family: var(--font-geist) !important;
+  font-weight: 400;
 }
 
 .deepa-root {
@@ -153,7 +170,8 @@ main {
 
 /* Tamil Typography Enhancements when lang-ta is active */
 body.lang-ta {
-  font-family: var(--font-tamil), var(--font-body), sans-serif;
+  font-family: var(--font-geist);
+  font-weight: 400;
 }
 
 body.lang-ta button,
@@ -172,6 +190,6 @@ body.lang-ta .about-why-title,
 body.lang-ta .about-why-name,
 body.lang-ta .about-why-desc,
 body.lang-ta .about-why-left .about-eyebrow {
-  font-family: var(--font-tamil), var(--font-body), sans-serif;
+  font-family: var(--font-geist);
+  font-weight: 400;
 }
-
