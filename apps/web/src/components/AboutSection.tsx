@@ -17,11 +17,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
           <div className="about-hero-text">
             <span className="about-eyebrow">{t("About us")}</span>
             <h1 className="about-hero-title">
-              {t("Bringing Brighter Celebrations to Every Home")}
+              {t("Making Festive Moments Unforgettable")}
             </h1>
             <p className="about-hero-desc">
               {t(
-                "We are a trusted Diwali crackers store committed to providing high-quality, safe and certified fireworks. With years of experience, we aim to make your celebrations brighter and safer.",
+                "Celebrate the festival of lights with Shanthi Crackers. We are dedicated to bringing families together through joyful traditions, quality products, and a memorable festive shopping experience.",
               )}
             </p>
             <button type="button" className="about-btn-copper" onClick={onExploreProducts}>
@@ -93,7 +93,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
             </div>
             <div className="about-trust-info">
               <h4 className="about-trust-title">{t("Fast & Safe Delivery")}</h4>
-              <p className="about-trust-sub">{t("Across Tamil Nadu & India")}</p>
+              <p className="about-trust-sub">{t("Across Tamil Nadu")}</p>
             </div>
           </div>
 
@@ -156,11 +156,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
           <div className="about-story-text">
             <span className="about-eyebrow">{t("Our story")}</span>
             <h2 className="about-section-heading">
-              {t("A Tradition of Trust and Happiness")}
+              {t("Where Tradition Meets Celebration")}
             </h2>
             <p className="about-story-p">
               {t(
-                "Started with a simple vision — to make Diwali celebrations happier, safer and more affordable for every family. Over the years, we have grown into a leading crackers store, serving thousands of happy customers across Tamil Nadu and beyond.",
+                "At Shanthi Crackers, our journey began with a simple vision - to bring joy to every Diwali celebration across Tamil Nadu. We are committed to quality products, great value, and a delightful festive shopping experience for every family.",
               )}
             </p>
             <p className="about-story-p">
@@ -284,11 +284,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
           <div className="about-mission-text">
             <span className="about-eyebrow">{t("Our mission")}</span>
             <h2 className="about-section-heading">
-              {t("To Make Every Diwali Brighter and Safer")}
+              {t("A Brighter Diwali for Every Home")}
             </h2>
             <p className="about-mission-desc">
               {t(
-                "We believe celebrations should bring happiness, not worry. Our mission is to provide safe, high-quality and eco-friendly fireworks so that every family can celebrate with joy.",
+                "We believe every celebration should be filled with joy and togetherness. Our mission is to offer quality products and encourage responsible celebrations, making every festive moment more memorable for families.",
               )}
             </p>
             <button type="button" className="about-btn-copper" onClick={onExploreProducts}>
@@ -324,11 +324,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
           <div className="about-safety-header">
             <span className="about-eyebrow">{t("Fireworks safety guide")}</span>
             <h2 className="about-section-heading">
-              {t("Dos & Don'ts While Handling Crackers")}
+              {t("Do's & Don'ts While Handling Crackers")}
             </h2>
             <p className="about-safety-subtitle">
               {t(
-                "Celebrate this Diwali with sparkling joy and complete peace of mind. Please follow these 4 essential safety guidelines.",
+                "Celebrate this Diwali with joy and peace of mind by following these four essential safety guidelines.",
               )}
             </p>
           </div>
@@ -361,7 +361,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
                   <p>
                     <strong>{t("Burst in open grounds:")}</strong>
                     {t(
-                      " Always ignite crackers in an open ground or terrace, well clear of vehicles, electrical wires, and dry trees.",
+                      " Light crackers in an open area, away from vehicles, wires, and trees.",
                     )}
                   </p>
                 </div>
@@ -370,7 +370,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
                   <p>
                     <strong>{t("Never use enclosed spaces:")}</strong>
                     {t(
-                      " Never place crackers inside glass bottles, tin cans, or enclosed containers that can blast hazardous shrapnel.",
+                      " Never burst crackers inside bottles, cans, or closed containers. ",
                     )}
                   </p>
                 </div>
@@ -387,7 +387,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
                   <p>
                     <strong>{t("Wear fitted cotton clothes:")}</strong>
                     {t(
-                      " Wear snug-fitting pure cotton clothing and closed footwear. Tie long hair back securely before lighting fireworks.",
+                      " Wear fitted cotton clothes and closed shoes. Tie back long hair before lighting fireworks.",
                     )}
                   </p>
                 </div>
@@ -420,7 +420,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
                 <div className="about-safety-cell cell-dont">
                   <span className="about-cell-label label-dont">{t("✕ DON'T")}</span>
                   <p>
-                    <strong>{t("Never relight dud crackers:")}</strong>
+                    <strong>{t("Never relight failed crackers:")}</strong>
                     {t(
                       " If a firecracker does not burst, do not lean over it. Wait 15 minutes, then soak it thoroughly in a water bucket.",
                     )}
