@@ -54,6 +54,32 @@
   white-space: nowrap;
 }
 
+.store-diwali-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(251, 191, 36, 0.18);
+  border: 1px solid rgba(253, 224, 71, 0.45);
+  color: #fef08a;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  margin-left: 8px;
+  white-space: nowrap;
+  animation: diwaliBadgeGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes diwaliBadgeGlow {
+  0% {
+    box-shadow: 0 0 6px rgba(251, 191, 36, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.55);
+  }
+}
+
 /* Nav Menu */
 .store-nav-menu {
   display: flex;
@@ -229,10 +255,14 @@
     padding: 12px 14px;
     width: 100%;
     max-width: 100vw;
-    background-color: var(--primary-blue, #0433ff);
+    background: var(--bg-gradient-blue-h, linear-gradient(90deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%));
     border-bottom: 2px solid var(--border-cream, #e2d5c3);
     box-sizing: border-box;
     overflow-x: hidden;
+  }
+
+  .store-diwali-pill {
+    display: none;
   }
 
   .store-nav-container {

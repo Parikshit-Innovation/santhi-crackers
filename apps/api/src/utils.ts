@@ -44,7 +44,9 @@ export const formatCart = (cart: CartWithItems): CartResponse => {
       total: (unitPrice * item.quantity).toFixed(2),
       ...(item.product
         ? {
-            name: item.product.name,
+            name: item.product.nameEng || item.product.name || "",
+            nameEng: item.product.nameEng || item.product.name || null,
+            nameTam: item.product.nameTam || null,
             imageUrl: item.product.imageUrl,
             categorySlug: item.product.category?.slug ?? null,
           }

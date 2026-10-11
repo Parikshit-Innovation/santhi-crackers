@@ -1,8 +1,14 @@
 export interface CreateProductInput {
   code: string;
-  name: string;
+  name?: string;
+  nameEng?: string;
+  nameTam?: string | null;
   description?: string;
+  descriptionEng?: string | null;
+  descriptionTam?: string | null;
   content?: string;
+  contentEng?: string | null;
+  contentTam?: string | null;
   actualPrice: number;
   price: number;
   discount?: number;
@@ -20,8 +26,14 @@ export interface BackendProductItem {
   id: string;
   code: string;
   name: string;
+  nameEng?: string | null;
+  nameTam?: string | null;
   description?: string | null;
+  descriptionEng?: string | null;
+  descriptionTam?: string | null;
   content?: string | null;
+  contentEng?: string | null;
+  contentTam?: string | null;
   actualPrice: string | number;
   price: string | number;
   discount: string | number;
@@ -59,6 +71,18 @@ const API_PRODUCTS_ENDPOINTS = [
 export async function createProductApi(input: CreateProductInput): Promise<CreateProductResponse> {
   let lastError: Error = new Error("Failed to create product");
 
+  const nameEng = input.nameEng?.trim() || input.name?.trim() || "";
+  const nameTam = input.nameTam?.trim() || null;
+  const name = nameEng || nameTam || "";
+
+  const descEng = input.descriptionEng !== undefined ? input.descriptionEng?.trim() : (input.description?.trim() || "");
+  const descTam = input.descriptionTam !== undefined ? input.descriptionTam?.trim() : null;
+  const description = descEng || descTam || "";
+
+  const contEng = input.contentEng !== undefined ? input.contentEng?.trim() : (input.content?.trim() || "");
+  const contTam = input.contentTam !== undefined ? input.contentTam?.trim() : null;
+  const content = contEng || contTam || "";
+
   for (const endpoint of API_PRODUCT_ENDPOINTS) {
     try {
       const response = await fetch(endpoint, {
@@ -69,9 +93,15 @@ export async function createProductApi(input: CreateProductInput): Promise<Creat
         },
         body: JSON.stringify({
           code: input.code.trim().toUpperCase(),
-          name: input.name.trim(),
-          description: input.description?.trim() || "",
-          content: input.content?.trim() || "",
+          name,
+          nameEng: nameEng || name,
+          nameTam,
+          description,
+          descriptionEng: descEng,
+          descriptionTam: descTam,
+          content,
+          contentEng: contEng,
+          contentTam: contTam,
           actualPrice: Number(input.actualPrice) || 0,
           price: Number(input.price) || 0,
           discount: Number(input.discount) || 0,
@@ -96,7 +126,6 @@ export async function createProductApi(input: CreateProductInput): Promise<Creat
       return data as CreateProductResponse;
     } catch (err: any) {
       lastError = err;
-      // If server responded with a known backend validation/conflict error, rethrow immediately
       if (err.message && !err.message.includes("Failed to fetch") && !err.message.includes("NetworkError")) {
         throw err;
       }
@@ -156,10 +185,16 @@ export async function updateProductApi(
   ];
 
   const bodyData: Record<string, any> = {};
-  if (input.code !== undefined) bodyData.code = input.code.trim().toUpperCase();
-  if (input.name !== undefined) bodyData.name = input.name.trim();
-  if (input.description !== undefined) bodyData.description = input.description.trim();
-  if (input.content !== undefined) bodyData.content = input.content.trim();
+  if (input.code !== undefined) bodyData.code = input.code ? input.code.trim().toUpperCase() : "";
+  if (input.nameEng !== undefined) bodyData.nameEng = input.nameEng ? input.nameEng.trim() : "";
+  if (input.nameTam !== undefined) bodyData.nameTam = input.nameTam ? input.nameTam.trim() : null;
+  if (input.name !== undefined) bodyData.name = input.name ? input.name.trim() : "";
+  if (input.descriptionEng !== undefined) bodyData.descriptionEng = input.descriptionEng ? input.descriptionEng.trim() : null;
+  if (input.descriptionTam !== undefined) bodyData.descriptionTam = input.descriptionTam ? input.descriptionTam.trim() : null;
+  if (input.description !== undefined) bodyData.description = input.description ? input.description.trim() : null;
+  if (input.contentEng !== undefined) bodyData.contentEng = input.contentEng ? input.contentEng.trim() : null;
+  if (input.contentTam !== undefined) bodyData.contentTam = input.contentTam ? input.contentTam.trim() : null;
+  if (input.content !== undefined) bodyData.content = input.content ? input.content.trim() : null;
   if (input.actualPrice !== undefined) bodyData.actualPrice = Number(input.actualPrice) || 0;
   if (input.price !== undefined) bodyData.price = Number(input.price) || 0;
   if (input.discount !== undefined) bodyData.discount = Number(input.discount) || 0;

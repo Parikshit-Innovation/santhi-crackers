@@ -4,7 +4,7 @@
 
 .about-page-wrapper {
   width: 100%;
-  background-color: var(--bg-canvas, #0433ff);
+  background-color: var(--bg-canvas, #0e1a47);
   color: #ffffff;
   font-family: var(--font-body);
   overflow-x: hidden;
@@ -39,7 +39,7 @@
   align-items: center;
   gap: 8px;
   background-color: #fff8eb; /* Cream button */
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   border: 1.5px solid var(--border-cream, #dfcfb5);
   border-radius: 9999px;
   padding: 13px 30px;
@@ -55,7 +55,7 @@
 
 .about-btn-copper:hover {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
   transform: translateY(-1px);
 }
@@ -70,7 +70,7 @@
   align-items: center;
   gap: 8px;
   background-color: #fffdf7; /* Light cream */
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   border: 1.5px solid var(--border-cream, #dfcfb5);
   border-radius: 9999px;
   padding: 12px 28px;
@@ -86,7 +86,7 @@
 
 .about-btn-outline:hover {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
   transform: translateY(-1px);
 }
 
@@ -192,7 +192,7 @@
 .about-trust-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
 }
 
 .about-trust-icon-box {
@@ -200,7 +200,7 @@
   height: 48px;
   border-radius: 50%;
   background-color: #f5ebd7;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -393,7 +393,7 @@ body.lang-ta .about-why-desc {
   height: 48px;
   border-radius: 50%;
   background-color: #f5ebd7;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -474,7 +474,7 @@ body.lang-ta .about-why-desc {
   width: 100%;
   padding: 40px 48px 96px;
   box-sizing: border-box;
-  background-color: var(--bg-canvas, #0433ff);
+  background-color: var(--bg-canvas, #0e1a47);
 }
 
 .about-safety-container {
@@ -583,7 +583,7 @@ body.lang-ta .about-why-desc {
 .about-topic-num {
   font-family: 'Anton', sans-serif;
   font-size: 20px;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   letter-spacing: 0.02em;
 }
 

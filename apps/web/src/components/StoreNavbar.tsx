@@ -102,6 +102,10 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
               className="store-brand-logo"
             />
             <span className="store-brand-text">{t("Santhi Sivakasi Crackers")}</span>
+            <span className="store-diwali-pill">
+              <span aria-hidden="true">🪔</span>
+              <span>{language === "ta" ? "தீபாவளி 2026" : "Diwali 2026"}</span>
+            </span>
           </div>
 
           {/* Center: Desktop Nav Links */}

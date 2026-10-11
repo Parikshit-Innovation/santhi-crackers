@@ -95,7 +95,7 @@
 
 .store-drawer-close:hover {
   background-color: #fef0ce;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
 }
 
 /* =========================================================
@@ -120,7 +120,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   margin-bottom: 22px;
 }
 
@@ -147,7 +147,7 @@
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   cursor: pointer;
   transition: all 0.15s ease;
   outline: none;
@@ -156,7 +156,7 @@
 
 .store-empty-action-btn:hover {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
 }
 
 /* =========================================================
@@ -269,7 +269,7 @@
   height: 26px;
   border: none;
   background: transparent;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -336,7 +336,7 @@
 }
 
 .store-discount-input:focus {
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
   box-shadow: 0 0 0 2px rgba(4, 51, 255, 0.2);
 }
 
@@ -348,7 +348,7 @@
   padding: 10px 20px;
   border: 1.5px solid var(--border-cream, #dfcfb5);
   background-color: #fff8eb;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 700;
@@ -361,7 +361,7 @@
 
 .store-discount-btn:hover:not(:disabled) {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
 }
 
 .store-discount-error {
@@ -409,8 +409,8 @@
   width: 100%;
   height: 48px;
   background-color: #fff0cf;
-  color: var(--primary-blue, #0433ff);
-  border: 2px solid var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
+  border: 2px solid var(--primary-blue, #0036f5);
   border-radius: 9999px;
   font-family: var(--font-body);
   font-size: 15px;
@@ -441,7 +441,7 @@
 }
 
 .store-continue-shopping-link:hover {
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   text-decoration: underline;
 }
 

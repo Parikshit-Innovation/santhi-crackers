@@ -4,8 +4,14 @@ export interface BackendProduct {
   id: string;
   code: string;
   name: string;
+  nameEng?: string | null;
+  nameTam?: string | null;
   description?: string | null;
+  descriptionEng?: string | null;
+  descriptionTam?: string | null;
   content?: string | null;
+  contentEng?: string | null;
+  contentTam?: string | null;
   actualPrice: string | number;
   price: string | number;
   discount?: string | number | null;
@@ -23,11 +29,39 @@ export interface BackendProduct {
 export interface BackendCategory {
   id: string;
   name: string;
+  nameEng?: string | null;
+  nameTam?: string | null;
   slug: string;
   description?: string | null;
+  descriptionEng?: string | null;
+  descriptionTam?: string | null;
   imageUrl?: string | null;
   sortOrder?: number;
   productCount?: number;
+}
+
+/**
+ * Reusable bilingual text resolution helper per Section 5 requirements.
+ * Returns the requested language field, falling back to the alternate language,
+ * the legacy field, or the safe fallback value.
+ */
+export function getLocalizedText<T extends Record<string, any>>(
+  entity: T | null | undefined,
+  field: string,
+  language: "en" | "ta",
+  safeDefault: string = ""
+): string {
+  if (!entity) return safeDefault;
+  const priKey = `${field}${language === "ta" ? "Tam" : "Eng"}`;
+  const secKey = `${field}${language === "ta" ? "Eng" : "Tam"}`;
+  const priVal = entity[priKey];
+  const secVal = entity[secKey];
+  const legacyVal = entity[field];
+
+  if (typeof priVal === "string" && priVal.trim() !== "") return priVal.trim();
+  if (typeof secVal === "string" && secVal.trim() !== "") return secVal.trim();
+  if (typeof legacyVal === "string" && legacyVal.trim() !== "") return legacyVal.trim();
+  return safeDefault;
 }
 
 const DEFAULT_CATEGORY_IMAGES: Record<string, string> = {
@@ -66,6 +100,7 @@ const SLUG_TO_CATEGORY_TITLE: Record<string, string> = {
 export const mapBackendProductToComboItem = (
   prod: BackendProduct,
   categoryNameMap?: Record<string, string>,
+  categoryTamMap?: Record<string, string>,
 ): ComboItem => {
   const slug = (prod.categorySlug || "").toLowerCase();
   const categoryName =
@@ -83,12 +118,29 @@ export const mapBackendProductToComboItem = (
       ? prod.imageUrl
       : DEFAULT_CATEGORY_IMAGES[slug] || DEFAULT_FALLBACK_IMAGE;
 
+  const nameEng = prod.nameEng || prod.name || "";
+  const nameTam = prod.nameTam || null;
+  const contentEng = prod.contentEng || prod.content || "1 Box";
+  const contentTam = prod.contentTam || null;
+  const descEng = prod.descriptionEng || prod.description || "";
+  const descTam = prod.descriptionTam || null;
+
   return {
     id: prod.id,
     code: prod.code || "CRK",
-    name: prod.name,
+    name: nameEng,
+    nameEng,
+    nameTam,
     category: categoryName,
-    content: prod.content || "1 Box",
+    categorySlug: slug,
+    categoryEng: categoryName,
+    categoryTam: categoryTamMap?.[slug] || null,
+    content: contentEng,
+    contentEng,
+    contentTam,
+    description: descEng,
+    descriptionEng: descEng,
+    descriptionTam: descTam,
     actualPrice: actualPriceNum,
     price: priceNum,
     image,

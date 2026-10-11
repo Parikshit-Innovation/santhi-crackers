@@ -143,7 +143,7 @@
   font-family: var(--font-body);
   font-size: 11px;
   font-weight: 700;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   background-color: #fff8eb;
   border: 1px solid var(--border-cream, #e2d5c3);
   padding: 2px 8px;
@@ -218,7 +218,7 @@
 }
 
 .combo-search-field:focus {
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
   box-shadow: 0 0 0 3px rgba(255, 253, 247, 0.4);
 }
 
@@ -248,19 +248,19 @@
 .combo-sort-btn:hover,
 .combo-sort-btn.active {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
   box-shadow: 0 0 0 3px rgba(4, 51, 255, 0.15);
 }
 
 .combo-sort-icon {
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
 }
 
 .combo-sort-chevron {
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   flex-shrink: 0;
   transition: transform 0.2s ease;
 }
@@ -328,17 +328,17 @@
 
 .combo-sort-option:hover {
   background-color: #f1f5f9;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
 }
 
 .combo-sort-option.selected {
   background-color: #eff6ff;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   font-weight: 700;
 }
 
 .combo-sort-check {
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   flex-shrink: 0;
 }
 
@@ -359,14 +359,14 @@
 
 .combo-sort-pill:hover {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
 }
 
 .combo-sort-label {
   font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 700;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   white-space: nowrap;
 }
 
@@ -395,7 +395,7 @@
   font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 700;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   cursor: pointer;
   transition: all 0.15s ease;
   outline: none;
@@ -404,7 +404,7 @@
 
 .combo-filter-btn:hover {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
 }
 
 /* Table Card Container - Festive Red Products Background */
@@ -585,7 +585,7 @@
   height: 20px;
   border: none;
   background: transparent;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -599,7 +599,7 @@
 
 .combo-qty-btn:hover:not(:disabled) {
   background-color: #fffdf7;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
 }
 
 .combo-qty-btn:disabled {
@@ -637,7 +637,7 @@
 .combo-add-btn {
   background-color: #fff8eb; /* Cream button */
   border: 1.5px solid var(--border-cream, #dfcfb5);
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   padding: 5px 14px;
   border-radius: 9999px;
   font-family: var(--font-body);
@@ -654,14 +654,14 @@
 }
 
 .combo-add-btn svg {
-  color: var(--primary-blue, #0433ff);
-  stroke: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
+  stroke: var(--primary-blue, #0036f5);
 }
 
 .combo-add-btn:hover {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
-  color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
+  color: var(--primary-blue, #0036f5);
   box-shadow: 0 3px 8px rgba(4, 51, 255, 0.2);
   transform: translateY(-1px);
 }
@@ -976,7 +976,7 @@
   .combo-m-total-badge {
     font-family: var(--font-body);
     background-color: #ffffff;
-    color: var(--primary-blue, #0433ff);
+    color: var(--primary-blue, #0036f5);
     font-size: 11px;
     font-weight: 700;
     padding: 2px 7px;
@@ -1003,7 +1003,7 @@
   }
 
   .combo-m-stepper .combo-qty-btn {
-    color: var(--primary-blue, #0433ff);
+    color: var(--primary-blue, #0036f5);
     font-weight: 800;
   }
 
@@ -1021,7 +1021,7 @@
     border-radius: 9999px;
     background-color: #fff8eb; /* Cream button */
     border: 1.5px solid #dfcfb5;
-    color: var(--primary-blue, #0433ff);
+    color: var(--primary-blue, #0036f5);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     transition: all 0.15s ease;
     display: inline-flex;
@@ -1243,7 +1243,7 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
-  color: var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
   cursor: pointer;
   transition: all 0.15s ease;
   outline: none;
@@ -1252,13 +1252,13 @@
 
 .combo-page-num-btn:hover:not(.active) {
   background-color: #fef0ce;
-  border-color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
 }
 
 .combo-page-num-btn.active {
   background-color: #fce5b2;
-  border-color: var(--primary-blue, #0433ff);
-  color: var(--primary-blue, #0433ff);
+  border-color: var(--primary-blue, #0036f5);
+  color: var(--primary-blue, #0036f5);
   font-weight: 800;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -1578,8 +1578,8 @@
 
 .combo-order-confirm-btn {
   background-color: #fff5da; /* Cream button */
-  color: var(--primary-blue, #0433ff);
-  border: 1.5px solid var(--primary-blue, #0433ff);
+  color: var(--primary-blue, #0036f5);
+  border: 1.5px solid var(--primary-blue, #0036f5);
   border-radius: 9999px;
   padding: 12px 18px;
   font-family: var(--font-body);

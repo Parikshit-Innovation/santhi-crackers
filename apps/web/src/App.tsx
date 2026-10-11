@@ -1,20 +1,21 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+    BackendCart,
+    fetchBackendCart,
+    loadCachedCart,
+    mapBackendCartItemToCartEntry,
+    saveCachedCart,
+} from "./api/cart";
 import { AboutSection } from "./components/AboutSection";
 import { ComboItem, ComboPackTable } from "./components/ComboPackTable";
 import { ContactSection } from "./components/ContactSection";
+import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
 import { MarqueeBanner } from "./components/MarqueeBanner";
 import { CartEntry, StoreCartDrawer } from "./components/StoreCartDrawer";
-import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
 import { StoreFooter } from "./components/StoreFooter";
 import { StoreHero } from "./components/StoreHero";
 import { StoreNavbar } from "./components/StoreNavbar";
-import {
-  fetchBackendCart,
-  mapBackendCartItemToCartEntry,
-  loadCachedCart,
-  saveCachedCart,
-  BackendCart,
-} from "./api/cart";
+import { DiwaliFestiveBackground } from "./components/DiwaliFestiveBackground";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact">("home");
@@ -98,47 +99,56 @@ export default function App() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "var(--bg-canvas, #0433ff)",
+        background: "var(--bg-gradient-blue, linear-gradient(135deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%)) fixed",
+        backgroundColor: "#0e1a47",
+        fontFamily: "var(--font-geist, 'Geist', 'Geist Sans', 'Noto Sans Tamil', sans-serif)",
+        fontWeight: 400,
         width: "100%",
         maxWidth: "100vw",
         overflowX: "hidden",
+        position: "relative",
       }}
     >
-      <StoreNavbar
-        cartCount={cartCount}
-        onCartClick={() => setIsCartOpen(true)}
-        activePage={currentPage}
-        onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
-      />
-      <main>
-        {currentPage === "about" ? (
-          <AboutSection onExploreProducts={handleGoToProducts} />
-        ) : currentPage === "contact" ? (
-          <ContactSection onNavigateHome={handleGoToProducts} />
-        ) : (
-          <>
-            <StoreHero />
-            <MarqueeBanner />
-            <ComboPackTable onAddToCart={handleAddToCart} />
-            <StoreFooter
-              onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
-            />
-          </>
-        )}
-      </main>
+      {/* Mild Diwali festive ambient backdrop (responsive, pointer-events: none, no hover effects) */}
+      <DiwaliFestiveBackground />
 
-      <FloatingWhatsApp />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <StoreNavbar
+          cartCount={cartCount}
+          onCartClick={() => setIsCartOpen(true)}
+          activePage={currentPage}
+          onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
+        />
+        <main>
+          {currentPage === "about" ? (
+            <AboutSection onExploreProducts={handleGoToProducts} />
+          ) : currentPage === "contact" ? (
+            <ContactSection onNavigateHome={handleGoToProducts} />
+          ) : (
+            <>
+              <StoreHero />
+              <MarqueeBanner />
+              <ComboPackTable onAddToCart={handleAddToCart} />
+              <StoreFooter
+                onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
+              />
+            </>
+          )}
+        </main>
 
-      <StoreCartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
-        backendCartId={backendCart?.id}
-        isLoading={isCartLoading}
-      />
+        <FloatingWhatsApp />
+
+        <StoreCartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          cartItems={cartItems}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemoveItem={handleRemoveItem}
+          onClearCart={handleClearCart}
+          backendCartId={backendCart?.id}
+          isLoading={isCartLoading}
+        />
+      </div>
     </div>
   );
 }
