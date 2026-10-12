@@ -32,7 +32,7 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
               </div>
               <p className="store-footer-brand-desc">
                 {t(
-                  "Your premier Sivakasi fireworks wholesale depot in Kalingiam. Dedicated to bringing vibrant lights, unforgettable joy, and certified safe festive celebrations to homes across India.",
+                  "Your premier Sivakasi fireworks wholesale depot in Kalingiam. Dedicated to bringing vibrant lights, unforgettable joy, and certified safe festive celebrations to homes across Tamil Nadu.",
                 )}
               </p>
               <div className="store-footer-badge">

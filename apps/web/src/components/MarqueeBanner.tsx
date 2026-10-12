@@ -21,8 +21,8 @@ const MARQUEE_ITEMS: MarqueeItem[] = [
   },
   {
     id: "2",
-    title: "All-India Safe Transport",
-    text: "Secure packaging direct from hub",
+    title: "Tamil Nadu Safe Transport",
+    text: "Delivering till Oct 25 only",
   },
   {
     id: "3",

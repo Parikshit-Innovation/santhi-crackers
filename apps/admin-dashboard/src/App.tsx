@@ -1297,26 +1297,6 @@ export default function App() {
           <NavItem icon={ShoppingCart} label={t("Orders")} path="/admin/orders" badge={24} />
           <NavItem icon={MessageSquare} label={t("Queries")} path="/admin/queries" badge={queriesList.length > 0 ? queriesList.length : undefined} />
         </nav>
-
-        <div className="my-6 border-t border-gray-100"></div>
-
-        {/* Language switch toggle in sidebar */}
-        <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Language / மொழி</p>
-          <button
-            type="button"
-            onClick={toggleLanguage}
-            className="w-full flex items-center justify-between px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 hover:border-blue-500 hover:text-blue-600 transition-all cursor-pointer shadow-2xs"
-          >
-            <span className="flex items-center gap-2">
-              <span>🌐</span>
-              <span>{language === "ta" ? "தமிழ் (Tamil)" : "English"}</span>
-            </span>
-            <span className="text-[11px] px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-extrabold">
-              {language === "ta" ? "English" : "தமிழ்"}
-            </span>
-          </button>
-        </div>
       </div>
 
       <div className="absolute bottom-0 w-full p-6 border-t border-gray-100 bg-white">

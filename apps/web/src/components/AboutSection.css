@@ -124,25 +124,47 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
 }
 
-.about-hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(48px, 6vw, 76px);
-  font-weight: 400;
+.about-hero-title,
+.about-section-heading {
+  font-family: var(--font-heading);
+  font-size: clamp(32px, 3.8vw, 48px);
+  font-weight: 700;
   color: #ffffff;
-  line-height: 1.05;
-  letter-spacing: 0.04em;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
-  margin: 0 0 20px;
+  margin: 0 0 18px;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
-.about-hero-desc {
-  font-size: 16px;
+body.lang-ta .about-hero-title,
+body.lang-ta .about-section-heading {
+  font-family: var(--font-tamil), var(--font-body), sans-serif;
+  font-size: clamp(24px, 2.8vw, 36px);
+  line-height: 1.35;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.about-hero-desc,
+.about-story-p {
+  font-size: 15.5px;
   color: #e0e7ff;
-  line-height: 1.65;
-  margin: 0 0 32px;
+  line-height: 1.7;
+  margin: 0 0 20px;
   max-width: 520px;
+  overflow-wrap: break-word;
+}
+
+body.lang-ta .about-hero-desc,
+body.lang-ta .about-story-p {
+  font-family: var(--font-tamil), var(--font-body), sans-serif;
+  font-size: 14.5px;
+  line-height: 1.72;
 }
 
 .about-hero-image-wrap {
@@ -685,16 +707,55 @@ body.lang-ta .about-why-desc {
 
 @media (max-width: 840px) {
   .about-hero-section {
-    padding: 24px 20px 36px;
+    padding: 24px 16px 36px;
   }
 
   .about-hero-container {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 24px;
   }
 
   .about-hero-text {
     order: 1;
+    width: 100%;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .about-hero-title,
+  .about-section-heading {
+    font-size: clamp(24px, 6.2vw, 32px);
+    line-height: 1.22;
+    margin: 0 0 14px;
+    letter-spacing: 0.01em;
+  }
+
+  body.lang-ta .about-hero-title,
+  body.lang-ta .about-section-heading {
+    font-size: clamp(19px, 5vw, 24px);
+    line-height: 1.38;
+    letter-spacing: normal;
+    text-transform: none;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+
+  .about-hero-desc,
+  .about-story-p {
+    font-size: 14px;
+    line-height: 1.62;
+    margin: 0 0 20px;
+    max-width: 100%;
+    color: #e0e7ff;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+
+  body.lang-ta .about-hero-desc,
+  body.lang-ta .about-story-p {
+    font-size: 13.5px;
+    line-height: 1.68;
+    letter-spacing: 0.01em;
   }
 
   .about-hero-image-wrap {
@@ -881,6 +942,35 @@ body.lang-ta .about-why-desc {
 }
 
 @media (max-width: 440px) {
+  .about-hero-section {
+    padding: 18px 12px 28px;
+  }
+
+  .about-hero-title,
+  .about-section-heading {
+    font-size: 21px;
+    line-height: 1.24;
+  }
+
+  body.lang-ta .about-hero-title,
+  body.lang-ta .about-section-heading {
+    font-size: 18px;
+    line-height: 1.38;
+  }
+
+  .about-hero-desc,
+  .about-story-p {
+    font-size: 13px;
+    line-height: 1.58;
+    margin: 0 0 16px;
+  }
+
+  body.lang-ta .about-hero-desc,
+  body.lang-ta .about-story-p {
+    font-size: 12.5px;
+    line-height: 1.66;
+  }
+
   .about-why-section {
     padding: 0 12px 36px;
   }

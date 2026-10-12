@@ -26,7 +26,6 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
   onUpdateQuantity,
   onRemoveItem,
   onClearCart,
-  backendCartId,
   isLoading,
 }) => {
   const { t, tProduct } = useLanguage();
@@ -113,11 +112,6 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
               {t("Your Cart")}{" "}
               {totalItemCount > 0 && `(${t("{count} items", { count: totalItemCount })})`}
             </h2>
-            {backendCartId && (
-              <span className="store-drawer-session-id" title={`Backend Session: ${backendCartId}`}>
-                Session: {backendCartId.slice(0, 10)}...
-              </span>
-            )}
           </div>
           <button
             type="button"

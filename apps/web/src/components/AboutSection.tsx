@@ -16,10 +16,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
         <div className="about-hero-container">
           <div className="about-hero-text">
             <span className="about-eyebrow">{t("About us")}</span>
-            <h1 className="about-hero-title">
+            <h1 className="about-section-heading about-hero-title">
               {t("Making Festive Moments Unforgettable")}
             </h1>
-            <p className="about-hero-desc">
+            <p className="about-story-p about-hero-desc">
               {t(
                 "Celebrate the festival of lights with Shanthi Crackers. We are dedicated to bringing families together through joyful traditions, quality products, and a memorable festive shopping experience.",
               )}

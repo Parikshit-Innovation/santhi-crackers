@@ -1,0 +1,132 @@
+[
+  {
+    "nameEng": "Flash Sound Crackers",
+    "nameTam": "ஃபிளாஷ் சவுண்ட் பட்டாசுகள்",
+    "slug": "flash-sound-crackers",
+    "descriptionEng": "Explore our collection of flash sound crackers.",
+    "descriptionTam": "எங்கள் ஃபிளாஷ் சவுண்ட் பட்டாசுகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/flash-sound-crackers.jpg",
+    "sortOrder": 1,
+    "isActive": true
+  },
+  {
+    "nameEng": "Electric Chorsa Crackers",
+    "nameTam": "எலக்ட்ரிக் சோர்சா பட்டாசுகள்",
+    "slug": "electric-chorsa-crackers",
+    "descriptionEng": "Explore our collection of electric chorsa crackers.",
+    "descriptionTam": "எங்கள் எலக்ட்ரிக் சோர்சா பட்டாசுகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/electric-chorsa-crackers.jpg",
+    "sortOrder": 2,
+    "isActive": true
+  },
+  {
+    "nameEng": "Deluxe Crackers",
+    "nameTam": "டீலக்ஸ் பட்டாசுகள்",
+    "slug": "deluxe-crackers",
+    "descriptionEng": "Explore our collection of deluxe crackers.",
+    "descriptionTam": "எங்கள் டீலக்ஸ் பட்டாசுகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/deluxe-crackers.jpg",
+    "sortOrder": 3,
+    "isActive": true
+  },
+  {
+    "nameEng": "Bijili Crackers",
+    "nameTam": "பிஜிலி பட்டாசுகள்",
+    "slug": "bijili-crackers",
+    "descriptionEng": "Explore our collection of bijili crackers.",
+    "descriptionTam": "எங்கள் பிஜிலி பட்டாசுகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/bijili-crackers.jpg",
+    "sortOrder": 4,
+    "isActive": true
+  },
+  {
+    "nameEng": "Flower Pots",
+    "nameTam": "பூச்சட்டி",
+    "slug": "flower-pots",
+    "descriptionEng": "Explore our collection of flower pot crackers.",
+    "descriptionTam": "எங்கள் பூச்சட்டி பட்டாசுகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/flower-pots.jpg",
+    "sortOrder": 5,
+    "isActive": true
+  },
+  {
+    "nameEng": "Ground Chakkars",
+    "nameTam": "தரைச் சக்கரம்",
+    "slug": "ground-chakkars",
+    "descriptionEng": "Explore our collection of ground chakkars.",
+    "descriptionTam": "எங்கள் தரைச் சக்கரங்களின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/ground-chakkars.jpg",
+    "sortOrder": 6,
+    "isActive": true
+  },
+  {
+    "nameEng": "Twinkling Star & Pencil",
+    "nameTam": "ட்விங்கிளிங் ஸ்டார் & பென்சில்",
+    "slug": "twinkling-star-pencil",
+    "descriptionEng": "Explore our collection of twinkling star and pencil crackers.",
+    "descriptionTam": "எங்கள் ட்விங்கிளிங் ஸ்டார் & பென்சில் பட்டாசுகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/twinkling-star-pencil.jpg",
+    "sortOrder": 7,
+    "isActive": true
+  },
+  {
+    "nameEng": "Atom Bombs",
+    "nameTam": "ஆட்டம் பாம்ஸ்",
+    "slug": "atom-bombs",
+    "descriptionEng": "Explore our collection of atom bombs.",
+    "descriptionTam": "எங்கள் ஆட்டம் பாம்ஸ் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/atom-bombs.jpg",
+    "sortOrder": 8,
+    "isActive": true
+  },
+  {
+    "nameEng": "Rockets",
+    "nameTam": "ராக்கெட்டுகள்",
+    "slug": "rockets",
+    "descriptionEng": "Explore our collection of rockets.",
+    "descriptionTam": "எங்கள் ராக்கெட்டுகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/rockets.jpg",
+    "sortOrder": 9,
+    "isActive": true
+  },
+  {
+    "nameEng": "Sparklers",
+    "nameTam": "கம்பி மத்தாப்பு",
+    "slug": "sparklers",
+    "descriptionEng": "Explore our collection of sparklers.",
+    "descriptionTam": "எங்கள் கம்பி மத்தாப்புகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/sparklers.jpg",
+    "sortOrder": 10,
+    "isActive": true
+  },
+  {
+    "nameEng": "Arial Fancy Colour Collection",
+    "nameTam": "ஏரியல் பேன்சி கலர் கலெக்ஷன்",
+    "slug": "arial-fancy-colour-collection",
+    "descriptionEng": "Explore our collection of aerial fancy colour crackers.",
+    "descriptionTam": "எங்கள் ஏரியல் பேன்சி கலர் கலெக்ஷன் பட்டாசுகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/arial-fancy-colour-collection.jpg",
+    "sortOrder": 11,
+    "isActive": true
+  },
+  {
+    "nameEng": "Garlands",
+    "nameTam": "சரவெடிகள்",
+    "slug": "garlands",
+    "descriptionEng": "Explore our collection of garland crackers.",
+    "descriptionTam": "எங்கள் சரவெடிகளின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/garlands.jpg",
+    "sortOrder": 12,
+    "isActive": true
+  },
+  {
+    "nameEng": "Gift Box",
+    "nameTam": "கிப்ட் பாக்ஸ்",
+    "slug": "gift-box",
+    "descriptionEng": "Explore our collection of cracker gift boxes.",
+    "descriptionTam": "எங்கள் பட்டாசு கிப்ட் பாக்ஸ்களின் தொகுப்பைப் பாருங்கள்.",
+    "imageUrl": "https://example.com/gift-box.jpg",
+    "sortOrder": 13,
+    "isActive": true
+  }
+]
