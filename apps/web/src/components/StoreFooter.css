@@ -47,12 +47,18 @@
 .store-footer-logo {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: 0;
   object-fit: contain;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   background-color: #fffdf7;
   border: 1.5px solid var(--border-cream, #e2d5c3);
+}
+
+.store-footer-brand-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .store-footer-brand-name {
@@ -62,6 +68,15 @@
   letter-spacing: -0.02em;
   color: #0f172a;
   margin: 0;
+  line-height: 1.15;
+}
+
+.store-footer-brand-tamil {
+  font-family: var(--font-tamil), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #b45309;
+  line-height: 1.15;
 }
 
 .store-footer-brand-desc {
@@ -86,7 +101,7 @@
   background-color: #fff8eb;
   border: 1.5px solid var(--border-cream, #e2d5c3);
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: 0;
   width: fit-content;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
@@ -171,7 +186,7 @@
   color: var(--primary-blue, #0036f5);
   background-color: #fff8eb;
   border: 1.5px solid var(--border-cream, #e2d5c3);
-  border-radius: 9999px;
+  border-radius: 0;
   text-decoration: none;
   transition: all 0.15s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -192,7 +207,7 @@
   font-weight: 700;
   color: #ffffff;
   background-color: #25d366;
-  border-radius: 9999px;
+  border-radius: 0;
   text-decoration: none;
   width: fit-content;
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
@@ -216,7 +231,7 @@
   color: var(--primary-blue, #0036f5);
   background-color: #fff8eb;
   border: 1.5px solid var(--border-cream, #dfcfb5);
-  border-radius: 9999px;
+  border-radius: 0;
   text-decoration: none;
   width: fit-content;
   transition: all 0.15s ease;
@@ -245,7 +260,7 @@
 .store-footer-map-frame {
   width: 100%;
   height: 175px;
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
   border: 1.5px solid var(--border-cream, #e2d5c3);
   background-color: #f5ebd7;
@@ -265,7 +280,7 @@
   padding: 8px 14px;
   background-color: #fff8eb;
   border: 1.5px solid var(--border-cream, #e2d5c3);
-  border-radius: 9999px;
+  border-radius: 0;
   color: var(--primary-blue, #0036f5);
   font-size: 12.5px;
   font-weight: 700;

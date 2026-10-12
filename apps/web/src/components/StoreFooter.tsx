@@ -25,10 +25,13 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
               <div className="store-footer-brand-header">
                 <img
                   src="/home/logo-santhi.png"
-                  alt={t("Santhi Sivakasi Crackers")}
+                  alt="Shanthi Crackers | சாந்தி பட்டாசுகள்"
                   className="store-footer-logo"
                 />
-                <h3 className="store-footer-brand-name">Shanthi Crackers</h3>
+                <div className="store-footer-brand-titles">
+                  <h3 className="store-footer-brand-name">Shanthi Crackers</h3>
+                  <span className="store-footer-brand-tamil">சாந்தி பட்டாசுகள்</span>
+                </div>
               </div>
               <p className="store-footer-brand-desc">
                 {t(
@@ -207,7 +210,7 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
       <div className="store-footer-bottom">
         <div className="store-footer-bottom-container">
           <div className="store-footer-copy">
-            {t("© {year} Santhi Sivakasi Crackers. All rights reserved.", {
+            {t("© {year} Shanthi Crackers | சாந்தி பட்டாசுகள். All rights reserved.", {
               year: new Date().getFullYear(),
             })}
           </div>

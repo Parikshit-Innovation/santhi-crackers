@@ -73,6 +73,21 @@ export default function App() {
     // Item added smoothly to cart state without opening drawer automatically
   };
 
+  const handleSetItemQuantity = (item: ComboItem, qty: number) => {
+    setCartItems((prev) => {
+      if (qty <= 0) {
+        return prev.filter((entry) => entry.item.id !== item.id);
+      }
+      const existing = prev.find((entry) => entry.item.id === item.id);
+      if (existing) {
+        return prev.map((entry) =>
+          entry.item.id === item.id ? { ...entry, quantity: qty } : entry,
+        );
+      }
+      return [...prev, { item, quantity: qty }];
+    });
+  };
+
   const handleUpdateQuantity = (id: string, newQty: number) => {
     setCartItems((prev) => {
       if (newQty <= 0) {
@@ -128,7 +143,12 @@ export default function App() {
             <>
               <StoreHero />
               <MarqueeBanner />
-              <ComboPackTable onAddToCart={handleAddToCart} />
+              <ComboPackTable
+                cartItems={cartItems}
+                onSetQuantity={handleSetItemQuantity}
+                onAddToCart={handleAddToCart}
+                onCartClick={() => setIsCartOpen(true)}
+              />
               <StoreFooter
                 onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
               />

@@ -166,7 +166,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
         <section className="contact-details-section">
           <div className="contact-details-header">
             <div className="contact-details-badge">{t("Official Store")}</div>
-            <h2 className="contact-store-name">{t("Shanthi Sivakasi Crackers")}</h2>
+            <h2 className="contact-store-name">Shanthi Crackers | சாந்தி பட்டாசுகள்</h2>
             <p className="contact-store-desc">
               {t(
                 "Visit our store or contact us via phone, WhatsApp, or email for bulk enquiries and orders.",

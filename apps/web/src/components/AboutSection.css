@@ -41,7 +41,7 @@
   background-color: #fff8eb; /* Cream button */
   color: var(--primary-blue, #0036f5);
   border: 1.5px solid var(--border-cream, #dfcfb5);
-  border-radius: 9999px;
+  border-radius: 0;
   padding: 13px 30px;
   font-family: var(--font-body);
   font-size: 14.5px;
@@ -72,7 +72,7 @@
   background-color: #fffdf7; /* Light cream */
   color: var(--primary-blue, #0036f5);
   border: 1.5px solid var(--border-cream, #dfcfb5);
-  border-radius: 9999px;
+  border-radius: 0;
   padding: 12px 28px;
   font-family: var(--font-body);
   font-size: 14px;

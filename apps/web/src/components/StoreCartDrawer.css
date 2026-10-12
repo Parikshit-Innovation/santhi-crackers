@@ -81,7 +81,7 @@
   justify-content: center;
   transition: all 0.15s ease;
   outline: none;
-  border-radius: 9999px;
+  border-radius: 0;
 }
 
 .store-drawer-close:hover {
@@ -105,7 +105,7 @@
 .store-empty-icon-circle {
   width: 76px;
   height: 76px;
-  border-radius: 50%;
+  border-radius: 0;
   background-color: #f5ebd7;
   border: 1.5px solid var(--border-cream, #e2d5c3);
   display: flex;
@@ -133,7 +133,7 @@
 .store-empty-action-btn {
   background-color: #fff8eb;
   border: 1.5px solid var(--border-cream, #dfcfb5);
-  border-radius: 9999px;
+  border-radius: 0;
   padding: 11px 26px;
   font-family: var(--font-body);
   font-size: 14px;
@@ -187,7 +187,7 @@
   width: 68px;
   height: 68px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0;
   background-color: #f5ebd7;
   border: 1px solid var(--border-cream, #e2d5c3);
   flex-shrink: 0;
@@ -223,7 +223,7 @@
   color: #94a3b8;
   cursor: pointer;
   padding: 6px;
-  border-radius: 9999px;
+  border-radius: 0;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -250,7 +250,7 @@
   display: inline-flex;
   align-items: center;
   border: 1.5px solid var(--border-cream, #e2d5c3);
-  border-radius: 9999px;
+  border-radius: 0;
   background-color: #f5ebd7;
   padding: 2px 4px;
 }
@@ -268,7 +268,7 @@
   align-items: center;
   justify-content: center;
   outline: none;
-  border-radius: 9999px;
+  border-radius: 0;
   transition: all 0.15s ease;
 }
 
@@ -317,7 +317,7 @@
   padding: 10px 16px;
   border: 1.5px solid var(--border-cream, #e2d5c3);
   background-color: #fffdf7;
-  border-radius: 9999px;
+  border-radius: 0;
   font-family: var(--font-body);
   font-size: 13.5px;
   color: #0f172a;
@@ -344,7 +344,7 @@
   font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
-  border-radius: 9999px;
+  border-radius: 0;
   transition: all 0.15s ease;
   outline: none;
   white-space: nowrap;
@@ -402,7 +402,7 @@
   background-color: #fff0cf;
   color: var(--primary-blue, #0036f5);
   border: 2px solid var(--primary-blue, #0036f5);
-  border-radius: 9999px;
+  border-radius: 0;
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 700;

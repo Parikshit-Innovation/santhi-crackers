@@ -193,3 +193,44 @@ body.lang-ta .about-why-left .about-eyebrow {
   font-family: var(--font-geist);
   font-weight: 400;
 }
+
+/* =========================================================
+   Universal Rectangular / Square Buttons & Interactive Controls
+   (Strictly remove all circular, oval, and pill border-radiuses site-wide)
+   ========================================================= */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"],
+.store-checkout-btn,
+.wholesale-qty-btn,
+.wholesale-filter-btn,
+.wholesale-clear-btn,
+.wholesale-reset-btn,
+.wholesale-floating-cart-view-btn,
+.store-nav-cart-btn,
+.store-nav-lang-btn,
+.store-nav-item,
+.store-footer-whatsapp-btn,
+.store-footer-phone-pill,
+.store-footer-back-to-top,
+.floating-whatsapp-btn,
+.floating-whatsapp-pulse,
+.about-btn-copper,
+.about-btn-outline,
+.contact-submit-btn,
+.contact-card-btn,
+.contact-phone-pill,
+.contact-email-badge,
+.contact-details-badge,
+.store-diwali-pill,
+.store-drawer-close,
+.store-empty-action-btn,
+.store-drawer-trash-btn,
+.store-drawer-stepper,
+.store-drawer-stepper-btn,
+.store-discount-btn {
+  border-radius: 0 !important;
+}
+

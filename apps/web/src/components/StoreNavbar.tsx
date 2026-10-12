@@ -7,6 +7,7 @@ interface StoreNavbarProps {
   onCartClick?: () => void;
   activePage?: string;
   onNavigate?: (page: string) => void;
+  hideBottomNav?: boolean;
 }
 
 export const StoreNavbar: React.FC<StoreNavbarProps> = ({
@@ -14,6 +15,7 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
   onCartClick,
   activePage = "home",
   onNavigate,
+  hideBottomNav = false,
 }) => {
   const { language, toggleLanguage, t } = useLanguage();
   const [activeTab, setActiveTab] = useState(
@@ -94,14 +96,17 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
             onClick={() => handleTabClick("Home")}
             role="button"
             tabIndex={0}
-            aria-label={t("Santhi Sivakasi Crackers - Home")}
+            aria-label="Shanthi Crackers | சாந்தி பட்டாசுகள்"
           >
             <img
               src="/home/logo-santhi.png"
-              alt={t("Santhi Sivakasi Crackers")}
+              alt="Shanthi Crackers | சாந்தி பட்டாசுகள்"
               className="store-brand-logo"
             />
-            <span className="store-brand-text">{t("Santhi Sivakasi Crackers")}</span>
+            <div className="store-brand-text-wrap">
+              <span className="store-brand-text">Shanthi Crackers</span>
+              <span className="store-brand-tamil">சாந்தி பட்டாசுகள்</span>
+            </div>
             <span className="store-diwali-pill">
               <span aria-hidden="true">🪔</span>
               <span>{language === "ta" ? "தீபாவளி 2026" : "Diwali 2026"}</span>
@@ -202,102 +207,120 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
         </div>
       </header>
 
-      {/* Amazon-style Mobile Bottom Navigation Bar (Icons Alone) */}
-      <nav className="store-bottom-nav" aria-label={t("Mobile navigation")}>
-        {/* 1. Home Icon */}
-        <button
-          type="button"
-          className={`store-bottom-btn ${activeTab === "home" || activeTab === "Home" || activeTab === "products" || activeTab === "All products" ? "active" : ""}`}
-          onClick={() => handleTabClick("Home")}
-          aria-label={t("Home")}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            width="22"
-            height="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      {/* Mobile Bottom Navigation Bar: Home, Cart, About, Location */}
+      {!hideBottomNav && (
+        <nav className="store-bottom-nav" aria-label={t("Mobile navigation")}>
+          {/* 1. Home Icon */}
+          <button
+            type="button"
+            className={`store-bottom-btn ${activeTab === "home" || activeTab === "Home" || activeTab === "products" || activeTab === "All products" ? "active" : ""}`}
+            onClick={() => handleTabClick("Home")}
+            aria-label={t("Home")}
+            title={t("Home")}
           >
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-          </svg>
-        </button>
+            <div className="store-bottom-item-inner">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              <span className="store-bottom-label">{t("Home")}</span>
+            </div>
+          </button>
 
-        {/* 2. About Icon */}
-        <button
-          type="button"
-          className={`store-bottom-btn ${activeTab === "about" || activeTab === "About" ? "active" : ""}`}
-          onClick={() => handleTabClick("About")}
-          aria-label={t("About")}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            width="22"
-            height="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          {/* 2. Cart Icon (with badge) */}
+          <button
+            type="button"
+            id="mobile-footer-cart-btn"
+            className={`store-bottom-btn ${activeTab === "cart" ? "active" : ""}`}
+            onClick={() => handleTabClick("cart")}
+            aria-label={t("Cart")}
+            title={t("Cart")}
           >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="16" x2="12" y2="12" />
-            <line x1="12" y1="8" x2="12.01" y2="8" />
-          </svg>
-        </button>
+            <div className="store-bottom-item-inner">
+              <div className="store-bottom-icon-wrap">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+                {cartCount > 0 && <span className="store-bottom-cart-badge">{cartCount}</span>}
+              </div>
+              <span className="store-bottom-label">{t("Cart")}</span>
+            </div>
+          </button>
 
-        {/* 4. Cart Icon (with badge) */}
-        <button
-          type="button"
-          id="footer-bottom-cart-btn"
-          className={`store-bottom-btn ${activeTab === "cart" ? "active" : ""}`}
-          onClick={() => handleTabClick("cart")}
-          aria-label={t("Cart")}
-        >
-          <div className="store-bottom-icon-wrap">
-            <svg
-              viewBox="0 0 24 24"
-              width="22"
-              height="22"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.9"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg>
-            {cartCount > 0 && <span className="store-bottom-cart-badge">{cartCount}</span>}
-          </div>
-        </button>
-
-        {/* 5. Location Icon */}
-        <button
-          type="button"
-          className={`store-bottom-btn ${activeTab === "location" || activeTab === "Contact us" ? "active" : ""}`}
-          onClick={() => handleTabClick("location")}
-          aria-label={t("Location")}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            width="22"
-            height="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          {/* 3. About Icon */}
+          <button
+            type="button"
+            className={`store-bottom-btn ${activeTab === "about" || activeTab === "About" ? "active" : ""}`}
+            onClick={() => handleTabClick("About")}
+            aria-label={t("About")}
+            title={t("About")}
           >
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-        </button>
-      </nav>
+            <div className="store-bottom-item-inner">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              <span className="store-bottom-label">{t("About")}</span>
+            </div>
+          </button>
+
+          {/* 4. Location Icon */}
+          <button
+            type="button"
+            className={`store-bottom-btn ${activeTab === "location" || activeTab === "Contact us" || activeTab === "contact" ? "active" : ""}`}
+            onClick={() => handleTabClick("location")}
+            aria-label={t("Location")}
+            title={t("Location")}
+          >
+            <div className="store-bottom-item-inner">
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span className="store-bottom-label">{t("Location")}</span>
+            </div>
+          </button>
+        </nav>
+      )}
     </>
   );
 };
