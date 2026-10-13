@@ -186,95 +186,109 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
         </div>
       </section>
 
-      {/* 4. WHY CHOOSE US Section */}
-      <section className="about-why-section">
-        <div className="about-why-container">
-          <div className="about-why-left">
-            <span className="about-eyebrow">{t("Why choose us")}</span>
-            <h2 className="about-why-title">{t("Why Customers Trust Us")}</h2>
-          </div>
+      {/* 4. Diwali Gift Boxes Showcase */}
+      <section className="about-gift-boxes-section">
+        <div className="about-gift-mosaic">
 
-          <div className="about-why-grid">
-            {/* Feature 1 */}
-            <div className="about-why-card">
-              <div className="about-why-icon-circle">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.9"
-                >
-                  <path d="M6 3h12l4 6-10 12L2 9l4-6z" />
-                </svg>
-              </div>
-              <h4 className="about-why-name">{t("Quality Products")}</h4>
-              <p className="about-why-desc">{t("Genuine and certified crackers")}</p>
+          {/* ── Row 1 ─────────────────────────────────── */}
+          <div className="about-gift-row about-gift-row--1">
+            {/* GIFT BOX 1 – wide landscape, left */}
+            <div className="about-gift-cell about-gift-cell--box1">
+              <img
+                src="/about/gift-box-1.png"
+                alt={t("Santhi Crackers Premium Gift Box Collection")}
+                className="about-gift-img"
+                loading="lazy"
+              />
             </div>
 
-            {/* Feature 2 */}
-            <div className="about-why-card">
-              <div className="about-why-icon-circle">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.9"
-                >
-                  <rect x="1" y="3" width="15" height="13" />
-                  <polygon points="16 8 20 8 23 11 23 16 16 16 8" />
-                  <circle cx="5.5" cy="18.5" r="2.5" />
-                  <circle cx="18.5" cy="18.5" r="2.5" />
-                </svg>
-              </div>
-              <h4 className="about-why-name">{t("Safe Delivery")}</h4>
-              <p className="about-why-desc">{t("Secure packaging and on-time delivery")}</p>
+            {/* P1 – Ground Spinner Chakkars */}
+            <div className="about-gift-cell about-gift-cell--p1">
+              <img
+                src="/combos/category_chakkar_1791389593100.jpg"
+                alt={t("Diwali Ground Spinner Chakkars")}
+                className="about-gift-img"
+                loading="lazy"
+              />
             </div>
 
-            {/* Feature 3 */}
-            <div className="about-why-card">
-              <div className="about-why-icon-circle">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.9"
-                >
-                  <line x1="19" y1="5" x2="5" y2="19" />
-                  <circle cx="6.5" cy="6.5" r="2.5" />
-                  <circle cx="17.5" cy="17.5" r="2.5" />
-                </svg>
-              </div>
-              <h4 className="about-why-name">{t("Festive Offers")}</h4>
-              <p className="about-why-desc">{t("Best prices and combo packs")}</p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="about-why-card">
-              <div className="about-why-icon-circle">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="22"
-                  height="22"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.9"
-                >
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </div>
-              <h4 className="about-why-name">{t("Happy Customers")}</h4>
-              <p className="about-why-desc">{t("Thousands of satisfied families")}</p>
+            {/* P2 – Sparklers */}
+            <div className="about-gift-cell about-gift-cell--p2">
+              <img
+                src="/combos/category_sparklers_1791389492145.jpg"
+                alt={t("Diwali Sparklers")}
+                className="about-gift-img"
+                loading="lazy"
+              />
             </div>
           </div>
+
+          {/* ── Row 2 ─────────────────────────────────── */}
+          <div className="about-gift-row about-gift-row--2">
+            {/* P3 – Aerial Sky Shots */}
+            <div className="about-gift-cell about-gift-cell--p3">
+              <img
+                src="/combos/category_skyshots_1791389684878.jpg"
+                alt={t("Diwali Aerial Sky Shots")}
+                className="about-gift-img"
+                loading="lazy"
+              />
+            </div>
+
+            {/* P4 – Sky Rockets */}
+            <div className="about-gift-cell about-gift-cell--p4">
+              <img
+                src="/combos/category_rockets_1791389644471.jpg"
+                alt={t("Diwali Sky Rockets")}
+                className="about-gift-img"
+                loading="lazy"
+              />
+            </div>
+
+            {/* GIFT BOX 2 – wide landscape, right */}
+            <div className="about-gift-cell about-gift-cell--box2">
+              <img
+                src="/about/gift-box-2.png"
+                alt={t("Santhi Crackers Traditional Gift Box Collection")}
+                className="about-gift-img"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          {/* ── Row 3 ─────────────────────────────────── */}
+          <div className="about-gift-row about-gift-row--3">
+            {/* GIFT BOX 3 – wide landscape, left */}
+            <div className="about-gift-cell about-gift-cell--box3">
+              <img
+                src="/about/gift-box-3.png"
+                alt={t("Santhi Crackers Special Gift Box Collection")}
+                className="about-gift-img"
+                loading="lazy"
+              />
+            </div>
+
+            {/* P5 – Flower Pots (Anaar) */}
+            <div className="about-gift-cell about-gift-cell--p5">
+              <img
+                src="/combos/category_flowerpots_1791389522726.jpg"
+                alt={t("Diwali Anaar Flower Pots")}
+                className="about-gift-img"
+                loading="lazy"
+              />
+            </div>
+
+            {/* P6 – Garland Crackers */}
+            <div className="about-gift-cell about-gift-cell--p6">
+              <img
+                src="/combos/category_crackers_1791389553522.jpg"
+                alt={t("Diwali Garland Crackers")}
+                className="about-gift-img"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
         </div>
       </section>
 
