@@ -7,7 +7,9 @@
     "dev": "concurrently --kill-others-on-fail --names build,server \"tsc --watch --preserveWatchOutput\" \"tsx watch server.ts\"",
     "build": "tsc",
     "start": "node dist/server.js",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "tsx --test test/*.test.ts",
+    "admin:hash-password": "node scripts/hash-admin-password.mjs"
   },
   "dependencies": {
     "@repo/db": "*",

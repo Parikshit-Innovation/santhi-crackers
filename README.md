@@ -5,8 +5,9 @@ product catalog website.
 
 ## 1. Purpose and scope
 
-This project is a simple product catalog site for displaying Diwali products.
-The backend provides product, category, and guest-cart data to the frontend.
+This project provides a Diwali product catalog and backend order persistence.
+The backend serves product, category, guest-cart, checkout, and protected admin
+order-list APIs.
 
 ### In scope
 
@@ -15,14 +16,16 @@ The backend provides product, category, and guest-cart data to the frontend.
 - [ ]  Category listing
 - [ ]  Products grouped by category
 - [ ]  Guest cart retrieval using an HTTP-only cookie
+- [ ]  Checkout order creation and persistence
+- [ ]  Protected admin login and orders list API
 - [ ]  PostgreSQL persistence through Prisma
 
 ### Out of scope for this version
 
 - Customer registration and login
-- Admin dashboard
+- Admin dashboard UI
 - Payment gateway
-- Order creation and order history
+- Order status management and cancellation/restocking
 - Delivery tracking
 - Coupons
 - Notifications
@@ -61,14 +64,22 @@ located in [`packages/db`](./packages/db).
 The API is served from `http://localhost:3007` during local development.
 
 
-| Method | Endpoint                | Purpose                         |
-| ------ | ----------------------- | ------------------------------- |
-| `GET`  | `/health`               | Check API availability          |
-| `GET`  | `/api/products`         | List active products            |
-| `GET`  | `/api/products/:id`     | Get one active product          |
-| `GET`  | `/api/categories`       | List active categories          |
-| `GET`  | `/api/categories/:slug` | Get a category and its products |
-| `GET`  | `/api/cart`             | Get the current guest cart      |
+| Method | Endpoint                | Purpose                                |
+| ------ | ----------------------- | -------------------------------------- |
+| `GET`  | `/health`               | Check API availability                 |
+| `GET`  | `/api/products`         | List active products                   |
+| `GET`  | `/api/products/:id`     | Get one active product                 |
+| `GET`  | `/api/categories`       | List active categories                 |
+| `GET`  | `/api/categories/:slug` | Get a category and its products        |
+| `GET`  | `/api/cart`             | Get the current guest cart             |
+| `POST` | `/api/orders`           | Create an order from product IDs/items |
+| `POST` | `/api/admin/login`      | Authenticate the configured admin      |
+| `GET`  | `/api/admin/orders`     | List orders (admin bearer token)       |
+
+Admin credentials are configured through environment variables. Order checkout
+prices products on the server and leaves payment pending because no payment
+provider is connected. See [the admin backend specification](./works/admin-backend.md)
+for configuration, request, and migration details.
 
 ### 4.1 List products
 

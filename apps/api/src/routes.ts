@@ -1,4 +1,5 @@
 import Router from "express";
+import { loginAdmin, requireAdmin } from "./admin-auth.js";
 import {
   createCategory,
   createProduct,
@@ -14,11 +15,20 @@ import {
   updateCategory,
   updateProduct,
 } from "./controller.js";
+import { getAdminInventory, updateProductStock } from "./inventory.js";
+import { createOrder, getAdminOrderById, getAdminOrders } from "./orders.js";
 import { corsMiddleware } from "./utils.js";
 
 const router = Router();
 
 router.use(corsMiddleware);
+
+router.post("/admin/login", loginAdmin);
+router.get("/admin/orders", requireAdmin, getAdminOrders);
+router.get("/admin/orders/:id", requireAdmin, getAdminOrderById);
+router.get("/admin/inventory", requireAdmin, getAdminInventory);
+router.patch("/admin/inventory/:id", requireAdmin, updateProductStock);
+router.post("/orders", createOrder);
 
 router.get("/products", getCrackersData);
 router.post("/product", createProduct);
