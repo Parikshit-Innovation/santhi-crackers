@@ -65,7 +65,7 @@
   font-family: var(--font-tamil), sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #fde047;
+  color: var(--color-mustard, #CDB462);
   letter-spacing: 0.01em;
   white-space: nowrap;
   line-height: 1.15;
@@ -75,13 +75,13 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(251, 191, 36, 0.18);
-  border: 1px solid rgba(253, 224, 71, 0.45);
-  color: #fef08a;
+  background: rgba(205, 180, 98, 0.2);
+  border: 1px solid var(--color-mustard, #CDB462);
+  color: var(--color-softivory, #F8EEBD);
   padding: 3px 9px;
   border-radius: 0;
   font-size: 11.5px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
   margin-left: 8px;
   white-space: nowrap;
@@ -90,10 +90,10 @@
 
 @keyframes diwaliBadgeGlow {
   0% {
-    box-shadow: 0 0 6px rgba(251, 191, 36, 0.2);
+    box-shadow: 0 0 6px rgba(205, 180, 98, 0.25);
   }
   100% {
-    box-shadow: 0 0 14px rgba(251, 191, 36, 0.55);
+    box-shadow: 0 0 14px rgba(205, 180, 98, 0.6);
   }
 }
 
@@ -110,7 +110,7 @@
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 500;
-  color: #e0e7ff;
+  color: var(--color-softivory, #F8EEBD);
   cursor: pointer;
   padding: 6px 14px;
   border-radius: 0;
@@ -121,13 +121,13 @@
 
 .store-nav-item:hover {
   color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(205, 180, 98, 0.2);
 }
 
 .store-nav-item.active {
-  color: #0433ff;
+  color: var(--color-garnet, #492201);
   font-weight: 700;
-  background-color: #fff8eb; /* Cream pill for active nav item */
+  background-color: var(--color-eggnog, #F9EDC5);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   border-radius: 0;
 }
@@ -150,31 +150,32 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #64748b;
+  color: var(--color-terracotta, #492201);
   pointer-events: none;
 }
 
 .store-search-input {
   width: 100%;
   padding: 9px 16px 9px 38px;
-  background-color: #fffdf7; /* Cream box input */
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  background-color: var(--color-softivory, #F8EEBD);
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
   font-size: 13.5px;
   font-family: var(--font-body);
-  color: #0f172a;
+  color: var(--color-espresso, #150A06);
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   box-sizing: border-box;
 }
 
 .store-search-input::placeholder {
-  color: #64748b;
+  color: var(--color-terracotta, #492201);
+  opacity: 0.8;
 }
 
 .store-search-input:focus {
-  border-color: #0433ff;
-  box-shadow: 0 0 0 3px rgba(255, 253, 247, 0.4);
+  border-color: var(--color-copper, #BF7F35);
+  box-shadow: 0 0 0 3px rgba(191, 127, 53, 0.3);
 }
 
 /* Language Switch - Cream Button */
@@ -185,9 +186,9 @@
   gap: 6px;
   padding: 7px 14px;
   border-radius: 0;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
-  background-color: #fff8eb; /* Cream button */
-  color: #0433ff;
+  border: 1.5px solid var(--color-copper, #BF7F35);
+  background-color: var(--color-eggnog, #F9EDC5);
+  color: var(--color-garnet, #492201);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -195,21 +196,22 @@
 }
 
 .store-lang-btn:hover {
-  background-color: #fef0ce;
+  background-color: var(--color-softivory, #F8EEBD);
+  border-color: var(--color-garnet, #492201);
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .store-lang-icon {
   flex-shrink: 0;
-  color: #0433ff;
+  color: var(--color-garnet, #492201);
 }
 
 .store-lang-badge {
   font-family: var(--font-tamil), var(--font-body), sans-serif;
   font-size: 12px;
   font-weight: 700;
-  color: #0433ff;
+  color: var(--color-garnet, #492201);
   letter-spacing: 0.02em;
   line-height: 1.2;
   white-space: nowrap;
@@ -221,9 +223,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff8eb; /* Cream button */
-  border: 1.5px solid var(--border-cream, #e2d5c3);
-  color: #0433ff;
+  background-color: var(--color-eggnog, #F9EDC5);
+  border: 1.5px solid var(--color-copper, #BF7F35);
+  color: var(--color-garnet, #492201);
   padding: 8px 14px;
   border-radius: 0;
   cursor: pointer;
@@ -233,7 +235,8 @@
 }
 
 .store-cart-btn:hover {
-  background-color: #fef0ce;
+  background-color: var(--color-softivory, #F8EEBD);
+  border-color: var(--color-garnet, #492201);
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
@@ -242,8 +245,8 @@
   position: absolute;
   top: -4px;
   right: -4px;
-  background-color: var(--alert-red, #ef4444);
-  color: #ffffff;
+  background-color: var(--color-terracotta, #492201);
+  color: var(--color-softivory, #F8EEBD);
   font-size: 11px;
   font-weight: 700;
   min-width: 18px;
@@ -254,7 +257,7 @@
   justify-content: center;
   padding: 0 4px;
   font-family: var(--font-body);
-  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5);
+  box-shadow: 0 2px 6px rgba(73, 34, 1, 0.5);
 }
 
 /* =========================================================
@@ -273,8 +276,8 @@
     padding: 12px 14px;
     width: 100%;
     max-width: 100vw;
-    background: var(--bg-gradient-blue-h, linear-gradient(90deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%));
-    border-bottom: 2px solid var(--border-cream, #e2d5c3);
+    background: var(--color-garnet, #492201);
+    border-bottom: 2px solid var(--color-mustard, #CDB462);
     box-sizing: border-box;
     overflow-x: hidden;
   }
@@ -303,8 +306,8 @@
     height: 32px;
     flex-shrink: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    background-color: #fffdf7;
-    border: 1.5px solid #fffdf7;
+    background-color: var(--color-softivory, #F8EEBD);
+    border: 1.5px solid var(--color-mustard, #CDB462);
   }
 
   .store-brand-text {
@@ -314,7 +317,7 @@
     text-overflow: ellipsis;
     min-width: 0;
     display: block;
-    color: #ffffff;
+    color: var(--color-softivory, #F8EEBD);
     font-weight: 700;
     line-height: 1.15;
   }
@@ -326,7 +329,7 @@
     text-overflow: ellipsis;
     min-width: 0;
     display: block;
-    color: #fde047;
+    color: var(--color-mustard, #CDB462);
     font-weight: 600;
     line-height: 1.15;
   }
@@ -349,32 +352,32 @@
   .store-lang-btn {
     padding: 5px 10px;
     gap: 4px;
-    background-color: #fff8eb; /* Cream button */
-    border: 1.5px solid var(--border-cream, #e2d5c3);
-    color: #0433ff;
+    background-color: var(--color-eggnog, #F9EDC5);
+    border: 1.5px solid var(--color-copper, #BF7F35);
+    color: var(--color-garnet, #492201);
   }
 
   .store-lang-icon {
     width: 16px;
     height: 16px;
-    color: #0433ff;
+    color: var(--color-garnet, #492201);
   }
 
   .store-lang-badge {
     font-size: 11px;
     padding: 1px 3px;
-    color: #0433ff;
+    color: var(--color-garnet, #492201);
     font-weight: 700;
   }
 
   .store-cart-btn {
     padding: 6px 10px;
-    background-color: #fff8eb; /* Cream button */
-    border: 1.5px solid var(--border-cream, #e2d5c3);
-    color: #0433ff;
+    background-color: var(--color-eggnog, #F9EDC5);
+    border: 1.5px solid var(--color-copper, #BF7F35);
+    color: var(--color-garnet, #492201);
   }
 
-  /* Fixed Bottom Nav Bar - Luxury Cream Box with Blue Accents */
+  /* Fixed Bottom Nav Bar - Crisp White Luxury with Golden Top Accent & Garnet Icons */
   .store-bottom-nav {
     display: flex;
     position: fixed;
@@ -383,14 +386,14 @@
     right: 0;
     width: 100%;
     max-width: 100vw;
-    height: 54px;
-    background-color: #fffdf7; /* Luxury Cream Box */
-    border-top: 2px solid var(--border-cream, #e2d5c3);
+    height: 56px;
+    background-color: #FFFFFF;
+    border-top: 2px solid var(--color-mustard, #CDB462);
     z-index: 1000;
     align-items: center;
     justify-content: space-around;
     padding-bottom: env(safe-area-inset-bottom, 0);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 -4px 20px rgba(205, 180, 98, 0.18), 0 -1px 6px rgba(73, 34, 1, 0.06);
     box-sizing: border-box;
     overflow-x: hidden;
   }
@@ -405,7 +408,7 @@
     background: transparent;
     border: none;
     border-radius: 0;
-    color: #64748b;
+    color: var(--color-terracotta, #492201);
     cursor: pointer;
     position: relative;
     transition: color 0.15s ease, background-color 0.15s ease;
@@ -426,7 +429,7 @@
   .store-bottom-label {
     font-family: var(--font-body);
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1;
     letter-spacing: 0.01em;
   }
@@ -437,12 +440,12 @@
   }
 
   .store-bottom-btn:active {
-    background-color: #f6efe1;
+    background-color: #FAFAFA;
   }
 
   .store-bottom-btn.active,
   .store-bottom-btn:hover {
-    color: var(--primary-blue, #0433ff);
+    color: var(--color-garnet, #492201);
   }
 
   /* Active line indicator on top of active icon button */
@@ -453,8 +456,8 @@
     left: 20%;
     right: 20%;
     height: 3px;
-    background-color: var(--primary-blue, #0433ff);
-    box-shadow: 0 2px 6px rgba(4, 51, 255, 0.4);
+    background-color: var(--color-garnet, #492201);
+    box-shadow: 0 2px 6px rgba(73, 34, 1, 0.4);
     border-radius: 0;
   }
 
@@ -469,8 +472,8 @@
     position: absolute;
     top: -5px;
     right: -10px;
-    background-color: var(--alert-red, #ef4444);
-    color: #ffffff;
+    background-color: var(--color-terracotta, #492201);
+    color: var(--color-softivory, #F8EEBD);
     font-size: 10px;
     font-weight: 700;
     min-width: 17px;
@@ -481,7 +484,7 @@
     justify-content: center;
     padding: 0 4px;
     font-family: var(--font-body);
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.6);
+    box-shadow: 0 2px 8px rgba(73, 34, 1, 0.5);
   }
 }
 

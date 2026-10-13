@@ -171,16 +171,17 @@ export const createProduct = async (
     const finalContent = finalContentEng || finalContentTam || "";
 
     let resolvedCategoryId = categoryId;
+    const targetSlug = categorySlug || (request.body as any).categorySlugEng;
 
-    if (categorySlug) {
+    if (targetSlug) {
       const category = await db.category.findUnique({
-        where: { slug: categorySlug },
+        where: { slug: targetSlug },
         select: { id: true },
       });
 
       if (!category) {
         response.status(400).json({
-          error: `No category exists with slug "${categorySlug}".`,
+          error: `No category exists with slug "${targetSlug}".`,
         });
         return;
       }

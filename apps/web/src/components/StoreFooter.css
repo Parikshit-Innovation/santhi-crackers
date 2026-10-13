@@ -1,12 +1,12 @@
-/* StoreFooter Component Styling - Luxury Cream Box with Blue Accents */
+/* StoreFooter Component Styling - Crisp White Canvas with Golden & Brown Accents */
 
 .store-footer {
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: var(--bg-box-cream, #fffdf7);
-  border-top: 3px solid var(--primary-blue, #0036f5);
-  color: #0f172a;
+  background-color: #FFFFFF;
+  border-top: 3px solid var(--color-mustard, #CDB462);
+  color: var(--color-espresso, #150A06);
   font-family: var(--font-body);
   box-sizing: border-box;
 }
@@ -50,9 +50,9 @@
   border-radius: 0;
   object-fit: contain;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  background-color: #fffdf7;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-mustard, #CDB462);
 }
 
 .store-footer-brand-titles {
@@ -66,7 +66,7 @@
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #0f172a;
+  color: var(--color-garnet, #492201);
   margin: 0;
   line-height: 1.15;
 }
@@ -75,7 +75,7 @@
   font-family: var(--font-tamil), sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #b45309;
+  color: var(--color-terracotta, #492201);
   line-height: 1.15;
 }
 
@@ -83,7 +83,8 @@
   font-family: var(--font-body);
   font-size: 13.5px;
   line-height: 1.6;
-  color: #475569;
+  color: var(--color-espresso, #150A06);
+  opacity: 0.85;
   margin: 0 0 18px 0;
   max-width: 380px;
 }
@@ -97,9 +98,9 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--primary-blue, #0036f5);
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  color: var(--color-garnet, #492201);
+  background-color: #FAFAFA;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   padding: 6px 12px;
   border-radius: 0;
   width: fit-content;
@@ -107,9 +108,9 @@
 }
 
 .store-footer-badge svg {
-  color: #d97706;
-  fill: #d97706;
-  stroke: #b45309;
+  color: var(--color-copper, #BF7F35);
+  fill: var(--color-copper, #BF7F35);
+  stroke: var(--color-terracotta, #492201);
 }
 
 /* Titles & Links */
@@ -119,9 +120,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #0f172a;
+  color: var(--color-garnet, #492201);
   margin: 0 0 20px 0;
-  border-bottom: 2.5px solid var(--primary-blue, #0036f5);
+  border-bottom: 2.5px solid var(--color-copper, #BF7F35);
   width: fit-content;
   padding-bottom: 4px;
 }
@@ -141,7 +142,7 @@
   padding: 0;
   margin: 0;
   font-size: 13.5px;
-  color: #475569;
+  color: var(--color-espresso, #150A06);
   cursor: pointer;
   text-align: left;
   font-family: inherit;
@@ -150,7 +151,7 @@
 }
 
 .store-footer-links button:hover {
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-garnet, #492201);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -160,7 +161,8 @@
   font-style: normal;
   font-size: 13.5px;
   line-height: 1.55;
-  color: #475569;
+  color: var(--color-espresso, #150A06);
+  opacity: 0.85;
   margin: 0 0 18px 0;
 }
 
@@ -183,9 +185,9 @@
   padding: 7px 12px;
   font-size: 12.5px;
   font-weight: 700;
-  color: var(--primary-blue, #0036f5);
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  color: var(--color-garnet, #492201);
+  background-color: var(--color-softivory, #F8EEBD);
+  border: 1.5px solid var(--color-copper, #BF7F35);
   border-radius: 0;
   text-decoration: none;
   transition: all 0.15s ease;
@@ -193,8 +195,8 @@
 }
 
 .store-footer-phone-pill:hover {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0036f5);
+  background-color: var(--color-eggnog, #F9EDC5);
+  border-color: var(--color-garnet, #492201);
 }
 
 .store-footer-whatsapp-btn {
@@ -228,9 +230,9 @@
   padding: 9px 16px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--primary-blue, #0036f5);
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #dfcfb5);
+  color: var(--color-garnet, #492201);
+  background-color: var(--color-softivory, #F8EEBD);
+  border: 1.5px solid var(--color-copper, #BF7F35);
   border-radius: 0;
   text-decoration: none;
   width: fit-content;
@@ -240,8 +242,8 @@
 
 .store-footer-email-btn:hover,
 .store-footer-email-link:hover {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0036f5);
+  background-color: var(--color-eggnog, #F9EDC5);
+  border-color: var(--color-garnet, #492201);
 }
 
 /* Map Column in StoreFooter */
@@ -262,8 +264,8 @@
   height: 175px;
   border-radius: 0;
   overflow: hidden;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
-  background-color: #f5ebd7;
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  background-color: #FAFAFA;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
@@ -278,10 +280,10 @@
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  background-color: var(--color-garnet, #492201);
+  border: 1.5px solid var(--color-copper, #BF7F35);
   border-radius: 0;
-  color: var(--primary-blue, #0036f5);
+  color: #FFFFFF;
   font-size: 12.5px;
   font-weight: 700;
   text-decoration: none;
@@ -291,15 +293,15 @@
 }
 
 .store-footer-map-link:hover {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0036f5);
+  background-color: var(--color-terracotta, #492201);
+  border-color: var(--color-mustard, #CDB462);
 }
 
-/* 3. Bottom Legal Bar - Warm Cream */
+/* 3. Bottom Legal Bar - Crisp Light */
 .store-footer-bottom {
-  border-top: 1.5px solid var(--border-cream, #e2d5c3);
+  border-top: 1.5px solid var(--color-mustard, #CDB462);
   padding: 20px 24px;
-  background-color: #faf4e8;
+  background-color: #FAFAF8;
 }
 
 .store-footer-bottom-container {
@@ -310,16 +312,17 @@
   justify-content: space-between;
   gap: 16px;
   font-size: 13px;
-  color: #64748b;
+  color: var(--color-espresso, #150A06);
+  opacity: 0.85;
 }
 
 .store-footer-copy {
-  color: #64748b;
+  color: var(--color-espresso, #150A06);
 }
 
 .store-footer-notice {
   font-weight: 700;
-  color: var(--alert-red, #dc2626);
+  color: var(--color-garnet, #492201);
 }
 
 .store-footer-back-to-top {
@@ -329,7 +332,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-garnet, #492201);
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
@@ -339,6 +342,7 @@
 
 .store-footer-back-to-top:hover {
   text-decoration: underline;
+  color: var(--color-terracotta, #492201);
 }
 
 /* Mobile & Tablet Responsiveness */

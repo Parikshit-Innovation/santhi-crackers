@@ -114,8 +114,9 @@ export default function App() {
     <div
       style={{
         minHeight: "100vh",
-        background: "var(--bg-gradient-blue, linear-gradient(135deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%)) fixed",
-        backgroundColor: "#0e1a47",
+        background: "#FFFFFF",
+        backgroundColor: "#FFFFFF",
+        color: "var(--text-main, #150A06)",
         fontFamily: "var(--font-geist, 'Geist', 'Geist Sans', 'Noto Sans Tamil', sans-serif)",
         fontWeight: 400,
         width: "100%",
