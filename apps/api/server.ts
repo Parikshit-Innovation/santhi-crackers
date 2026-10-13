@@ -3,7 +3,10 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import apiRoute from "./src/routes.js";
 
-config({ path: "../../.env" });
+import path from "node:path";
+
+config({ path: path.resolve(import.meta.dirname, "../../.env") });
+config();
 
 const app = express();
 const port = Number(process.env.PORT ?? 3007);

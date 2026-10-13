@@ -148,7 +148,7 @@
 /* Mobile Adjustments */
 @media (max-width: 640px) {
   .floating-whatsapp-container {
-    bottom: 16px;
+    bottom: 66px;
     right: 14px;
     gap: 7px;
   }
