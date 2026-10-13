@@ -1,14 +1,14 @@
-/* Contact Page Styling - Blue Background & Light Yellow Boxes/Buttons */
+/* Contact Page Styling - Crisp White Canvas & Highlighted Golden Containers */
 
 .contact-page-wrapper {
   min-height: calc(100vh - 72px);
-  background-color: var(--bg-canvas, #0e1a47);
+  background-color: #FFFFFF;
   padding: 40px 24px 80px 24px;
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
   font-family: var(--font-body);
-  color: #ffffff;
+  color: var(--color-espresso, #150A06);
 }
 
 .contact-page-container {
@@ -16,7 +16,6 @@
   max-width: 900px;
   margin: 0 auto;
 }
-
 
 .contact-breadcrumb {
   display: flex;
@@ -31,7 +30,7 @@
   border: none;
   padding: 0;
   margin: 0;
-  color: #e0e7ff;
+  color: var(--color-terracotta, #492201);
   font-size: 14px;
   cursor: pointer;
   transition: color 0.15s ease;
@@ -40,18 +39,18 @@
 }
 
 .contact-breadcrumb-link:hover {
-  color: #ffffff;
+  color: var(--color-garnet, #492201);
   text-decoration: underline;
 }
 
 .contact-breadcrumb-separator {
-  color: #bfdbfe;
+  color: var(--color-copper, #BF7F35);
   user-select: none;
   font-size: 13px;
 }
 
 .contact-breadcrumb-current {
-  color: #ffffff;
+  color: var(--color-garnet, #492201);
   font-weight: 700;
   font-size: 14px;
 }
@@ -63,7 +62,7 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--color-garnet, #492201);
   margin: 0 0 16px 0;
   line-height: 1.15;
 }
@@ -72,22 +71,22 @@
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.6;
-  color: #e0e7ff;
+  color: var(--color-espresso, #150A06);
   margin: 0 0 36px 0;
   max-width: 720px;
 }
 
-/* Form - Festive Red Container with Cream Input Boxes */
+/* Form - Highlighted White Container with Golden Borders */
 .contact-form {
   display: flex;
   flex-direction: column;
   gap: 24px;
   margin-bottom: 56px;
-  background-color: #dc2626; /* Festive Red Container */
-  border: 2px solid #b91c1c;
-  border-radius: 20px;
+  background-color: #A95413;
+  border: 2px solid var(--color-mustard, #CDB462);
+  border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 30px rgba(169, 84, 19, 0.25), 0 2px 10px rgba(73, 34, 1, 0.12);
   box-sizing: border-box;
 }
 
@@ -100,7 +99,7 @@
 .contact-label {
   font-size: 14.5px;
   font-weight: 700;
-  color: #ffffff; /* White label on red */
+  color: #FFFFFF;
   letter-spacing: -0.01em;
 }
 
@@ -108,36 +107,38 @@
   width: 100%;
   padding: 13px 16px;
   font-size: 15px;
-  color: #0f172a;
-  background-color: #fffdf7; /* Luxury Cream Box */
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  color: var(--color-espresso, #150A06);
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 10px;
   outline: none;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
   box-sizing: border-box;
   font-family: inherit;
 }
 
 .contact-input::placeholder {
-  color: #64748b;
+  color: #8C7464;
+  opacity: 0.8;
   font-size: 15px;
 }
 
 .contact-input:focus {
-  border-color: #fff8eb;
-  box-shadow: 0 0 0 3px rgba(255, 253, 247, 0.4);
+  background-color: #FFFFFF;
+  border-color: var(--color-copper, #BF7F35);
+  box-shadow: 0 0 0 3px rgba(205, 180, 98, 0.3);
 }
 
 .contact-textarea {
   width: 100%;
   padding: 14px 16px;
   font-size: 15px;
-  color: #0f172a;
-  background-color: #fffdf7; /* Luxury Cream Box */
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  color: var(--color-espresso, #150A06);
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 12px;
   outline: none;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
   box-sizing: border-box;
   resize: vertical;
   min-height: 190px;
@@ -146,16 +147,18 @@
 }
 
 .contact-textarea::placeholder {
-  color: #64748b;
+  color: #8C7464;
+  opacity: 0.8;
   font-size: 15px;
 }
 
 .contact-textarea:focus {
-  border-color: #fff8eb;
-  box-shadow: 0 0 0 3px rgba(255, 253, 247, 0.4);
+  background-color: #FFFFFF;
+  border-color: var(--color-copper, #BF7F35);
+  box-shadow: 0 0 0 3px rgba(205, 180, 98, 0.3);
 }
 
-/* Action button - Cream Button */
+/* Action button - Royal Garnet Button with Golden Border */
 .contact-action-wrap {
   display: flex;
   align-items: center;
@@ -166,28 +169,28 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background-color: #fff8eb; /* Cream button */
-  color: var(--primary-blue, #0036f5);
-  border: 1.5px solid var(--border-cream, #dfcfb5);
+  background-color: var(--color-garnet, #492201);
+  color: #FFFFFF;
+  border: 1.5px solid var(--color-copper, #BF7F35);
   border-radius: 0;
-  padding: 13px 30px;
-  font-size: 14.5px;
+  padding: 14px 32px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: inherit;
-  box-shadow: 0 4px 14px rgba(4, 51, 255, 0.15);
+  box-shadow: 0 4px 14px rgba(73, 34, 1, 0.3);
 }
 
 .contact-submit-btn:hover {
-  background-color: #fef0ce;
-  box-shadow: 0 6px 18px rgba(4, 51, 255, 0.25);
+  background-color: var(--color-terracotta, #492201);
+  box-shadow: 0 6px 20px rgba(73, 34, 1, 0.45);
   transform: translateY(-1px);
 }
 
 .contact-submit-btn:active {
   transform: translateY(0);
-  background-color: #fae4b5;
+  background-color: var(--color-garnet, #492201);
 }
 
 .contact-submit-btn:disabled {
@@ -198,7 +201,7 @@
 
 .contact-arrow-icon {
   transition: transform 0.18s ease;
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-garnet, #492201);
 }
 
 .contact-submit-btn:hover .contact-arrow-icon {
@@ -245,14 +248,14 @@
   }
 }
 
-/* Store Information Section - Festive Red Container */
+/* Store Information Section - Highlighted Copper/Rust Container (#A95413) */
 .contact-details-section {
-  background-color: #dc2626; /* Festive Red Container */
-  border: 2px solid #b91c1c;
-  border-radius: 20px;
+  background-color: #A95413;
+  border: 2px solid var(--color-mustard, #CDB462);
+  border-radius: 16px;
   padding: 36px 32px 40px;
   margin-bottom: 48px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 30px rgba(169, 84, 19, 0.25), 0 2px 10px rgba(73, 34, 1, 0.12);
   box-sizing: border-box;
 }
 
@@ -266,9 +269,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #b91c1c;
-  background-color: #fff8eb;
-  border: 1px solid #fecaca;
+  color: var(--color-garnet, #492201);
+  background-color: var(--color-eggnog, #F9EDC5);
+  border: 1px solid var(--color-copper, #BF7F35);
   padding: 4px 12px;
   border-radius: 0;
   margin-bottom: 10px;
@@ -278,13 +281,14 @@
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: #FFFFFF;
   margin: 0 0 8px 0;
 }
 
 .contact-store-desc {
   font-size: 15px;
-  color: #fef0ce;
+  color: #FFFDF5;
+  opacity: 0.95;
   margin: 0;
   line-height: 1.5;
 }
@@ -299,13 +303,13 @@
 }
 
 .contact-info-card {
-  background-color: var(--bg-box-cream, #fffdf7);
-  border: 1.5px solid var(--border-cream, #e2d5c3);
-  border-radius: 18px;
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  border-radius: 14px;
   padding: 24px 22px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 4px 16px rgba(205, 180, 98, 0.12);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   box-sizing: border-box;
   height: 100%;
@@ -313,8 +317,8 @@
 
 .contact-info-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
-  border-color: #dfcfb5;
+  box-shadow: 0 8px 24px rgba(205, 180, 98, 0.22);
+  border-color: var(--color-copper, #BF7F35);
 }
 
 /* Card Header */
@@ -329,20 +333,20 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background-color: #f5ebd7;
-  border: 1.5px solid var(--border-cream, #dfcfb5);
+  background-color: var(--color-eggnog, #F9EDC5);
+  border: 1.5px solid var(--color-copper, #BF7F35);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-garnet, #492201);
   flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .contact-icon-phone {
-  background-color: #fef3c7;
-  border-color: #fde68a;
-  color: #b45309;
+  background-color: var(--color-eggnog, #F9EDC5);
+  border-color: var(--color-mustard, #CDB462);
+  color: var(--color-garnet, #492201);
 }
 
 .contact-card-title-group {
@@ -353,7 +357,7 @@
 .contact-info-title {
   font-size: 17px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-garnet, #492201);
   margin: 0 0 4px 0;
   line-height: 1.3;
 }
@@ -361,7 +365,8 @@
 .contact-info-sub {
   font-size: 13px;
   line-height: 1.45;
-  color: #64748b;
+  color: var(--color-espresso, #150A06);
+  opacity: 0.85;
   margin: 0;
 }
 
@@ -375,9 +380,9 @@
 }
 
 .contact-branch-box {
-  background-color: #faf6ed;
-  border: 1.5px solid #ebdcc6;
-  border-radius: 12px;
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  border-radius: 10px;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
@@ -386,8 +391,8 @@
 }
 
 .contact-branch-box:hover {
-  background-color: #f6efe1;
-  border-color: #dfcaa8;
+  background-color: #FFFDF7;
+  border-color: var(--color-copper, #BF7F35);
 }
 
 .contact-branch-badge {
@@ -398,20 +403,20 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #b91c1c;
-  background-color: #fee2e2;
-  border: 1px solid #fecaca;
+  color: #FFFFFF;
+  background-color: var(--color-garnet, #492201);
+  border: 1px solid var(--color-copper, #BF7F35);
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: 4px;
   line-height: 1.3;
 }
 
 .contact-branch-text {
   font-size: 13.5px;
   line-height: 1.5;
-  color: #1e293b;
+  color: var(--color-espresso, #150A06);
   margin: 0;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .contact-map-link {
@@ -421,26 +426,26 @@
   gap: 8px;
   font-size: 13.5px;
   font-weight: 700;
-  color: var(--primary-blue, #0036f5);
+  color: #FFFFFF;
   text-decoration: none;
   padding: 11px 18px;
   border-radius: 0;
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #dfcfb5);
+  background-color: var(--color-garnet, #492201);
+  border: 1.5px solid var(--color-copper, #BF7F35);
   width: 100%;
   box-sizing: border-box;
   margin-top: auto;
   transition: all 0.18s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(73, 34, 1, 0.25);
 }
 
 .contact-map-link:hover,
 .contact-map-link:focus,
 .contact-map-link:active {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0036f5);
+  background-color: var(--color-terracotta, #492201);
+  border-color: var(--color-mustard, #CDB462);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(4, 51, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(73, 34, 1, 0.35);
 }
 
 /* Card 2: Direct Contact (WhatsApp + Phone 2x2 + Email) */
@@ -502,10 +507,11 @@
   transform: translateX(3px);
 }
 
-/* 2x2 Phone Numbers Grid */
+/* Phone Numbers List - Equal size, stacked one after the other, compact and centered */
 .contact-phone-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 8px;
   width: 100%;
   margin-bottom: 12px;
@@ -515,16 +521,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 9px 10px;
-  font-size: 12.5px;
+  gap: 8px;
+  width: 100%;
+  max-width: 260px;
+  padding: 9px 16px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--primary-blue, #0036f5);
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #dfcfb5);
+  color: var(--color-garnet, #492201);
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
   text-decoration: none;
-  width: 100%;
   box-sizing: border-box;
   transition: all 0.15s ease;
   white-space: nowrap;
@@ -533,14 +540,14 @@
 .contact-phone-pill:hover,
 .contact-phone-pill:active,
 .contact-phone-pill:focus {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0036f5);
+  background-color: var(--color-eggnog, #F9EDC5);
+  border-color: var(--color-copper, #BF7F35);
   transform: translateY(-1px);
 }
 
 .contact-phone-primary {
-  background-color: #fffbeb;
-  border-color: #f59e0b;
+  background-color: #FFFFFF;
+  border-color: var(--color-mustard, #CDB462);
 }
 
 /* Email Badge */
@@ -552,9 +559,9 @@
   padding: 11px 18px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--primary-blue, #0036f5);
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #dfcfb5);
+  color: var(--color-garnet, #492201);
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
   text-decoration: none;
   width: 100%;
@@ -568,15 +575,15 @@
 .contact-email-badge:hover,
 .contact-email-badge:active,
 .contact-email-badge:focus {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0036f5);
+  background-color: var(--color-eggnog, #F9EDC5);
+  border-color: var(--color-copper, #BF7F35);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(4, 51, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(73, 34, 1, 0.15);
 }
 
 .contact-email-icon {
   flex-shrink: 0;
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-copper, #BF7F35);
 }
 
 .contact-email-text {
@@ -589,7 +596,7 @@
 /* FAQ Note */
 .contact-faq-note {
   font-size: 14px;
-  color: #e0e7ff;
+  color: var(--color-espresso, #150A06);
   margin-top: 16px;
   line-height: 1.5;
 }
@@ -599,7 +606,7 @@
   border: none;
   padding: 0;
   margin: 0;
-  color: #fde047;
+  color: var(--color-garnet, #492201);
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
@@ -609,25 +616,25 @@
 }
 
 .contact-faq-link:hover {
-  color: #ffffff;
+  color: var(--color-copper, #BF7F35);
 }
 
-/* Expandable FAQ accordion - Cream Box */
+/* Expandable FAQ accordion - White Box with Golden Border */
 .contact-faq-accordion {
   margin-top: 20px;
   padding: 24px;
-  background-color: var(--bg-box-cream, #fffdf7);
-  border: 2px solid var(--border-cream, #e2d5c3);
-  border-radius: 16px;
+  background-color: #FAFAFA;
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 16px rgba(205, 180, 98, 0.12);
   animation: fadeIn 0.2s ease-out;
 }
 
 .contact-faq-item {
-  border-bottom: 1px solid var(--border-cream-light, #f1e9dc);
+  border-bottom: 1px solid rgba(205, 180, 98, 0.4);
   padding-bottom: 12px;
 }
 
@@ -639,13 +646,13 @@
 .contact-faq-q {
   font-size: 14.5px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-garnet, #492201);
   margin: 0 0 6px 0;
 }
 
 .contact-faq-a {
   font-size: 13.5px;
-  color: #475569;
+  color: var(--color-espresso, #150A06);
   margin: 0;
   line-height: 1.55;
 }
@@ -755,13 +762,14 @@
   }
 
   .contact-phone-grid {
-    gap: 6px;
+    gap: 7px;
   }
 
   .contact-phone-pill {
-    padding: 8px 6px;
-    font-size: 11.5px;
-    gap: 4px;
+    max-width: 250px;
+    padding: 8px 14px;
+    font-size: 12px;
+    gap: 6px;
   }
 
   .contact-email-badge {
@@ -771,12 +779,9 @@
 }
 
 @media (max-width: 380px) {
-  .contact-phone-grid {
-    grid-template-columns: 1fr;
-  }
-
   .contact-phone-pill {
-    font-size: 13px;
-    padding: 9px 12px;
+    max-width: 240px;
+    font-size: 11.5px;
+    padding: 8px 10px;
   }
 }

@@ -5,9 +5,9 @@
 
 .combo-table-wrapper {
   width: 100%;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   margin: 0;
-  padding: 0 0 24px 0;
+  padding: 0 0 32px 0;
   box-sizing: border-box;
   font-family: inherit;
 }
@@ -15,7 +15,7 @@
 .combo-table-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 8px 6px;
+  padding: 10px 8px;
   box-sizing: border-box;
 }
 
@@ -26,9 +26,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
-  background-color: #ffffff;
+  gap: 10px;
+  margin-bottom: 12px;
+  background-color: #FFFFFF;
   box-sizing: border-box;
 }
 
@@ -41,30 +41,34 @@
 
 .combo-search-input {
   width: 100%;
-  height: 32px;
-  padding: 0 28px 0 10px;
-  border: 1px solid #c8c8c8;
+  height: 34px;
+  padding: 0 28px 0 12px;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
-  background-color: #ffffff;
-  color: #111827;
-  font-size: 11.5px;
+  background-color: #FAFAFA;
+  color: var(--color-espresso, #150A06);
+  font-size: 12px;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .combo-search-input::placeholder {
-  color: #6b7280;
-  font-size: 11.5px;
+  color: #8C7464;
+  opacity: 0.85;
+  font-size: 12px;
 }
 
 .combo-search-input:focus {
-  border-color: #00a2e8;
+  background-color: #FFFFFF;
+  border-color: var(--color-copper, #BF7F35);
+  box-shadow: 0 0 0 2px rgba(205, 180, 98, 0.25);
 }
 
 .combo-search-icon {
   position: absolute;
-  right: 8px;
+  right: 10px;
+  color: var(--color-copper, #BF7F35);
   pointer-events: none;
 }
 
@@ -73,38 +77,39 @@
 }
 
 .combo-filters-btn {
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid #c8c8c8;
+  height: 34px;
+  padding: 0 14px;
+  border: 1.5px solid var(--color-copper, #BF7F35);
   border-radius: 0;
-  background-color: #f8f9fa;
-  color: #374151;
-  font-size: 11.5px;
-  font-weight: 500;
+  background-color: #FFFFFF;
+  color: var(--color-garnet, #492201);
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   outline: none;
   white-space: nowrap;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(73, 34, 1, 0.08);
 }
 
 .combo-filters-btn:hover,
 .combo-filters-btn.active {
-  background-color: #f1f5f9;
-  border-color: #94a3b8;
+  background-color: var(--color-eggnog, #F9EDC5);
+  border-color: var(--color-garnet, #492201);
 }
 
 .combo-filters-arrow {
   font-size: 11px;
-  color: #6b7280;
+  color: var(--color-copper, #BF7F35);
 }
 
 .combo-filters-active-dot {
   width: 6px;
   height: 6px;
-  background-color: #f97316;
+  background-color: var(--color-copper, #BF7F35);
   border-radius: 0;
   display: inline-block;
 }
@@ -114,11 +119,11 @@
   top: calc(100% + 4px);
   right: 0;
   width: 220px;
-  background-color: #ffffff;
-  border: 1px solid #d1d5db;
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  padding: 10px;
+  box-shadow: 0 10px 28px rgba(205, 180, 98, 0.22), 0 4px 12px rgba(73, 34, 1, 0.1);
+  padding: 12px;
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -132,41 +137,49 @@
 }
 
 .combo-filter-label {
-  font-size: 10.5px;
-  font-weight: 600;
-  color: #4b5563;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-garnet, #492201);
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .combo-filter-select {
   width: 100%;
-  padding: 5px 8px;
-  font-size: 11.5px;
-  border: 1px solid #d1d5db;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
-  color: #111827;
+  color: var(--color-espresso, #150A06);
   outline: none;
-  background-color: #f9fafb;
+  background-color: #FAFAFA;
 }
 
 .combo-filter-clear-btn {
   padding: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #ef4444;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--color-garnet, #492201);
   background: transparent;
-  border: 1px dashed #fca5a5;
+  border: 1.5px dashed var(--color-copper, #BF7F35);
   border-radius: 0;
   cursor: pointer;
   text-align: center;
+  transition: all 0.15s ease;
+}
+
+.combo-filter-clear-btn:hover {
+  background-color: var(--color-eggnog, #F9EDC5);
 }
 
 /* ---------------------------------------------------------
-   Table Card & Container
+   Table Card & Highlighted Golden Container
    --------------------------------------------------------- */
 .combo-table-card {
   width: 100%;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
+  border: 2px solid var(--color-mustard, #CDB462);
+  box-shadow: 0 10px 30px rgba(205, 180, 98, 0.22), 0 2px 10px rgba(73, 34, 1, 0.06);
   box-sizing: border-box;
 }
 
@@ -177,35 +190,38 @@
 }
 
 /* ---------------------------------------------------------
-   Table Layout & Headers
+   Table Layout & Headers - Deep Royal Garnet with Gold Accents
    --------------------------------------------------------- */
 .combo-grid-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   box-sizing: border-box;
 }
 
-/* Header Cells */
+/* Header Cells - Royal Garnet with Golden Frame and Crisp White Text */
 .combo-grid-table th {
-  background-color: #faebe0; /* Light warm cream/peach from screenshot */
-  color: #1f2937;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 5px 2px;
+  background-color: var(--color-garnet, #492201);
+  color: #FFFFFF;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 7px 3px;
   text-align: center;
   vertical-align: middle;
-  border: 1px solid #d1d5db;
+  border: 1px solid rgba(205, 180, 98, 0.35);
+  border-bottom: 3px solid var(--color-mustard, #CDB462); /* Rich Golden Accent Border */
   line-height: 1.15;
   box-sizing: border-box;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .th-actual-line {
   display: block;
 }
 
-/* Column Widths (Desktop / Tablet) - 7 Columns (Code removed) */
+/* Column Widths (Desktop / Tablet) - 7 Columns */
 .th-img, .td-img {
   width: 44px;
   text-align: center;
@@ -250,42 +266,49 @@
 }
 
 /* ---------------------------------------------------------
-   Orange Category Section Row (Full Width Banner)
+   Terracotta Category Section Row (Festive Highlight Banner)
    --------------------------------------------------------- */
 .combo-cat-row {
-  background-color: #f97316;
+  background-color: var(--color-terracotta, #492201);
 }
 
 .combo-cat-cell {
-  background-color: #f97316 !important; /* Solid orange */
-  color: #000000 !important; /* Black text matching screenshot */
-  font-size: 11.5px;
-  font-weight: 700;
+  background-color: var(--color-terracotta, #492201) !important;
+  color: #FFFFFF !important;
+  font-size: 12px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
   text-align: center;
-  padding: 6px 8px;
-  border: 1px solid #d1d5db !important;
+  padding: 7px 8px;
+  border-top: 2px solid var(--color-mustard, #CDB462) !important;
+  border-bottom: 2px solid var(--color-mustard, #CDB462) !important;
+  border-left: 1px solid var(--color-copper, #BF7F35) !important;
+  border-right: 1px solid var(--color-copper, #BF7F35) !important;
   line-height: 1.25;
 }
 
 /* ---------------------------------------------------------
-   Product Rows & Cells
+   Product Rows & Cells - Crisp White with Faint Cream Zebra
    --------------------------------------------------------- */
 .combo-data-row {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   transition: background-color 0.12s ease;
 }
 
+.combo-data-row:nth-child(even) {
+  background-color: #FDFBF7;
+}
+
 .combo-data-row:hover {
-  background-color: #fafafa;
+  background-color: rgba(205, 180, 98, 0.12); /* Subtle Gold hover */
 }
 
 .combo-grid-table td {
-  border: 1px solid #d1d5db;
-  padding: 3px 2px;
+  border: 1px solid #EAE0C8;
+  padding: 4px 2px;
   vertical-align: middle;
-  background-color: #ffffff;
+  background-color: transparent;
   box-sizing: border-box;
 }
 
@@ -294,14 +317,14 @@
   width: 32px;
   height: 32px;
   margin: 0 auto;
-  border: 1px solid #e5e7eb;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background-color: #fafafa;
+  background-color: #ffffff;
 }
 
 .combo-img-thumbnail img {
@@ -314,8 +337,8 @@
 /* Code */
 .combo-cell-code {
   font-size: 10.5px;
-  color: #374151;
-  font-weight: 400;
+  color: var(--color-terracotta, #492201);
+  font-weight: 700;
   display: block;
   text-align: center;
   word-break: break-word;
@@ -323,9 +346,9 @@
 
 /* Name */
 .combo-cell-name {
-  font-size: 11px;
-  color: #111827;
-  font-weight: 500;
+  font-size: 11.5px;
+  color: var(--color-espresso, #150A06);
+  font-weight: 700;
   line-height: 1.25;
   display: block;
   text-align: center;
@@ -335,7 +358,9 @@
 /* Content */
 .combo-cell-content {
   font-size: 10px;
-  color: #4b5563;
+  color: var(--color-espresso, #150A06);
+  font-weight: 600;
+  opacity: 0.85;
   display: block;
   text-align: center;
 }
@@ -343,18 +368,19 @@
 /* Actual Price (Strikethrough) */
 .combo-cell-actual {
   font-size: 10.5px;
-  color: #4b5563;
+  color: var(--color-terracotta, #492201);
+  opacity: 0.8;
   text-decoration: line-through;
   white-space: nowrap;
   display: block;
   text-align: center;
 }
 
-/* Discounted Price */
+/* Discounted Price (Garnet) */
 .combo-cell-price {
-  font-size: 11px;
-  font-weight: 700;
-  color: #111827;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--color-garnet, #492201);
   white-space: nowrap;
   display: block;
   text-align: center;
@@ -365,22 +391,24 @@
   width: 100%;
   max-width: 48px;
   height: 25px;
-  border: 1px solid #c8c8c8;
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
-  background-color: #ffffff;
-  color: #111827;
+  background-color: #FFFFFF;
+  color: var(--color-espresso, #150A06);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   box-sizing: border-box;
   padding: 0 2px;
   outline: none;
   margin: 0 auto;
   display: block;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .combo-input-qty:focus {
-  border-color: #f97316;
+  border-color: var(--color-copper, #BF7F35);
+  box-shadow: 0 0 0 2px rgba(205, 180, 98, 0.3);
 }
 
 .combo-input-qty::-webkit-outer-spin-button,
@@ -397,12 +425,12 @@
   width: 100%;
   max-width: 48px;
   height: 25px;
-  background-color: #f3f4f6; /* Gray box matching screenshot */
-  border: 1px solid #d4d4d4;
+  background-color: var(--color-eggnog, #F9EDC5);
+  border: 1.5px solid var(--color-copper, #BF7F35);
   border-radius: 0;
-  color: #111827;
-  font-size: 10.5px;
-  font-weight: 600;
+  color: var(--color-garnet, #492201);
+  font-size: 11px;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -474,19 +502,19 @@
 
 .combo-lightbox-info {
   padding: 14px 18px;
-  background-color: #ffffff;
+  background-color: var(--color-softivory, #F8EEBD);
 }
 
 .combo-lightbox-info h3 {
   font-size: 16px;
   font-weight: 700;
   margin: 0 0 4px;
-  color: #0f172a;
+  color: var(--color-espresso, #150A06);
 }
 
 .combo-lightbox-info p {
   font-size: 12.5px;
-  color: #4b5563;
+  color: var(--color-terracotta, #492201);
   margin: 0;
 }
 
@@ -498,15 +526,15 @@
 .combo-empty-search-box {
   text-align: center;
   padding: 36px 16px;
-  background-color: #ffffff;
-  color: #64748b;
+  background-color: var(--color-softivory, #F8EEBD);
+  color: var(--color-terracotta, #492201);
 }
 
 .combo-loading-spinner {
   width: 28px;
   height: 28px;
-  border: 3px solid #e2e8f0;
-  border-top-color: #f97316;
+  border: 3px solid var(--color-eggnog, #F9EDC5);
+  border-top-color: var(--color-copper, #BF7F35);
   border-radius: 50%;
   animation: comboSpin 0.7s linear infinite;
   margin: 0 auto 12px;
@@ -523,13 +551,13 @@
 .combo-empty-search-title {
   font-size: 13px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-espresso, #150A06);
   margin: 0 0 6px;
 }
 
 .combo-empty-bucket-desc {
   font-size: 11.5px;
-  color: #64748b;
+  color: var(--color-terracotta, #492201);
   margin: 0 0 14px;
 }
 
@@ -538,8 +566,8 @@
   padding: 6px 14px;
   font-size: 11.5px;
   font-weight: 600;
-  color: #ffffff;
-  background-color: #f97316;
+  color: var(--color-softivory, #F8EEBD);
+  background-color: var(--color-garnet, #492201);
   border: none;
   border-radius: 0;
   cursor: pointer;

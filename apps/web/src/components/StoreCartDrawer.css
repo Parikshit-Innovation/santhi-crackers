@@ -21,7 +21,7 @@
   pointer-events: auto;
 }
 
-/* Drawer panel - Luxury Cream Box sliding from right to left */
+/* Drawer panel - Crisp White Luxury sliding from right to left */
 .store-drawer-panel {
   position: fixed;
   top: 0;
@@ -29,10 +29,10 @@
   bottom: 0;
   width: 440px;
   max-width: 100vw;
-  background-color: var(--bg-box-cream, #fffdf7);
-  border-left: 2px solid var(--border-cream, #e2d5c3);
+  background-color: #FFFFFF;
+  border-left: 2px solid var(--color-mustard, #CDB462);
   z-index: 1100;
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.25);
+  box-shadow: -10px 0 40px rgba(73, 34, 1, 0.15);
   display: flex;
   flex-direction: column;
   transform: translate3d(100%, 0, 0);
@@ -41,7 +41,7 @@
   transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.32s ease;
   font-family: var(--font-body);
   box-sizing: border-box;
-  color: #0f172a;
+  color: var(--color-espresso, #150A06);
 }
 
 .store-drawer-panel.open {
@@ -50,14 +50,14 @@
   pointer-events: auto;
 }
 
-/* Header - Warm Cream */
+/* Header - Royal Garnet with Golden Accent */
 .store-drawer-header {
   padding: 22px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1.5px solid var(--border-cream, #e2d5c3);
-  background-color: #f5ebd7;
+  border-bottom: 2px solid var(--color-mustard, #CDB462);
+  background-color: var(--color-garnet, #492201);
   flex-shrink: 0;
 }
 
@@ -65,7 +65,7 @@
   font-family: var(--font-body);
   font-size: 17px;
   font-weight: 700;
-  color: #0f172a;
+  color: #FFFFFF;
   margin: 0;
   letter-spacing: -0.015em;
 }
@@ -74,7 +74,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #64748b;
+  color: var(--color-softivory, #F8EEBD);
   padding: 6px;
   display: flex;
   align-items: center;
@@ -85,8 +85,8 @@
 }
 
 .store-drawer-close:hover {
-  background-color: #fef0ce;
-  color: var(--primary-blue, #0036f5);
+  background-color: var(--color-terracotta, #492201);
+  color: #FFFFFF;
 }
 
 /* =========================================================
@@ -106,12 +106,12 @@
   width: 76px;
   height: 76px;
   border-radius: 0;
-  background-color: #f5ebd7;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  background-color: var(--color-eggnog, #F9EDC5);
+  border: 1.5px solid var(--color-copper, #BF7F35);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-garnet, #492201);
   margin-bottom: 22px;
 }
 
@@ -119,35 +119,35 @@
   font-family: var(--font-body);
   font-size: 18px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-espresso, #150A06);
   margin: 0 0 6px;
 }
 
 .store-empty-desc {
   font-family: var(--font-body);
   font-size: 14px;
-  color: #64748b;
+  color: var(--color-terracotta, #492201);
   margin: 0 0 24px;
 }
 
 .store-empty-action-btn {
-  background-color: #fff8eb;
-  border: 1.5px solid var(--border-cream, #dfcfb5);
+  background-color: var(--color-garnet, #492201);
+  border: 1.5px solid var(--color-copper, #BF7F35);
   border-radius: 0;
   padding: 11px 26px;
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-softivory, #F8EEBD);
   cursor: pointer;
   transition: all 0.15s ease;
   outline: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(73, 34, 1, 0.2);
 }
 
 .store-empty-action-btn:hover {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0036f5);
+  background-color: var(--color-terracotta, #492201);
+  border-color: var(--color-mustard, #CDB462);
 }
 
 /* =========================================================
@@ -175,7 +175,7 @@
   gap: 16px;
   align-items: flex-start;
   padding-bottom: 18px;
-  border-bottom: 1px solid var(--border-cream-light, #f1e9dc);
+  border-bottom: 1px solid rgba(205, 180, 98, 0.4);
 }
 
 .store-drawer-item-row:last-child {
@@ -188,8 +188,8 @@
   height: 68px;
   object-fit: cover;
   border-radius: 0;
-  background-color: #f5ebd7;
-  border: 1px solid var(--border-cream, #e2d5c3);
+  background-color: var(--color-eggnog, #F9EDC5);
+  border: 1px solid var(--color-mustard, #CDB462);
   flex-shrink: 0;
 }
 
@@ -212,7 +212,7 @@
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-espresso, #150A06);
   line-height: 1.35;
   word-break: break-word;
 }
@@ -220,7 +220,7 @@
 .store-drawer-trash-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--color-terracotta, #492201);
   cursor: pointer;
   padding: 6px;
   border-radius: 0;
@@ -234,8 +234,8 @@
 }
 
 .store-drawer-trash-btn:hover {
-  background-color: #fee2e2;
-  color: #ef4444;
+  background-color: var(--color-eggnog, #F9EDC5);
+  color: var(--color-garnet, #492201);
 }
 
 .store-drawer-item-bottom {
@@ -245,13 +245,13 @@
   gap: 10px;
 }
 
-/* Stepper (- 3 +) - Cream Box */
+/* Stepper (- 3 +) - Egg Nog Box */
 .store-drawer-stepper {
   display: inline-flex;
   align-items: center;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
+  border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
-  background-color: #f5ebd7;
+  background-color: var(--color-eggnog, #F9EDC5);
   padding: 2px 4px;
 }
 
@@ -260,7 +260,7 @@
   height: 26px;
   border: none;
   background: transparent;
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-garnet, #492201);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -273,7 +273,7 @@
 }
 
 .store-drawer-stepper-btn:hover {
-  background-color: #fffdf7;
+  background-color: var(--color-softivory, #F8EEBD);
 }
 
 .store-drawer-stepper-val {
@@ -282,23 +282,23 @@
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-espresso, #150A06);
 }
 
 .store-drawer-item-price {
   font-family: var(--font-body);
   font-size: 14.5px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-garnet, #492201);
 }
 
 /* =========================================================
-   Drawer Footer (Pinned to Bottom) - Warm Cream
+   Drawer Footer (Pinned to Bottom) - Light Luxury
    ========================================================= */
 .store-drawer-footer {
   padding: 20px 24px 24px;
-  border-top: 1.5px solid var(--border-cream, #e2d5c3);
-  background-color: #faf4e8;
+  border-top: 1.5px solid var(--color-mustard, #CDB462);
+  background-color: #FAFAF8;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -315,31 +315,32 @@
 .store-discount-input {
   flex: 1;
   padding: 10px 16px;
-  border: 1.5px solid var(--border-cream, #e2d5c3);
-  background-color: #fffdf7;
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  background-color: #FFFFFF;
   border-radius: 0;
   font-family: var(--font-body);
   font-size: 13.5px;
-  color: #0f172a;
+  color: var(--color-espresso, #150A06);
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.15s ease;
 }
 
 .store-discount-input:focus {
-  border-color: var(--primary-blue, #0036f5);
-  box-shadow: 0 0 0 2px rgba(4, 51, 255, 0.2);
+  border-color: var(--color-copper, #BF7F35);
+  box-shadow: 0 0 0 2px rgba(191, 127, 53, 0.25);
 }
 
 .store-discount-input::placeholder {
-  color: #64748b;
+  color: var(--color-terracotta, #492201);
+  opacity: 0.8;
 }
 
 .store-discount-btn {
   padding: 10px 20px;
-  border: 1.5px solid var(--border-cream, #dfcfb5);
-  background-color: #fff8eb;
-  color: var(--primary-blue, #0036f5);
+  border: 1.5px solid var(--color-copper, #BF7F35);
+  background-color: var(--color-softivory, #F8EEBD);
+  color: var(--color-garnet, #492201);
   font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 700;
@@ -351,20 +352,20 @@
 }
 
 .store-discount-btn:hover:not(:disabled) {
-  background-color: #fef0ce;
-  border-color: var(--primary-blue, #0036f5);
+  background-color: var(--color-copper, #BF7F35);
+  color: var(--color-softivory, #F8EEBD);
 }
 
 .store-discount-error {
   font-size: 12px;
-  color: #ef4444;
+  color: var(--color-garnet, #492201);
   font-weight: 500;
   margin-top: -6px;
 }
 
 .store-discount-success {
   font-size: 12px;
-  color: #16a34a;
+  color: #1b5e20;
   font-weight: 600;
   margin-top: -6px;
 }
@@ -379,29 +380,30 @@
 
 .store-subtotal-label {
   font-size: 14.5px;
-  color: #475569;
+  color: var(--color-terracotta, #492201);
   font-weight: 600;
 }
 
 .store-subtotal-amount {
   font-size: 17px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-garnet, #492201);
 }
 
 .store-shipping-note {
   font-size: 12.5px;
-  color: #64748b;
+  color: var(--color-terracotta, #492201);
+  opacity: 0.85;
   margin: -4px 0 4px;
 }
 
-/* Checkout CTA - Luxury Cream Button with Blue Border & Text */
+/* Checkout CTA - Luxury Garnet Button with Soft Ivory Text */
 .store-checkout-btn {
   width: 100%;
   height: 48px;
-  background-color: #fff0cf;
-  color: var(--primary-blue, #0036f5);
-  border: 2px solid var(--primary-blue, #0036f5);
+  background-color: var(--color-garnet, #492201);
+  color: var(--color-softivory, #F8EEBD);
+  border: 2px solid var(--color-copper, #BF7F35);
   border-radius: 0;
   font-family: var(--font-body);
   font-size: 15px;
@@ -409,12 +411,12 @@
   cursor: pointer;
   transition: all 0.15s ease;
   outline: none;
-  box-shadow: 0 4px 14px rgba(4, 51, 255, 0.15);
+  box-shadow: 0 4px 14px rgba(73, 34, 1, 0.25);
 }
 
 .store-checkout-btn:hover:not(:disabled) {
-  background-color: #fde5a8;
-  box-shadow: 0 6px 18px rgba(4, 51, 255, 0.25);
+  background-color: var(--color-terracotta, #492201);
+  border-color: var(--color-mustard, #CDB462);
   transform: translateY(-1px);
 }
 
@@ -423,7 +425,7 @@
   border: none;
   font-family: var(--font-body);
   font-size: 13px;
-  color: #64748b;
+  color: var(--color-terracotta, #492201);
   cursor: pointer;
   align-self: center;
   margin-top: 2px;
@@ -432,7 +434,7 @@
 }
 
 .store-continue-shopping-link:hover {
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-garnet, #492201);
   text-decoration: underline;
 }
 

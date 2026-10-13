@@ -1,18 +1,18 @@
-/* Marquee Moving Text Ticker - Luxury Cream Ribbon with Blue Typography */
+/* Marquee Moving Text Ticker - Luxury Cream Ribbon with Garnet & Copper Typography */
 .marquee-bar {
   width: 100%;
   max-width: 100vw;
   overflow: hidden;
-  background: linear-gradient(90deg, #fffdf7 0%, #fff6e5 25%, #fffdf7 50%, #fff6e5 75%, #fffdf7 100%);
-  border-top: 1.5px solid var(--border-cream, #e2d5c3);
-  border-bottom: 1.5px solid var(--border-cream, #e2d5c3);
+  background: linear-gradient(90deg, #F9EDC5 0%, #F8EEBD 25%, #F9EDC5 50%, #F8EEBD 75%, #F9EDC5 100%);
+  border-top: 1.5px solid var(--color-mustard, #CDB462);
+  border-bottom: 1.5px solid var(--color-mustard, #CDB462);
   padding: 11px 0;
   display: flex;
   align-items: center;
   position: relative;
   user-select: none;
   box-sizing: border-box;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(21, 10, 6, 0.08);
 }
 
 /* Track container moving continuously from right to left */
@@ -43,7 +43,7 @@
 /* Bold prefix title */
 .marquee-title {
   font-weight: 700;
-  color: var(--primary-blue, #0036f5);
+  color: var(--color-garnet, #492201);
   letter-spacing: -0.01em;
 }
 
@@ -52,7 +52,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--alert-red, #ef4444);
+  color: var(--color-copper, #BF7F35);
   flex-shrink: 0;
 }
 
@@ -63,7 +63,7 @@
 /* Descriptive slogan / detail text */
 .marquee-text {
   font-weight: 500;
-  color: #0f172a;
+  color: var(--color-espresso, #150A06);
   letter-spacing: -0.005em;
 }
 

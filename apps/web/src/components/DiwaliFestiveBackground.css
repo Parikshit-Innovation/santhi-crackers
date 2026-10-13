@@ -17,13 +17,13 @@
   z-index: 0; /* Stays in background - never covers buttons or cards */
 }
 
-/* Ambient Warm Golden Glow Aura in Corners (Soft Diwali Night Warmth) */
+/* Ambient Warm Golden Glow Aura in Corners (Soft Diwali Festive Warmth - No Mustard Cast) */
 .diwali-aura-glow {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  filter: blur(80px);
-  opacity: 0.2;
+  filter: blur(100px);
+  opacity: 0.06;
   animation: diwaliAuraPulse 7s ease-in-out infinite alternate;
 }
 
@@ -32,7 +32,7 @@
   left: -80px;
   width: 320px;
   height: 320px;
-  background: radial-gradient(circle, #f59e0b 0%, #ea580c 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(191, 127, 53, 0.4) 0%, rgba(73, 34, 1, 0.2) 45%, transparent 70%);
 }
 
 .diwali-aura-top-right {
@@ -40,7 +40,7 @@
   right: -80px;
   width: 320px;
   height: 320px;
-  background: radial-gradient(circle, #fbbf24 0%, #d97706 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(191, 127, 53, 0.35) 0%, rgba(73, 34, 1, 0.2) 45%, transparent 70%);
   animation-delay: 2.5s;
 }
 
@@ -49,7 +49,7 @@
   left: -80px;
   width: 360px;
   height: 360px;
-  background: radial-gradient(circle, #fde047 0%, #ea580c 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(191, 127, 53, 0.3) 0%, rgba(73, 34, 1, 0.15) 40%, transparent 70%);
   animation-delay: 4s;
 }
 
@@ -58,18 +58,18 @@
   right: -80px;
   width: 360px;
   height: 360px;
-  background: radial-gradient(circle, #f59e0b 0%, #b45309 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(191, 127, 53, 0.35) 0%, rgba(73, 34, 1, 0.2) 40%, transparent 70%);
   animation-delay: 1.5s;
 }
 
 @keyframes diwaliAuraPulse {
   0% {
     transform: scale(0.95);
-    opacity: 0.16;
+    opacity: 0.04;
   }
   100% {
     transform: scale(1.08);
-    opacity: 0.26;
+    opacity: 0.08;
   }
 }
 
@@ -86,7 +86,7 @@
   position: absolute;
   pointer-events: none;
   z-index: 2;
-  filter: drop-shadow(0 4px 14px rgba(251, 191, 36, 0.55));
+  filter: drop-shadow(0 4px 14px rgba(191, 127, 53, 0.45));
   animation: diyaGentleFloat 5s ease-in-out infinite alternate;
 }
 
@@ -133,7 +133,7 @@
   50% {
     transform: scale(1.04) skewX(1.5deg);
     opacity: 1;
-    filter: drop-shadow(0 0 8px #f59e0b);
+    filter: drop-shadow(0 0 8px #BF7F35);
   }
   100% {
     transform: scale(1) skewX(0deg);
@@ -147,8 +147,8 @@
 .diwali-gutter-star {
   position: absolute;
   pointer-events: none;
-  color: #fde047;
-  filter: drop-shadow(0 0 6px rgba(253, 224, 71, 0.8));
+  color: #BF7F35;
+  filter: drop-shadow(0 0 6px rgba(205, 180, 98, 0.6));
   animation: starGlint 3.5s ease-in-out infinite;
 }
 
