@@ -20,9 +20,24 @@ The first version should focus on:
 The existing Prisma schema already covers `Product`, `Category`, `Cart`,
 and `CartItem`.
 
-> Important: the current schema does **not** contain `Order` or
-> `OrderItem` models. These must be added before the admin can reliably
-> display completed purchases.
+The original schema did not contain `Order` or `OrderItem` models. The backend
+implementation below adds both before the admin can display persistent orders.
+
+## Orders and admin authentication backend
+
+The API mounts its router at `/api`. The backend implementation provides:
+
+- `POST /api/admin/login`, accepting `{ "username": "...", "password": "..." }` and returning an eight-hour bearer token.
+- `POST /api/orders`, accepting customer name, phone, delivery address, and unique `{ productId, quantity }` items. Prices are read from active products; client totals are ignored. The server decrements stock and creates the order and purchase-time item snapshots in one serializable transaction.
+- `GET /api/admin/orders`, requiring `Authorization: Bearer <token>`. Supports `search`, `status`, `paymentStatus`, `page`, and `limit` (maximum 10), and returns customer name/phone, total item quantity, total, statuses, creation date, and pagination metadata.
+
+Configure the single administrator with the environment variables `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, and `ADMIN_SESSION_SECRET`. Generate the password hash interactively, with terminal echo disabled, from the repository root using `npm --workspace api run admin:hash-password`. Store the emitted `ADMIN_PASSWORD_HASH` in the deployment secret store or a local ignored `.env` file. `ADMIN_SESSION_SECRET` must contain at least 32 random bytes; generate it with a trusted secret manager or a cryptographically secure random generator. Never commit the resulting values. If any setting is missing or malformed, admin endpoints fail closed with `503`.
+
+Login permits five failed password attempts per source socket address in a 15-minute window and then returns `429` with `Retry-After`. The limiter is in-memory and per API process; it resets on restart and is not shared between instances. Deployments with multiple API instances should also enforce login throttling at a shared gateway or rate-limit store.
+
+There is no payment provider. New orders therefore start with `PENDING` order and payment status; the API does not claim payment succeeded. Shipping and discount are currently fixed at zero because no server-side pricing policies exist. Stock is decremented when an order is placed to prevent overselling; cancellation/restocking and payment processing are not implemented here. The storefront currently keeps cart contents in browser storage and does not write `CartItem` rows, so checkout accepts product IDs and quantities directly and does not clear the backend cart.
+
+The migration adds only `Order` and `OrderItem`; apply it only to a verified non-production database using the project's normal migration process.
 
 ---
 
