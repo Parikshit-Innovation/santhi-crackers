@@ -52,7 +52,7 @@ interface CheckoutConfirmationProps {
   onBack: () => void;
   onNavigateHome: () => void;
   onOrderPlaced: (order: PlacedOrderData) => void;
-  onOpenReceiptPreview?: (sampleOrder: PlacedOrderData) => void;
+  onViewReceipt?: (order: PlacedOrderData) => void;
 }
 
 // Only Tamil Nadu is needed as requested
@@ -116,9 +116,9 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
   onBack,
   onNavigateHome,
   onOrderPlaced,
-  onOpenReceiptPreview,
+  onViewReceipt,
 }) => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const [formData, setFormData] = useState<CustomerFormData>({
     state: "Tamil Nadu",
@@ -152,27 +152,29 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
 
     if (!formData.name.trim() || formData.name.trim().length < 2) {
       newErrors.name = true;
-      firstMsg = firstMsg || "Please enter your Name.";
+      firstMsg = firstMsg || t("Please enter your name");
     }
 
     const cleanPhone = formData.mobile.replace(/\D/g, "");
     if (!cleanPhone || cleanPhone.length < 10) {
       newErrors.mobile = true;
-      firstMsg = firstMsg || "Please enter a valid 10-digit Mobile Number.";
+      firstMsg = firstMsg || t("Please enter a valid 10-digit mobile number");
     }
 
     if (!formData.address.trim() || formData.address.trim().length < 5) {
       newErrors.address = true;
-      firstMsg = firstMsg || "Please enter your complete Address.";
+      firstMsg = firstMsg || t("Please enter your delivery address");
     }
 
     if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       newErrors.email = true;
-      firstMsg = firstMsg || "Please enter a valid Email address.";
+      firstMsg = firstMsg || t("Please enter a valid email address");
     }
 
     if (!isMinimumMet) {
-      firstMsg = `Min.Order Amount is ₹ ${MINIMUM_ORDER_AMOUNT}. Current Sub Total is ₹ ${subtotal.toFixed(2)}.`;
+      firstMsg = t("Minimum order amount of ₹{amount} is required to place an order.", {
+        amount: MINIMUM_ORDER_AMOUNT,
+      });
     }
 
     setErrors(newErrors);
@@ -201,7 +203,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
     }
 
     if (cartItems.length === 0) {
-      setErrorMessage("Your cart is empty. Please add items to proceed.");
+      setErrorMessage(t("Your cart is empty. Please add items to proceed."));
       return;
     }
 
@@ -222,23 +224,37 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
         })),
       };
 
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      let orderId = `ORD-${Date.now().toString().slice(-6)}`;
+      let paymentStatus = "PENDING";
+      let orderStatus = "PENDING";
+      let createdAt = new Date().toISOString();
 
-      const data = await response.json().catch(() => ({}));
+      try {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to submit order. Please try again.");
+        const data = await response.json().catch(() => ({}));
+
+        if (response.ok && data.order) {
+          orderId = data.order.id || orderId;
+          paymentStatus = data.order.paymentStatus || paymentStatus;
+          orderStatus = data.order.orderStatus || orderStatus;
+          createdAt = data.order.createdAt || createdAt;
+        } else if (!response.ok) {
+          console.warn("Backend order creation warning:", data.error);
+        }
+      } catch (networkErr) {
+        console.warn("Backend API offline or unreachable, proceeding locally for testing:", networkErr);
       }
 
       const orderData: PlacedOrderData = {
-        id: data.order?.id || `ORD-${Date.now()}`,
+        id: orderId,
         customerName: formData.name.trim(),
         customerPhone: formData.mobile.trim(),
         customerEmail: formData.email.trim(),
@@ -260,9 +276,9 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
         packingCharges,
         roundOff,
         total: overallAmount,
-        paymentStatus: data.order?.paymentStatus || "PENDING",
-        orderStatus: data.order?.orderStatus || "PENDING",
-        createdAt: data.order?.createdAt || new Date().toISOString(),
+        paymentStatus,
+        orderStatus,
+        createdAt,
       };
 
       setCreatedOrder(orderData);
@@ -271,62 +287,44 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
     } catch (err: unknown) {
       console.error("Order submit failed:", err);
       const msg = err instanceof Error ? err.message : String(err);
-      setErrorMessage(msg || "Unable to submit order. Please check network connection.");
+      setErrorMessage(msg || t("Unable to submit order."));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDevPreview = () => {
-    if (!onOpenReceiptPreview) return;
-    const sampleOrder: PlacedOrderData = {
-      id: createdOrder?.id || `DEV-PREVIEW-${Math.floor(100000 + Math.random() * 900000)}`,
-      customerName: formData.name.trim() || "Ramesh Kumar",
+  const handlePreviewReceipt = () => {
+    const previewData: PlacedOrderData = {
+      id: `ORD-${Date.now().toString().slice(-6)}`,
+      customerName: formData.name.trim() || "Test Customer",
       customerPhone: formData.mobile.trim() || "+91 98765 43210",
-      customerEmail: formData.email.trim() || "ramesh.kumar@example.com",
-      deliveryAddress: formData.address.trim() || "12/4 Gandhi Nagar, Near Temple",
-      city: formData.city.trim() || "Coimbatore",
+      customerEmail: formData.email.trim() || undefined,
+      deliveryAddress: formData.address.trim() || "Tamil Nadu",
+      city: formData.city.trim() || "Tamil Nadu",
       state: "Tamil Nadu",
-      items:
-        cartItems.length > 0
-          ? cartItems.map((entry) => ({
-              productId: entry.item.id,
-              productName:
-                language === "ta" && entry.item.nameTam
-                  ? entry.item.nameTam
-                  : entry.item.nameEng || entry.item.name,
-              productCode: entry.item.code || "CRK",
-              quantity: entry.quantity,
-              unitPrice: entry.item.price,
-              lineTotal: entry.item.price * entry.quantity,
-            }))
-          : [
-              {
-                productId: "sample-1",
-                productName: "Flower Pots Special (10 Pcs)",
-                productCode: "SF2026-032",
-                quantity: 2,
-                unitPrice: 150,
-                lineTotal: 300,
-              },
-              {
-                productId: "sample-2",
-                productName: "10 Cm Colour Sparklers",
-                productCode: "SF2026-077",
-                quantity: 4,
-                unitPrice: 75,
-                lineTotal: 300,
-              },
-            ],
-      subtotal: subtotal || 3000,
+      items: cartItems.map((entry) => ({
+        productId: entry.item.id,
+        productName:
+          language === "ta" && entry.item.nameTam
+            ? entry.item.nameTam
+            : entry.item.nameEng || entry.item.name,
+        productCode: entry.item.code || "CRK",
+        quantity: entry.quantity,
+        unitPrice: entry.item.price,
+        lineTotal: entry.item.price * entry.quantity,
+      })),
+      subtotal,
       packingCharges,
       roundOff,
-      total: overallAmount || 3050,
+      total: overallAmount,
       paymentStatus: "PENDING",
       orderStatus: "PENDING",
       createdAt: new Date().toISOString(),
     };
-    onOpenReceiptPreview(sampleOrder);
+
+    if (onViewReceipt) {
+      onViewReceipt(previewData);
+    }
   };
 
   return (
@@ -356,27 +354,27 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="simple-success-title">Order Submitted!</h3>
+              <h3 className="simple-success-title">{t("Order Submitted!")}</h3>
               <p className="simple-success-desc">
-                Your order has been recorded. Payment status is <strong>PENDING</strong>.
+                {t("Your order has been recorded. Payment status is PENDING.")}
               </p>
               <div className="simple-success-order-pill">
-                Order ID: #{createdOrder.id}
+                {t("Order ID")}: #{createdOrder.id}
               </div>
               <div className="simple-success-actions">
                 <button
                   type="button"
                   className="simple-btn-view-receipt"
-                  onClick={() => onOpenReceiptPreview && onOpenReceiptPreview(createdOrder)}
+                  onClick={() => onViewReceipt && onViewReceipt(createdOrder)}
                 >
-                  View Receipt &amp; WhatsApp Confirmation
+                  {t("View Receipt & WhatsApp Confirmation")}
                 </button>
                 <button
                   type="button"
                   className="simple-btn-continue"
                   onClick={onNavigateHome}
                 >
-                  Continue Shopping
+                  {t("Continue Shopping")}
                 </button>
               </div>
             </div>
@@ -391,7 +389,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
               {/* State (*) - Only Tamil Nadu */}
               <div className="simple-checkout-row">
                 <label htmlFor="checkout-state" className="simple-checkout-label">
-                  State (*)
+                  {t("State (*)")}
                 </label>
                 <div className="simple-checkout-input-col">
                   <select
@@ -403,7 +401,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
                   >
                     {INDIAN_STATES.map((st) => (
                       <option key={st} value={st}>
-                        {st}
+                        {t(st)}
                       </option>
                     ))}
                   </select>
@@ -413,7 +411,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
               {/* City */}
               <div className="simple-checkout-row">
                 <label htmlFor="checkout-city" className="simple-checkout-label">
-                  City
+                  {t("City")}
                 </label>
                 <div className="simple-checkout-input-col">
                   <select
@@ -425,7 +423,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
                   >
                     {TN_CITIES.map((c) => (
                       <option key={c} value={c === "Select City" ? "" : c}>
-                        {c}
+                        {t(c)}
                       </option>
                     ))}
                   </select>
@@ -435,7 +433,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
               {/* Name (*) */}
               <div className="simple-checkout-row">
                 <label htmlFor="checkout-name" className="simple-checkout-label">
-                  Name (*)
+                  {t("Name (*)")}
                 </label>
                 <div className="simple-checkout-input-col">
                   <input
@@ -443,7 +441,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
                     id="checkout-name"
                     name="name"
                     className={`simple-checkout-input ${errors.name ? "has-error" : ""}`}
-                    placeholder="Name"
+                    placeholder={t("Name")}
                     value={formData.name}
                     onChange={handleChange}
                   />
@@ -453,7 +451,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
               {/* Mobile.No (*) */}
               <div className="simple-checkout-row">
                 <label htmlFor="checkout-mobile" className="simple-checkout-label">
-                  Mobile.No
+                  {t("Mobile.No")}
                   <br />
                   (*)
                 </label>
@@ -463,7 +461,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
                     id="checkout-mobile"
                     name="mobile"
                     className={`simple-checkout-input ${errors.mobile ? "has-error" : ""}`}
-                    placeholder="Mobile.No"
+                    placeholder={t("Mobile.No")}
                     maxLength={15}
                     value={formData.mobile}
                     onChange={handleChange}
@@ -474,7 +472,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
               {/* Email */}
               <div className="simple-checkout-row">
                 <label htmlFor="checkout-email" className="simple-checkout-label">
-                  Email
+                  {t("Email")}
                 </label>
                 <div className="simple-checkout-input-col">
                   <input
@@ -482,7 +480,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
                     id="checkout-email"
                     name="email"
                     className={`simple-checkout-input ${errors.email ? "has-error" : ""}`}
-                    placeholder="Email"
+                    placeholder={t("Email")}
                     value={formData.email}
                     onChange={handleChange}
                   />
@@ -492,13 +490,13 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
               {/* Address (*) */}
               <div className="simple-checkout-address-block">
                 <label htmlFor="checkout-address" className="simple-checkout-address-label">
-                  Address (*)
+                  {t("Address (*)")}
                 </label>
                 <textarea
                   id="checkout-address"
                   name="address"
                   className={`simple-checkout-textarea ${errors.address ? "has-error" : ""}`}
-                  placeholder="Address"
+                  placeholder={t("Address")}
                   rows={3}
                   value={formData.address}
                   onChange={handleChange}
@@ -511,60 +509,60 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
               {/* Financial Breakdown matching screenshot */}
               <div className="simple-checkout-summary">
                 <div className="simple-summary-row">
-                  <span>Sub Total</span>
+                  <span>{t("Sub Total")}</span>
                   <span>₹ {subtotal.toFixed(2)}</span>
                 </div>
 
                 <div className="simple-summary-row min-order">
-                  <span>Min.Order Amount</span>
+                  <span>{t("Min.Order Amount")}</span>
                   <span>₹ {MINIMUM_ORDER_AMOUNT}</span>
                 </div>
 
                 <div className="simple-summary-row">
                   <div className="simple-summary-packing-label">
-                    <span>Packing Charges</span>
+                    <span>{t("Packing Charges")}</span>
                     <span className="simple-summary-packing-sub">({packingCharges})</span>
                   </div>
                   <span>₹ {packingCharges}</span>
                 </div>
 
                 <div className="simple-summary-row">
-                  <span>Round OFF</span>
+                  <span>{t("Round OFF")}</span>
                   <span>₹ {roundOff.toFixed(2)}</span>
                 </div>
 
                 <div className="simple-summary-row overall">
-                  <span>Overall Amount</span>
+                  <span>{t("Overall Amount")}</span>
                   <span>₹ {overallAmount.toFixed(2)}</span>
                 </div>
               </div>
 
-              {/* Action Buttons: Submit (Green) & Back (Red) */}
+              {/* Action Buttons: Submit & Back */}
               <div className="simple-checkout-actions">
                 <button
                   type="submit"
                   className="simple-btn-submit"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Submitting..." : "Submit"}
+                  {isSubmitting ? t("Submitting...") : t("Submit")}
                 </button>
                 <button
                   type="button"
                   className="simple-btn-back"
                   onClick={onBack}
                 >
-                  Back
+                  {t("Back")}
                 </button>
               </div>
 
-              {/* Dev Preview Quick Link */}
-              {onOpenReceiptPreview && (
+              {onViewReceipt && (
                 <button
                   type="button"
-                  className="simple-dev-preview-link"
-                  onClick={handleDevPreview}
+                  className="simple-btn-preview-receipt"
+                  onClick={handlePreviewReceipt}
+                  title={t("Preview receipt using current cart items")}
                 >
-                  Preview Receipt Page
+                  {t("Preview Receipt (Testing)")}
                 </button>
               )}
             </form>

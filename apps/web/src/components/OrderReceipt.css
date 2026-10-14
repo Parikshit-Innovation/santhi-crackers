@@ -1,5 +1,7 @@
 /* =========================================================
-   OrderReceipt.css - Simple & Clean Theme Matching Checkout
+   OrderReceipt.css - Theme Matching Website Warm Luxury System
+   Egg Nog (#F9EDC5), Mustard (#CDB462), Copper (#BF7F35),
+   Garnet (#492201), Espresso Black (#150A06), Ivory (#FAF5DE)
    Drawer on RIGHT Side (Overlapping Cart) + Full Print Media
    ========================================================= */
 
@@ -31,18 +33,18 @@
   width: 440px;
   max-width: 100vw;
   background-color: #ffffff;
-  border-left: 1px solid #e2e8f0;
+  border-left: 2px solid var(--color-mustard, #CDB462);
   border-right: none;
   z-index: 1200;
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.25);
+  box-shadow: -10px 0 40px rgba(73, 34, 1, 0.18);
   display: flex;
   flex-direction: column;
   transform: translate3d(100%, 0, 0);
   visibility: hidden;
   pointer-events: none;
   transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.32s ease;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #212529;
+  font-family: var(--font-geist, 'Geist', 'Geist Sans', 'Noto Sans Tamil', -apple-system, BlinkMacSystemFont, sans-serif);
+  color: var(--color-espresso, #150A06);
   box-sizing: border-box;
 }
 
@@ -52,10 +54,11 @@
   pointer-events: auto;
 }
 
-/* Orange Top Accent Bar */
+/* Garnet Top Accent Bar matching brand theme */
 .receipt-drawer-top-bar {
-  height: 8px;
-  background-color: #f26522;
+  height: 6px;
+  background-color: var(--color-garnet, #492201);
+  border-bottom: 2px solid var(--color-mustard, #CDB462);
   width: 100%;
   flex-shrink: 0;
 }
@@ -70,48 +73,30 @@
   flex-direction: column;
 }
 
-/* Dev Preview Badge */
-.simple-receipt-dev-tag {
-  background-color: #e0f2fe;
-  color: #0369a1;
-  border: 1px solid #bae6fd;
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 11px;
-  font-weight: 700;
-  display: inline-block;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
 /* Header Section */
 .simple-receipt-header {
   margin-bottom: 14px;
 }
 
 .simple-receipt-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
-  color: #212529;
-  margin: 0 0 4px;
-}
-
-.simple-receipt-sub {
-  font-size: 13px;
-  color: #6c757d;
+  color: var(--color-garnet, #492201);
+  font-family: var(--font-geist, inherit);
   margin: 0 0 10px;
-  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 
 .simple-receipt-meta-grid {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 4px;
-  padding: 8px 12px;
+  background-color: var(--bg-box-cream, #FAF5DE);
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  border-radius: 0;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 13px;
+  gap: 5px;
+  font-size: 13.5px;
+  font-family: var(--font-geist, inherit);
 }
 
 .simple-receipt-meta-row {
@@ -120,46 +105,49 @@
 }
 
 .simple-receipt-meta-label {
-  color: #6c757d;
+  color: var(--color-terracotta, #492201);
+  font-weight: 500;
 }
 
 .simple-receipt-meta-val {
-  font-weight: 600;
-  color: #212529;
+  font-weight: 700;
+  color: var(--color-espresso, #150A06);
 }
 
 .simple-receipt-meta-val.pending {
-  color: #d97706;
+  color: #b45309;
 }
 
 .simple-receipt-meta-val.paid {
-  color: #16a34a;
+  color: #15803d;
 }
 
 /* Divider */
 .simple-receipt-divider {
   border: none;
-  border-top: 1px solid #e9ecef;
-  margin: 14px 0 12px 0;
+  border-top: 1px solid rgba(205, 180, 98, 0.4);
+  margin: 16px 0 14px 0;
 }
 
 /* Section Headings */
 .simple-receipt-section-heading {
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 700;
-  color: #212529;
-  margin: 0 0 8px;
+  color: var(--color-garnet, #492201);
+  margin: 0 0 10px;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
+  font-family: var(--font-geist, inherit);
 }
 
 /* Customer Details */
 .simple-receipt-cust-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 14px;
-  color: #333333;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--color-espresso, #150A06);
+  font-family: var(--font-geist, inherit);
   line-height: 1.4;
 }
 
@@ -169,13 +157,14 @@
 
 .simple-receipt-cust-label {
   width: 90px;
-  color: #6c757d;
+  color: var(--color-terracotta, #492201);
+  font-weight: 500;
   flex-shrink: 0;
 }
 
 .simple-receipt-cust-val {
-  font-weight: 500;
-  color: #212529;
+  font-weight: 600;
+  color: var(--color-espresso, #150A06);
 }
 
 /* Products List Table */
@@ -189,9 +178,10 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  font-size: 13px;
-  padding: 6px 0;
-  border-bottom: 1px dashed #f1f3f5;
+  font-size: 13.5px;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(205, 180, 98, 0.45);
+  font-family: var(--font-geist, inherit);
 }
 
 .simple-receipt-item-left {
@@ -201,26 +191,27 @@
 
 .simple-receipt-item-name {
   font-weight: 600;
-  color: #212529;
+  color: var(--color-espresso, #150A06);
   display: block;
+  line-height: 1.35;
 }
 
 .simple-receipt-item-code {
   font-size: 11px;
-  color: #6c757d;
-  font-family: monospace;
+  color: var(--color-copper, #BF7F35);
+  font-weight: 600;
 }
 
 .simple-receipt-item-sub {
   font-size: 12px;
-  color: #495057;
+  color: var(--color-terracotta, #492201);
   margin-top: 2px;
 }
 
 .simple-receipt-item-right {
   font-size: 14px;
-  font-weight: 600;
-  color: #212529;
+  font-weight: 700;
+  color: var(--color-garnet, #492201);
   text-align: right;
   white-space: nowrap;
 }
@@ -229,24 +220,31 @@
 .simple-receipt-summary {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
   margin-bottom: 16px;
+  background-color: var(--bg-box-cream, #FAF5DE);
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  border-radius: 0;
+  padding: 14px 16px;
+  box-sizing: border-box;
 }
 
 .simple-summary-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 15px;
-  color: #212529;
-  line-height: 1.35;
+  font-size: 14px;
+  color: var(--color-espresso, #150A06);
+  font-family: var(--font-geist, inherit);
 }
 
 .simple-summary-row.overall {
   font-size: 16px;
-  font-weight: 600;
-  color: #212529;
+  font-weight: 700;
+  color: var(--color-garnet, #492201);
   margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(205, 180, 98, 0.45);
 }
 
 /* Action Buttons */
@@ -259,66 +257,72 @@
 
 .simple-btn-whatsapp-confirm {
   width: 100%;
-  background-color: #28a745;
+  background-color: #25D366;
   color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  padding: 11px 16px;
-  font-size: 15px;
-  font-weight: 600;
+  border: 1.5px solid #1eb757;
+  border-radius: 0;
+  padding: 12px 16px;
+  font-size: 14.5px;
+  font-weight: 700;
+  font-family: var(--font-geist, inherit);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
   box-sizing: border-box;
 }
 
 .simple-btn-whatsapp-confirm:hover:not(:disabled) {
-  background-color: #218838;
+  background-color: #20bd5a;
+  transform: translateY(-1px);
 }
 
 .simple-btn-whatsapp-confirm:disabled,
 .simple-btn-whatsapp-confirm.disabled {
-  background-color: #94a3b8;
-  color: #f1f5f9;
+  background-color: var(--bg-box-cream, #FAF5DE);
+  color: var(--color-terracotta, #492201);
+  border: 1.5px solid var(--color-mustard, #CDB462);
   cursor: not-allowed;
-  opacity: 0.8;
-}
-
-.simple-btn-whatsapp-confirm:disabled:hover,
-.simple-btn-whatsapp-confirm.disabled:hover {
-  background-color: #94a3b8;
+  opacity: 0.75;
+  box-shadow: none;
+  transform: none;
 }
 
 .receipt-payment-pending-note {
-  font-size: 11.5px;
-  color: #64748b;
+  font-size: 12px;
+  color: var(--color-terracotta, #492201);
   text-align: center;
   margin: -4px 0 2px 0;
   line-height: 1.35;
+  font-family: var(--font-geist, inherit);
 }
 
+/* Continue Shopping Button - Royal Garnet with Soft Ivory Text */
 .simple-btn-receipt-continue {
   width: 100%;
-  background-color: #dc3545;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 16px;
-  font-size: 15px;
-  font-weight: 600;
+  background-color: var(--color-garnet, #492201);
+  color: var(--color-softivory, #F8EEBD);
+  border: 2px solid var(--color-copper, #BF7F35);
+  border-radius: 0;
+  padding: 12px 16px;
+  font-size: 14.5px;
+  font-weight: 700;
+  font-family: var(--font-geist, inherit);
   cursor: pointer;
   text-align: center;
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
   box-sizing: border-box;
+  box-shadow: 0 4px 14px rgba(73, 34, 1, 0.2);
 }
 
 .simple-btn-receipt-continue:hover {
-  background-color: #c82333;
+  background-color: var(--color-terracotta, #492201);
+  border-color: var(--color-mustard, #CDB462);
+  transform: translateY(-1px);
 }
-
 
 /* =========================================================
    Print Stylesheet - Clean Receipt Print Only
@@ -333,7 +337,7 @@
   html, body {
     background: #ffffff !important;
     background-image: none !important;
-    color: #111827 !important;
+    color: #150a06 !important;
     margin: 0 !important;
     padding: 0 !important;
     -webkit-print-color-adjust: exact !important;
@@ -356,12 +360,12 @@
     display: none !important;
   }
 
-  /* CRITICAL: Hide all other direct children in main (StoreHero, MarqueeBanner, ComboPackTable, StoreFooter) */
+  /* Hide direct children in main */
   main > *:not(.receipt-drawer-panel) {
     display: none !important;
   }
 
-  /* CRITICAL: Hide any product cards/photos/images outside receipt */
+  /* Hide any product cards/photos/images outside receipt */
   body img:not(.receipt-print-allowed) {
     display: none !important;
   }
@@ -375,8 +379,8 @@
     transform: none !important;
     visibility: visible !important;
     box-shadow: none !important;
-    border: 1px solid #d1d5db !important;
-    border-radius: 6px !important;
+    border: 1.5px solid #cdb462 !important;
+    border-radius: 0 !important;
     overflow: visible !important;
     display: block !important;
     background: #ffffff !important;
@@ -385,7 +389,7 @@
 
   .receipt-drawer-top-bar {
     height: 6px !important;
-    background-color: #f26522 !important;
+    background-color: #492201 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -396,7 +400,7 @@
   }
 
   .simple-receipt-meta-grid {
-    background-color: #f8f9fa !important;
+    background-color: #faf5de !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }

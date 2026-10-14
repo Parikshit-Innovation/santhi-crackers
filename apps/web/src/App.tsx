@@ -26,7 +26,6 @@ export default function App() {
   const [backendCart, setBackendCart] = useState<BackendCart | null>(null);
   const [isCartLoading, setIsCartLoading] = useState(false);
   const [currentOrder, setCurrentOrder] = useState<PlacedOrderData | null>(null);
-  const [isReceiptPreview, setIsReceiptPreview] = useState(false);
 
   // Initialize and synchronize backend cart from GET /api/cart
   useEffect(() => {
@@ -57,14 +56,11 @@ export default function App() {
     };
   }, []);
 
-  // Check URL params for receipt or checkout preview
+  // Check URL params for checkout
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("view") === "receipt" || params.get("preview") === "receipt") {
-        setIsReceiptPreview(true);
-        setCurrentPage("receipt");
-      } else if (params.get("view") === "checkout") {
+      if (params.get("view") === "checkout") {
         setCurrentPage("checkout");
       }
     } catch {
@@ -132,8 +128,9 @@ export default function App() {
     <div
       style={{
         minHeight: "100vh",
-        background: "var(--bg-gradient-blue, linear-gradient(135deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%)) fixed",
-        backgroundColor: "#0e1a47",
+        background: "#FFFFFF",
+        backgroundColor: "#FFFFFF",
+        color: "var(--text-main, #150A06)",
         fontFamily: "var(--font-geist, 'Geist', 'Geist Sans', 'Noto Sans Tamil', sans-serif)",
         fontWeight: 400,
         width: "100%",
@@ -182,54 +179,17 @@ export default function App() {
                   onOrderPlaced={(order) => {
                     setCurrentOrder(order);
                   }}
-                  onOpenReceiptPreview={(sampleOrder) => {
-                    setCurrentOrder(sampleOrder);
-                    setIsReceiptPreview(true);
+                  onViewReceipt={(order) => {
+                    setCurrentOrder(order);
                     setCurrentPage("receipt");
                   }}
                 />
               )}
-              {currentPage === "receipt" && (
+              {currentPage === "receipt" && currentOrder && (
                 <OrderReceipt
                   isOpen={true}
-                  order={
-                    currentOrder || {
-                      id: "DEV-SAMPLE-ORD",
-                      customerName: "Ramesh Kumar",
-                      customerPhone: "+91 98765 43210",
-                      customerEmail: "ramesh.kumar@example.com",
-                      deliveryAddress: "12/4 Gandhi Nagar, Near Temple",
-                      city: "Coimbatore",
-                      state: "Tamil Nadu",
-                      items: [
-                        {
-                          productId: "sample-1",
-                          productName: "Flower Pots Special (10 Pcs)",
-                          productCode: "SF2026-032",
-                          quantity: 2,
-                          unitPrice: 150,
-                          lineTotal: 300,
-                        },
-                        {
-                          productId: "sample-2",
-                          productName: "10 Cm Colour Sparklers",
-                          productCode: "SF2026-077",
-                          quantity: 4,
-                          unitPrice: 75,
-                          lineTotal: 300,
-                        },
-                      ],
-                      subtotal: 3000,
-                      packingCharges: 50,
-                      roundOff: 0,
-                      total: 3050,
-                      paymentStatus: "PENDING",
-                      orderStatus: "PENDING",
-                      createdAt: new Date().toISOString(),
-                    }
-                  }
+                  order={currentOrder}
                   onNavigateHome={handleGoToProducts}
-                  isPreview={isReceiptPreview}
                 />
               )}
             </>

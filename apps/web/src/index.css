@@ -14,65 +14,80 @@
   --font-tamil: var(--font-geist);
   --font-premium: var(--font-geist);
 
-  /* Site-wide Brand Color Palette - Gradient Blue & Luxury Cream System */
-  --bg-gradient-blue: linear-gradient(135deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%);
-  --bg-gradient-blue-h: linear-gradient(90deg, #0e1a47 0%, #0a2abf 35%, #0036f5 65%, #101e54 100%);
-  --primary-blue: #0036f5;          /* Vivid electric royal blue */
-  --primary-blue-deep: #0a2abf;     /* Rich saturated royal blue */
-  --primary-blue-dark: #0e1a47;     /* Deep navy blue */
-  --primary-blue-accent: #1c62ff;   /* Clean button blue */
-  --alert-red: #ef4444;             /* Vibrant crimson red */
-  --alert-red-dark: #dc2626;        /* Deep festive red */
-  --warning-yellow: #fbbf24;        /* Golden festival spark */
-  --success-green: #22c55e;         /* Pure festive emerald */
+  /* =========================================================
+     Selected Warm Luxury Color System:
+     Egg Nog: #F9EDC5 | Mustard: #CDB462 | Copper: #BF7F35
+     Garnet: #492201  | Terracotta Brown: #492201
+     Soft Ivory: #F8EEBD | Espresso Black: #150A06
+     ========================================================= */
+  --color-eggnog: #F9EDC5;
+  --color-mustard: #CDB462;
+  --color-copper: #BF7F35;
+  --color-garnet: #492201;
+  --color-terracotta: #492201;
+  --color-softivory: #F8EEBD;
+  --color-ivory-light: #FAF5DE;     /* Lighter than Soft Ivory - Highlighted container fill */
+  --color-espresso: #150A06;
 
-  /* Blue Background Canvas System */
-  --bg-canvas: #0e1a47;             /* Dark navy blue fallback */
-  --bg-canvas-deep: #0a2abf;        /* Deep rich royal blue */
-  --bg-surface: #0a2abf;            /* Elevated royal surface */
+  /* Crisp White Canvas & Luxury Golden Accents System */
+  --bg-canvas: #FFFFFF;
+  --bg-canvas-deep: #FDFBF7;
+  --bg-gradient-blue: linear-gradient(180deg, #FFFFFF 0%, #FDFBF7 50%, #FFFFFF 100%);
+  --bg-gradient-blue-h: linear-gradient(90deg, #FFFFFF 0%, #FDFBF7 50%, #FFFFFF 100%);
+  --bg-surface: #FFFFFF;
 
-  /* Luxury Cream Boxes & Cards System */
-  --bg-box-cream: #fffdf7;          /* Pure warm ivory cream box */
-  --bg-box-cream-card: #fffdf7;     /* Pure warm cream card */
-  --bg-box-cream-alt: #faf4e8;      /* Alternate soft warm cream */
-  --bg-box-cream-subtle: #f6efe1;   /* Subtle tinted cream for headers/stripes */
-  --bg-box-cream-deep: #efe4d1;     /* Rich warm cream pill */
+  /* Brand Accents - Garnet & Terracotta Brown with Golden Mustard & Copper */
+  --primary-blue: #492201;          /* Royal Garnet Brown - Primary brand */
+  --primary-blue-deep: #492201;     /* Festive Terracotta Brown - Rich secondary */
+  --primary-blue-dark: #150A06;     /* Espresso Black - Deep contrast */
+  --primary-blue-accent: #BF7F35;   /* Metallic Copper */
+  --alert-red: #492201;             /* Garnet */
+  --alert-red-dark: #492201;        /* Terracotta Brown */
+  --warning-yellow: #CDB462;        /* Golden Mustard */
+  --success-green: #15803d;         /* Fresh festive emerald */
 
-  /* Borders */
-  --border-cream: #e2d5c3;          /* Soft luxury sand border */
-  --border-cream-dark: #cdbca4;     /* Rich gold/sand border */
-  --border-cream-light: #f1e9dc;    /* Subtle cream divider */
-  --border-white-subtle: rgba(255, 255, 255, 0.22); /* White accent on blue */
+  /* Highlighted Container & Cards System */
+  --bg-box-cream: #FAF5DE;          /* Highlighted Ivory Container Fill (lighter than soft ivory) */
+  --bg-box-cream-card: #FFFFFF;     /* Crisp White Inner Card */
+  --bg-box-cream-alt: #FDFBF7;      /* Subtle Gold-Ivory Tint */
+  --bg-box-cream-subtle: #FAF8F2;   /* Soft Luxury Tint */
+  --bg-box-cream-deep: #F9EDC5;     /* Warm Egg Nog Highlight */
 
-  /* Luxury Cream Buttons System */
-  --btn-cream: #fff8eb;             /* Warm glowing cream button */
-  --btn-cream-hover: #fef0ce;       /* Rich cream hover */
-  --btn-cream-active: #fce5b2;      /* Active pressed cream */
-  --btn-cream-border: #dfcfb5;      /* Refined button border */
-  --btn-cream-text: #0036f5;        /* Royal blue text on cream button */
+  /* Golden & Copper Borders System */
+  --border-cream: #CDB462;          /* Golden Mustard border */
+  --border-cream-dark: #BF7F35;     /* Metallic Copper border */
+  --border-cream-light: rgba(205, 180, 98, 0.35); /* Subtle Golden divider */
+  --border-white-subtle: rgba(73, 34, 1, 0.12);
+
+  /* Buttons System */
+  --btn-cream: #F9EDC5;             /* Egg Nog button */
+  --btn-cream-hover: #F8EEBD;       /* Soft Ivory hover */
+  --btn-cream-active: #CDB462;      /* Mustard active */
+  --btn-cream-border: #BF7F35;      /* Copper border */
+  --btn-cream-text: #492201;        /* Garnet text on button */
 
   /* Text Colors */
-  --text-main: #ffffff;             /* White text for blue canvas */
-  --text-muted: #e0e7ff;            /* Soft light tint text on blue */
-  --text-light: #bfdbfe;            /* Sky caption text on blue */
-  --text-on-cream: #0f172a;         /* High contrast slate on cream boxes */
-  --text-on-cream-muted: #475569;   /* Slate secondary on cream boxes */
-  --text-on-cream-light: #64748b;   /* Slate caption on cream boxes */
+  --text-main: #150A06;             /* Crisp Espresso Black for high readability on white */
+  --text-muted: #492201;            /* Terracotta Brown secondary */
+  --text-light: #BF7F35;            /* Copper caption */
+  --text-on-cream: #150A06;         /* Espresso Black */
+  --text-on-cream-muted: #492201;   /* Terracotta */
+  --text-on-cream-light: #BF7F35;   /* Copper */
 
   /* Harmonized helper shades */
-  --primary-blue-hover: #2651ff;
-  --primary-blue-light: rgba(0, 54, 245, 0.16);
-  --primary-blue-glow: rgba(0, 54, 245, 0.45);
+  --primary-blue-hover: #492201;
+  --primary-blue-light: rgba(73, 34, 1, 0.08);
+  --primary-blue-glow: rgba(73, 34, 1, 0.25);
 
-  --alert-red-hover: #f87171;
-  --alert-red-light: rgba(239, 68, 68, 0.18);
-  --alert-red-glow: rgba(239, 68, 68, 0.4);
+  --alert-red-hover: #492201;
+  --alert-red-light: rgba(73, 34, 1, 0.1);
+  --alert-red-glow: rgba(73, 34, 1, 0.2);
 
-  --warning-yellow-hover: #f59e0b;
-  --warning-yellow-light: rgba(251, 191, 36, 0.15);
+  --warning-yellow-hover: #BF7F35;
+  --warning-yellow-light: rgba(205, 180, 98, 0.2);
 
-  --success-green-hover: #16a34a;
-  --success-green-light: rgba(34, 197, 94, 0.15);
+  --success-green-hover: #166534;
+  --success-green-light: rgba(21, 128, 61, 0.12);
 }
 
 * {
@@ -83,15 +98,15 @@
 }
 
 ::selection {
-  background-color: var(--alert-red);
-  color: #ffffff;
+  background-color: var(--color-garnet, #492201);
+  color: #FFFFFF;
 }
 
 html {
   scroll-behavior: smooth;
-  background: var(--bg-gradient-blue) fixed;
-  background-color: #0e1a47;
-  color: var(--text-main, #ffffff);
+  background: #FFFFFF fixed;
+  background-color: #FFFFFF;
+  color: var(--text-main, #150A06);
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
@@ -102,9 +117,9 @@ html {
 body {
   font-family: var(--font-geist);
   font-weight: 400;
-  background: var(--bg-gradient-blue) fixed;
-  background-color: #0e1a47;
-  color: var(--text-main, #ffffff);
+  background: #FFFFFF fixed;
+  background-color: #FFFFFF;
+  color: var(--text-main, #150A06);
   min-height: 100vh;
   margin: 0;
   width: 100%;
