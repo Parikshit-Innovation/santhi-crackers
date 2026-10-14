@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { randomBytes, scryptSync } from "node:crypto";
 import test from "node:test";
 import { requireAdmin } from "../src/admin-auth.js";
-import { createOrder, getAdminOrderById, getAdminOrders } from "../src/orders.js";
+import { createOrder, getAdminOrderById, getAdminOrders, getOrderReceipt } from "../src/orders.js";
 
 const createResponse = () => {
   let statusCode = 200;
@@ -450,3 +450,72 @@ test("admin order details requires authentication via requireAdmin middleware", 
     else process.env.ADMIN_SESSION_SECRET = originalSession;
   }
 });
+
+test("public order receipt returns order details for valid order and 404 when missing", async () => {
+  const originalFindUnique = db.order.findUnique;
+  try {
+    const mockOrder = {
+      id: "order-xyz",
+      customerName: "Senthil",
+      customerPhone: "9876543210",
+      deliveryAddress: "45 Market St, Erode",
+      status: "PENDING",
+      paymentStatus: "PENDING",
+      subtotal: new Prisma.Decimal("1200.00"),
+      shippingAmount: new Prisma.Decimal("0.00"),
+      discountAmount: new Prisma.Decimal("0.00"),
+      total: new Prisma.Decimal("1200.00"),
+      createdAt: new Date("2026-10-13T12:00:00Z"),
+      items: [
+        {
+          id: "item-1",
+          productId: "prod-1",
+          productName: "2¾\" Kuruvi",
+          productCode: "SF2026-001",
+          quantity: 2,
+          unitPrice: new Prisma.Decimal("10.00"),
+          lineTotal: new Prisma.Decimal("20.00"),
+        },
+      ],
+    };
+
+    (db.order as any).findUnique = async ({ where }: { where: { id: string } }) => {
+      if (where.id === "order-xyz") return mockOrder;
+      return null;
+    };
+
+    // Valid order
+    const validRes = createResponse();
+    await getOrderReceipt(
+      { params: { id: "order-xyz" } } as unknown as Request,
+      validRes.response,
+      () => undefined,
+    );
+    assert.equal(validRes.statusCode, 200);
+    const body = validRes.body as { order: { customerName: string; total: string; items: unknown[] } };
+    assert.equal(body.order.customerName, "Senthil");
+    assert.equal(body.order.total, "1200.00");
+    assert.equal(body.order.items.length, 1);
+
+    // Missing order
+    const notFoundRes = createResponse();
+    await getOrderReceipt(
+      { params: { id: "order-missing" } } as unknown as Request,
+      notFoundRes.response,
+      () => undefined,
+    );
+    assert.equal(notFoundRes.statusCode, 404);
+
+    // Invalid id
+    const invalidRes = createResponse();
+    await getOrderReceipt(
+      { params: { id: "" } } as unknown as Request,
+      invalidRes.response,
+      () => undefined,
+    );
+    assert.equal(invalidRes.statusCode, 400);
+  } finally {
+    db.order.findUnique = originalFindUnique;
+  }
+});
+

@@ -12,11 +12,10 @@ import {
   getProductById,
   getQueries,
   handleContactForm,
-  updateCategory,
   updateProduct,
 } from "./controller.js";
 import { getAdminInventory, updateProductStock } from "./inventory.js";
-import { createOrder, getAdminOrderById, getAdminOrders } from "./orders.js";
+import { createOrder, getAdminOrderById, getAdminOrders, getOrderReceipt } from "./orders.js";
 import { corsMiddleware } from "./utils.js";
 
 const router = Router();
@@ -29,6 +28,7 @@ router.get("/admin/orders/:id", requireAdmin, getAdminOrderById);
 router.get("/admin/inventory", requireAdmin, getAdminInventory);
 router.patch("/admin/inventory/:id", requireAdmin, updateProductStock);
 router.post("/orders", createOrder);
+router.get("/orders/:id", getOrderReceipt);
 
 router.get("/products", getCrackersData);
 router.post("/product", createProduct);
@@ -48,10 +48,6 @@ router.delete("/products/:id", deleteProduct);
 router.get("/categories", getCategories);
 router.get("/categories/:slug", getCategoryBySlug);
 router.post("/categories", createCategory);
-router.put("/categories/:id", updateCategory);
-router.patch("/categories/:id", updateCategory);
-router.put("/category/:id", updateCategory);
-router.patch("/category/:id", updateCategory);
 router.get("/cart", getCart);
 
 // Contact / Mail / Queries APIs
@@ -61,3 +57,4 @@ router.post("/queries", createQuery);
 router.get("/queries", getQueries);
 
 export default router;
+

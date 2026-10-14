@@ -17,6 +17,7 @@ interface StoreCartDrawerProps {
   onClearCart?: () => void;
   backendCartId?: string;
   isLoading?: boolean;
+  onProceedToCheckout?: () => void;
 }
 
 export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
@@ -27,6 +28,7 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
   onRemoveItem,
   onClearCart,
   isLoading,
+  onProceedToCheckout,
 }) => {
   const { t, tProduct } = useLanguage();
   const [discountCode, setDiscountCode] = useState("");
@@ -75,6 +77,12 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
   };
 
   const handleCheckout = () => {
+    if (onProceedToCheckout) {
+      onClose();
+      onProceedToCheckout();
+      return;
+    }
+
     setIsCheckingOut(true);
     setTimeout(() => {
       alert(
