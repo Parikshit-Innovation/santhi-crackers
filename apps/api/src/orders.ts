@@ -130,9 +130,21 @@ export const createOrder: RequestHandler = async (request, response): Promise<vo
           id: createdOrder.id,
           orderStatus: createdOrder.status,
           paymentStatus: createdOrder.paymentStatus,
+          customerName: checkout.customerName,
+          customerPhone: checkout.customerPhone,
+          deliveryAddress: checkout.deliveryAddress,
           itemCount: createdOrder.items.reduce((count, item) => count + item.quantity, 0),
+          subtotal: subtotal.toFixed(2),
           total: createdOrder.total.toFixed(2),
           createdAt: createdOrder.createdAt,
+          items: orderItems.map((item) => ({
+            productId: item.productId,
+            productName: item.productName,
+            productCode: item.productCode,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice.toFixed(2),
+            lineTotal: item.lineTotal.toFixed(2),
+          })),
         };
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
@@ -292,3 +304,75 @@ export const getAdminOrderById: RequestHandler = async (request, response): Prom
     response.status(500).json({ error: "Failed to retrieve order." });
   }
 };
+
+export const getOrderReceipt: RequestHandler = async (request, response): Promise<void> => {
+  const id = parseOrderId(request.params["id"]);
+  if (!id) {
+    response.status(400).json({ error: "Invalid order ID." });
+    return;
+  }
+
+  try {
+    const order = await db.order.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        customerName: true,
+        customerPhone: true,
+        deliveryAddress: true,
+        status: true,
+        paymentStatus: true,
+        subtotal: true,
+        shippingAmount: true,
+        discountAmount: true,
+        total: true,
+        createdAt: true,
+        items: {
+          select: {
+            id: true,
+            productId: true,
+            productName: true,
+            productCode: true,
+            quantity: true,
+            unitPrice: true,
+            lineTotal: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      response.status(404).json({ error: "Order not found." });
+      return;
+    }
+
+    response.json({
+      order: {
+        id: order.id,
+        customerName: order.customerName,
+        customerPhone: order.customerPhone,
+        deliveryAddress: order.deliveryAddress,
+        status: order.status,
+        paymentStatus: order.paymentStatus,
+        subtotal: order.subtotal.toFixed(2),
+        shippingAmount: order.shippingAmount.toFixed(2),
+        discountAmount: order.discountAmount.toFixed(2),
+        total: order.total.toFixed(2),
+        createdAt: order.createdAt,
+        items: order.items.map((item) => ({
+          id: item.id,
+          productId: item.productId,
+          productName: item.productName,
+          productCode: item.productCode,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice.toFixed(2),
+          lineTotal: item.lineTotal.toFixed(2),
+        })),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to retrieve order receipt:", error);
+    response.status(500).json({ error: "Failed to retrieve order." });
+  }
+};
+

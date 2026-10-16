@@ -7,22 +7,25 @@ import {
     saveCachedCart,
 } from "./api/cart";
 import { AboutSection } from "./components/AboutSection";
+import { CheckoutConfirmation, PlacedOrderData } from "./components/CheckoutConfirmation";
 import { ComboItem, ComboPackTable } from "./components/ComboPackTable";
 import { ContactSection } from "./components/ContactSection";
+import { DiwaliFestiveBackground } from "./components/DiwaliFestiveBackground";
 import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
 import { MarqueeBanner } from "./components/MarqueeBanner";
+import { OrderReceipt } from "./components/OrderReceipt";
 import { CartEntry, StoreCartDrawer } from "./components/StoreCartDrawer";
 import { StoreFooter } from "./components/StoreFooter";
 import { StoreHero } from "./components/StoreHero";
 import { StoreNavbar } from "./components/StoreNavbar";
-import { DiwaliFestiveBackground } from "./components/DiwaliFestiveBackground";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact">("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact" | "checkout" | "receipt">("home");
   const [cartItems, setCartItems] = useState<CartEntry[]>(() => loadCachedCart());
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [backendCart, setBackendCart] = useState<BackendCart | null>(null);
   const [isCartLoading, setIsCartLoading] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState<PlacedOrderData | null>(null);
 
   // Initialize and synchronize backend cart from GET /api/cart
   useEffect(() => {
@@ -53,6 +56,18 @@ export default function App() {
     };
   }, []);
 
+  // Check URL params for checkout
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("view") === "checkout") {
+        setCurrentPage("checkout");
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   // Persist updated cart items locally
   useEffect(() => {
     saveCachedCart(cartItems);
@@ -70,7 +85,6 @@ export default function App() {
       }
       return [...prev, { item, quantity: qty }];
     });
-    // Item added smoothly to cart state without opening drawer automatically
   };
 
   const handleSetItemQuantity = (item: ComboItem, qty: number) => {
@@ -153,6 +167,31 @@ export default function App() {
               <StoreFooter
                 onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
               />
+              {currentPage === "checkout" && (
+                <CheckoutConfirmation
+                  isOpen={true}
+                  cartItems={cartItems}
+                  onBack={() => {
+                    setCurrentPage("home");
+                    setIsCartOpen(true);
+                  }}
+                  onNavigateHome={handleGoToProducts}
+                  onOrderPlaced={(order) => {
+                    setCurrentOrder(order);
+                  }}
+                  onViewReceipt={(order) => {
+                    setCurrentOrder(order);
+                    setCurrentPage("receipt");
+                  }}
+                />
+              )}
+              {currentPage === "receipt" && currentOrder && (
+                <OrderReceipt
+                  isOpen={true}
+                  order={currentOrder}
+                  onNavigateHome={handleGoToProducts}
+                />
+              )}
             </>
           )}
         </main>
@@ -168,6 +207,10 @@ export default function App() {
           onClearCart={handleClearCart}
           backendCartId={backendCart?.id}
           isLoading={isCartLoading}
+          onProceedToCheckout={() => {
+            setCurrentPage("checkout");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
         />
       </div>
     </div>
