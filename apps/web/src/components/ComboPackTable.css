@@ -202,6 +202,7 @@
 
 /* Header Cells - Royal Garnet with Golden Frame and Crisp White Text */
 .combo-grid-table th {
+<<<<<<< Updated upstream
   background-color: var(--color-garnet, #492201);
   color: #FFFFFF;
   font-size: 11.5px;
@@ -212,6 +213,17 @@
   border: 1px solid rgba(205, 180, 98, 0.35);
   border-bottom: 3px solid var(--color-mustard, #CDB462); /* Rich Golden Accent Border */
   line-height: 1.15;
+=======
+  background-color: #faebe0; /* Light warm cream/peach from screenshot */
+  color: #1f2937;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 3px;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid #d1d5db;
+  line-height: 1.2;
+>>>>>>> Stashed changes
   box-sizing: border-box;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -223,7 +235,7 @@
 
 /* Column Widths (Desktop / Tablet) - 7 Columns */
 .th-img, .td-img {
-  width: 44px;
+  width: 46px;
   text-align: center;
 }
 
@@ -237,12 +249,11 @@
 }
 
 .th-content, .td-content {
-  width: auto;
-  min-width: 100px;
-  max-width: 240px;
-  text-align: left;
-  padding-left: 6px !important;
-  padding-right: 6px !important;
+  width: 72px;
+  max-width: 80px;
+  text-align: center;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
 }
 
 .th-actual, .td-actual {
@@ -280,11 +291,16 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-align: center;
+<<<<<<< Updated upstream
   padding: 7px 8px;
   border-top: 2px solid var(--color-mustard, #CDB462) !important;
   border-bottom: 2px solid var(--color-mustard, #CDB462) !important;
   border-left: 1px solid var(--color-copper, #BF7F35) !important;
   border-right: 1px solid var(--color-copper, #BF7F35) !important;
+=======
+  padding: 8px 8px;
+  border: 1px solid #d1d5db !important;
+>>>>>>> Stashed changes
   line-height: 1.25;
 }
 
@@ -294,6 +310,7 @@
 .combo-data-row {
   background-color: #FFFFFF;
   transition: background-color 0.12s ease;
+  height: 42px;
 }
 
 .combo-data-row:nth-child(even) {
@@ -305,8 +322,13 @@
 }
 
 .combo-grid-table td {
+<<<<<<< Updated upstream
   border: 1px solid #EAE0C8;
   padding: 4px 2px;
+=======
+  border: 1px solid #d1d5db;
+  padding: 6px 3px;
+>>>>>>> Stashed changes
   vertical-align: middle;
   background-color: transparent;
   box-sizing: border-box;
@@ -314,8 +336,8 @@
 
 /* Image Thumbnail */
 .combo-img-thumbnail {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   margin: 0 auto;
   border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
@@ -346,10 +368,17 @@
 
 /* Name */
 .combo-cell-name {
+<<<<<<< Updated upstream
   font-size: 11.5px;
   color: var(--color-espresso, #150A06);
   font-weight: 700;
   line-height: 1.25;
+=======
+  font-size: 11px;
+  color: #111827;
+  font-weight: 500;
+  line-height: 1.3;
+>>>>>>> Stashed changes
   display: block;
   text-align: center;
   word-break: break-word;
@@ -363,6 +392,7 @@
   opacity: 0.85;
   display: block;
   text-align: center;
+  line-height: 1.25;
 }
 
 /* Actual Price (Strikethrough) */
@@ -390,6 +420,7 @@
 .combo-input-qty {
   width: 100%;
   max-width: 48px;
+<<<<<<< Updated upstream
   height: 25px;
   border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
@@ -397,6 +428,15 @@
   color: var(--color-espresso, #150A06);
   font-size: 11px;
   font-weight: 700;
+=======
+  height: 29px;
+  border: 1px solid #c8c8c8;
+  border-radius: 0;
+  background-color: #ffffff;
+  color: #111827;
+  font-size: 11.5px;
+  font-weight: 600;
+>>>>>>> Stashed changes
   text-align: center;
   box-sizing: border-box;
   padding: 0 2px;
@@ -424,6 +464,7 @@
 .combo-cell-total-box {
   width: 100%;
   max-width: 48px;
+<<<<<<< Updated upstream
   height: 25px;
   background-color: var(--color-eggnog, #F9EDC5);
   border: 1.5px solid var(--color-copper, #BF7F35);
@@ -431,6 +472,15 @@
   color: var(--color-garnet, #492201);
   font-size: 11px;
   font-weight: 800;
+=======
+  height: 29px;
+  background-color: #f3f4f6; /* Gray box matching screenshot */
+  border: 1px solid #d4d4d4;
+  border-radius: 0;
+  color: #111827;
+  font-size: 11px;
+  font-weight: 600;
+>>>>>>> Stashed changes
   display: flex;
   align-items: center;
   justify-content: center;
@@ -605,7 +655,7 @@
   /* Compact Column Widths to fit mobile screens (~360px - 400px) */
   .th-img, .td-img { width: 34px; }
   .th-name, .td-name { width: auto; min-width: 90px; text-align: center; padding-left: 4px !important; padding-right: 4px !important; }
-  .th-content, .td-content { width: auto; min-width: 70px; padding-left: 4px !important; padding-right: 4px !important; }
+  .th-content, .td-content { width: 50px; min-width: 46px; max-width: 54px; text-align: center; padding-left: 2px !important; padding-right: 2px !important; }
   .th-actual, .td-actual { width: 44px; }
   .th-price, .td-price { width: 40px; }
   .th-qty, .td-qty { width: 48px; }
@@ -614,19 +664,23 @@
   /* Compact Headers */
   .combo-grid-table th {
     font-size: 9.5px;
-    padding: 4px 1px;
-    line-height: 1.1;
+    padding: 6px 1px;
+    line-height: 1.15;
   }
 
   /* Compact Category Banner */
   .combo-cat-cell {
     font-size: 10px;
-    padding: 5px 4px;
+    padding: 7px 4px;
   }
 
   /* Compact Data Cells */
   .combo-grid-table td {
-    padding: 3px 1px;
+    padding: 5px 1px;
+  }
+
+  .combo-data-row {
+    height: 36px;
   }
 
   .combo-img-thumbnail {
@@ -656,13 +710,13 @@
   }
 
   .combo-input-qty {
-    height: 23px;
+    height: 26px;
     max-width: 40px;
     font-size: 10px;
   }
 
   .combo-cell-total-box {
-    height: 23px;
+    height: 26px;
     max-width: 40px;
     font-size: 9.5px;
   }
