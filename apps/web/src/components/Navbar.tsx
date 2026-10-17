@@ -27,6 +27,39 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [currentTab, setCurrentTab] = useState(activeTab);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  React.useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (currentScrollY <= 60) {
+            setIsVisible(true);
+            setIsScrolled(false);
+          } else {
+            setIsScrolled(true);
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+              setIsVisible(false);
+            } else if (currentScrollY < lastScrollY) {
+              setIsVisible(true);
+            }
+          }
+          lastScrollY = Math.max(0, currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navItems = ["Home", "About", "Pricelist", "Contact Us"];
 
@@ -37,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <nav className="sr-navbar">
+    <nav className={`sr-navbar ${isVisible ? "nav-visible" : "nav-hidden"} ${isScrolled ? "nav-scrolled" : ""}`}>
       {/* 1. TOP PURPLE STRIP */}
       <div className="sr-top-strip">
         <div className="sr-top-container">

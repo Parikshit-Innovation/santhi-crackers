@@ -6,25 +6,24 @@ const WHATSAPP_NUMBER = "917373292931";
 const WHATSAPP_MESSAGE = "வணக்கம்! நாங்கள் உங்களிடம் பட்டாசுகள் வாங்க விரும்புகிறோம்.";
 
 export const FloatingWhatsApp: React.FC = () => {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  const isTa = language === "ta";
 
   return (
     <div className="floating-whatsapp-container">
-      {/* Information badge placed directly before the floating WhatsApp button in both English and Tamil */}
+      {/* Information badge placed directly before the floating WhatsApp button */}
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="floating-whatsapp-info"
-        title="Delivery available only till Oct 25 | அக்டோபர் 25 வரை மட்டுமே"
+        title={isTa ? "ஆன்லைன் ஆர்டர் அக் 25 வரை மட்டுமே" : "Delivery available till Oct 25"}
       >
-        <span className="floating-whatsapp-dot" aria-hidden="true" />
-        <div className="floating-whatsapp-text">
-          <span className="floating-whatsapp-text-en">Only till Oct 25</span>
-          <span className="floating-whatsapp-text-ta">அக் 25 வரை மட்டுமே</span>
-        </div>
+        <span className="floating-whatsapp-text">
+          {isTa ? "ஆன்லைன் ஆர்டர் அக் 25 வரை மட்டுமே" : "Delivery available till Oct 25"}
+        </span>
       </a>
 
       {/* Floating WhatsApp Action Button */}
@@ -36,7 +35,6 @@ export const FloatingWhatsApp: React.FC = () => {
         aria-label={t("Chat on WhatsApp")}
         title="Chat on WhatsApp (73732 92931)"
       >
-        <div className="floating-whatsapp-pulse" aria-hidden="true" />
         <svg
           viewBox="0 0 24 24"
           width="26"

@@ -309,26 +309,101 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
     [language, tCategory],
   );
 
+
+  // Category collapse state
+  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
+
+  const toggleCategoryCollapse = (category: string) => {
+    setCollapsedCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
+
+  // Quantity stepper increment/decrement
+  const handleStepQuantity = (item: ComboItem, step: number) => {
+    const current = quantityMap[item.id] || 0;
+    const next = Math.max(0, current + step);
+    if (onSetQuantity) {
+      onSetQuantity(item, next);
+    } else {
+      setLocalQuantities((prev) => ({ ...prev, [item.id]: next }));
+      if (onAddToCart && next > current) {
+        onAddToCart(step, item);
+      }
+    }
+  };
+
+  // Cart summary calculations
+  const totalCartCount = useMemo(() => {
+    if (cartItems) {
+      return cartItems.reduce((sum, entry) => sum + entry.quantity, 0);
+    }
+    return Object.values(localQuantities).reduce((sum, q) => sum + q, 0);
+  }, [cartItems, localQuantities]);
+
+  const totalCartAmount = useMemo(() => {
+    if (cartItems) {
+      return cartItems.reduce((sum, entry) => sum + entry.quantity * entry.item.price, 0);
+    }
+    return Object.entries(localQuantities).reduce((sum, [id, qty]) => {
+      const it = items.find((x) => x.id === id);
+      return sum + (it ? it.price * qty : 0);
+    }, 0);
+  }, [cartItems, localQuantities, items]);
+
   return (
     <section className="combo-table-wrapper">
       <div className="combo-table-inner">
-        {/* Search & Filters Bar */}
-        <div className="combo-toolbar">
-          <div className="combo-search-container">
-            <input
-              type="text"
-              placeholder={t("Search an item")}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="combo-search-input"
-            />
+        {/* 1. Top Summary Banner (Items, Total ₹, View Cart) */}
+        <div className="combo-summary-banner">
+          <div className="combo-summary-col">
+            <span className="combo-summary-label">{t("ITEMS")}</span>
+            <span className="combo-summary-value">{totalCartCount}</span>
+          </div>
+
+          <div className="combo-summary-col">
+            <span className="combo-summary-label">{t("TOTAL")}</span>
+            <span className="combo-summary-value">₹{totalCartAmount}</span>
+          </div>
+
+          <button
+            type="button"
+            className="combo-summary-cart-btn"
+            onClick={onCartClick}
+            aria-label={t("View Cart")}
+          >
             <svg
-              className="combo-search-icon"
               viewBox="0 0 24 24"
               width="15"
               height="15"
               fill="none"
-              stroke="#00a2e8"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>{t("View Cart")}</span>
+          </button>
+        </div>
+
+        {/* 2. Single-line Search & Filter Bar */}
+        <div className="combo-search-filter-row">
+          <div className="combo-search-container">
+            <svg
+              className="combo-search-icon"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
               strokeWidth="2.4"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -336,6 +411,27 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
               <circle cx="11" cy="11" r="7" />
               <line x1="16.5" y1="16.5" x2="21" y2="21" />
             </svg>
+            <input
+              type="text"
+              placeholder={
+                language === "ta"
+                  ? "பொருளை பெயர் அல்லது வகை மூலம் தேடுக..."
+                  : "Search products by name, code, or category..."
+              }
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="combo-search-input"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                className="combo-search-clear"
+                onClick={() => setSearchQuery("")}
+                aria-label={t("Clear Search")}
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           <div className="combo-filters-wrap" ref={filtersDropdownRef}>
@@ -347,9 +443,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
             >
               <span>{t("Filters")}</span>
               <span className="combo-filters-arrow">▾</span>
-              {selectedCategory !== "all" && (
-                <span className="combo-filters-active-dot" />
-              )}
+              {selectedCategory !== "all" && <span className="combo-filters-active-dot" />}
             </button>
 
             {isFiltersOpen && (
@@ -358,7 +452,10 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
                   <label className="combo-filter-label">{t("Category")}</label>
                   <select
                     value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    onChange={(e) => {
+                      setSelectedCategory(e.target.value);
+                      setIsFiltersOpen(false);
+                    }}
                     className="combo-filter-select"
                   >
                     <option value="all">{t("All Categories")}</option>
@@ -376,6 +473,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
                     className="combo-filter-clear-btn"
                     onClick={() => {
                       setSelectedCategory("all");
+                      setIsFiltersOpen(false);
                     }}
                   >
                     {t("Clear Filters")}
@@ -386,8 +484,8 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
           </div>
         </div>
 
-        {/* Data Table */}
-        <div className="combo-table-card">
+        {/* 4. Products Catalog Section */}
+        <div className="combo-catalog-container">
           {isLoading ? (
             <div className="combo-loading-box">
               <div className="combo-loading-spinner" />
@@ -428,111 +526,149 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
               </button>
             </div>
           ) : (
-            <div className="combo-table-responsive">
-              <table className="combo-grid-table">
-                <thead>
-                  <tr>
-                    <th className="th-img">{t("Image")}</th>
-                    <th className="th-name">{t("Product Name")}</th>
-                    <th className="th-content">{t("Content")}</th>
-                    <th className="th-actual">
-                      <span className="th-actual-line">{t("Actual")}</span>
-                      <span className="th-actual-line">{t("Price")}</span>
-                    </th>
-                    <th className="th-price">{t("Price")}</th>
-                    <th className="th-qty">{t("Quantity")}</th>
-                    <th className="th-total">{t("Total")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {groupedCategories.map(({ category, items }) => (
-                    <React.Fragment key={category}>
-                      {/* Orange Category Section Header */}
-                      <tr className="combo-cat-row">
-                        <td colSpan={7} className="combo-cat-cell">
-                          {getCategoryHeaderTitle(category, items)}
-                        </td>
-                      </tr>
+            <div className="combo-category-accordion-list">
+              {groupedCategories.map(({ category, items }) => {
+                const isCollapsed = Boolean(collapsedCategories[category]);
 
-                      {/* Product Data Rows */}
-                      {items.map((item) => {
-                        const qty = quantityMap[item.id] || 0;
-                        const total = qty > 0 ? qty * item.price : 0;
+                return (
+                  <div key={category} className="combo-cat-section">
+                    {/* Category Header Accordion Bar */}
+                    <button
+                      type="button"
+                      className="combo-cat-header-btn"
+                      onClick={() => toggleCategoryCollapse(category)}
+                      aria-expanded={!isCollapsed}
+                    >
+                      <div className="combo-cat-header-left">
+                        <div className="combo-cat-icon-box">
+                          <img
+                            src={FALLBACK_THUMB}
+                            alt="Category Logo"
+                            className="combo-cat-icon-img"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="combo-cat-title-wrap">
+                          <h3 className="combo-cat-name">
+                            {getCategoryHeaderTitle(category, items)}
+                          </h3>
+                          <span className="combo-cat-count">
+                            {items.length} {language === "ta" ? "பட்டாசுகள்" : "products"}
+                          </span>
+                        </div>
+                      </div>
 
-                        return (
-                          <tr key={item.id} className="combo-data-row">
-                            {/* 1. Image */}
-                            <td className="td-img">
-                              <div
-                                className="combo-img-thumbnail"
-                                onClick={() => setActivePreview(item)}
-                                title={getProductName(item)}
-                              >
-                                <img
-                                  src={item.image}
-                                  alt={getProductName(item)}
-                                  loading="lazy"
-                                  onError={(e) => {
-                                    e.currentTarget.onerror = null;
-                                    e.currentTarget.src = FALLBACK_THUMB;
-                                  }}
-                                />
+                      <div className={`combo-cat-chevron ${isCollapsed ? "collapsed" : ""}`}>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="18 15 12 9 6 15" />
+                        </svg>
+                      </div>
+                    </button>
+
+                    {/* Products Grid / Cards inside this category */}
+                    {!isCollapsed && (
+                      <div className="combo-product-cards-grid">
+                        {items.map((item) => {
+                          const qty = quantityMap[item.id] || 0;
+                          const total = qty > 0 ? qty * item.price : 0;
+                          const contentDesc = getProductContent(item);
+
+                          return (
+                            <div key={item.id} className="combo-product-card">
+                              {/* Top row: Image & Product Details */}
+                              <div className="combo-card-top">
+                                <div
+                                  className="combo-card-thumb-wrap"
+                                  onClick={() => setActivePreview(item)}
+                                  title={getProductName(item)}
+                                >
+                                  <img
+                                    src={item.image}
+                                    alt={getProductName(item)}
+                                    loading="lazy"
+                                    className="combo-card-thumb"
+                                    onError={(e) => {
+                                      e.currentTarget.onerror = null;
+                                      e.currentTarget.src = FALLBACK_THUMB;
+                                    }}
+                                  />
+                                </div>
+
+                                <div className="combo-card-info">
+                                  {/* Product Title (Language-dependent) */}
+                                  <h4 className="combo-card-title-en">
+                                    {getProductName(item)}
+                                  </h4>
+
+
+                                  {/* Content / Packing Pill */}
+                                  {contentDesc && (
+                                    <span className="combo-card-content-pill">
+                                      {contentDesc}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
-                            </td>
 
-                            {/* 2. Product Name */}
-                            <td className="td-name">
-                              <span className="combo-cell-name">{getProductName(item)}</span>
-                            </td>
+                              {/* Bottom row: Prices, Quantity Stepper, and Row Total */}
+                              <div className="combo-card-bottom">
+                                {/* Price Box */}
+                                <div className="combo-card-price-col">
+                                  {item.actualPrice > item.price && (
+                                    <span className="combo-card-actual-price">
+                                      {item.actualPrice}
+                                    </span>
+                                  )}
+                                  <span className="combo-card-sale-price">
+                                    ₹{item.price}
+                                  </span>
+                                </div>
 
-                            {/* 4. Content */}
-                            <td className="td-content">
-                              <span className="combo-cell-content">
-                                {getProductContent(item)}
-                              </span>
-                            </td>
+                                {/* Stepper (- 0 +) and numeric manual input */}
+                                <div className="combo-card-stepper">
+                                  <button
+                                    type="button"
+                                    className="combo-stepper-btn minus"
+                                    onClick={() => handleStepQuantity(item, -1)}
+                                    disabled={qty <= 0}
+                                    aria-label="Decrease quantity"
+                                  >
+                                    −
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    className="combo-stepper-input"
+                                    value={qty > 0 ? qty : 0}
+                                    onChange={(e) => handleQuantityInputChange(item, e.target.value)}
+                                    aria-label={`${getProductName(item)} quantity`}
+                                  />
+                                  <button
+                                    type="button"
+                                    className="combo-stepper-btn plus"
+                                    onClick={() => handleStepQuantity(item, 1)}
+                                    aria-label="Increase quantity"
+                                  >
+                                    +
+                                  </button>
+                                </div>
 
-                            {/* 5. Actual Price */}
-                            <td className="td-actual">
-                              <span className="combo-cell-actual">
-                                {item.actualPrice}
-                              </span>
-                            </td>
-
-                            {/* 6. Price */}
-                            <td className="td-price">
-                              <span className="combo-cell-price">{item.price}</span>
-                            </td>
-
-                            {/* 7. Quantity */}
-                            <td className="td-qty">
-                              <input
-                                type="number"
-                                min="0"
-                                step="1"
-                                className="combo-input-qty"
-                                value={qty > 0 ? qty : ""}
-                                placeholder=""
-                                onChange={(e) =>
-                                  handleQuantityInputChange(item, e.target.value)
-                                }
-                                aria-label={`${getProductName(item)} quantity`}
-                              />
-                            </td>
-
-                            {/* 8. Total */}
-                            <td className="td-total">
-                              <div className="combo-cell-total-box">
-                                {qty > 0 ? total : ""}
+                                {/* Subtotal Box */}
+                                <div className="combo-card-total-col">
+                                  <span className="combo-card-total-val">
+                                    ₹{total}
+                                  </span>
+                                </div>
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

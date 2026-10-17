@@ -1,12 +1,15 @@
 import { config } from "dotenv";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+config({ path: path.resolve(currentDir, "../../.env") });
+config({ path: path.resolve(currentDir, "../../../.env") });
+config();
+
 import cookieParser from "cookie-parser";
 import express from "express";
 import apiRoute from "./src/routes.js";
-
-import path from "node:path";
-
-config({ path: path.resolve(import.meta.dirname, "../../.env") });
-config();
 
 const app = express();
 const port = Number(process.env.PORT ?? 3007);

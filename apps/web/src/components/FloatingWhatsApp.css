@@ -10,15 +10,18 @@
   pointer-events: auto;
 }
 
-/* Info badge placed before the WhatsApp button (Bilingual: English + Tamil) */
+/* Info badge placed before the WhatsApp button (Same height as WhatsApp button) */
 .floating-whatsapp-info {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  height: 50px; /* Exactly same height as .floating-whatsapp-btn */
+  box-sizing: border-box;
   background-color: var(--color-softivory, #F8EEBD); /* Warm luxury ivory box */
   border: 1.5px solid var(--border-cream, #CDB462);
   border-radius: 0; /* Strictly square / rectangular */
-  padding: 6px 12px;
+  padding: 0 14px;
   text-decoration: none;
   cursor: pointer;
   box-shadow: 0 4px 18px rgba(21, 10, 6, 0.12);
@@ -34,48 +37,22 @@
   transform: translateY(-1px);
 }
 
-.floating-whatsapp-dot {
-  width: 7px;
-  height: 7px;
-  background-color: var(--color-garnet, #492201); /* Pulsing garnet indicator */
-  border-radius: 0;
-  flex-shrink: 0;
-  animation: waDotBlink 1.4s ease-in-out infinite alternate;
-}
-
-@keyframes waDotBlink {
-  0% {
-    opacity: 0.3;
-    transform: scale(0.85);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-}
-
 .floating-whatsapp-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  text-align: left;
-}
-
-.floating-whatsapp-text-en {
   font-family: var(--font-body);
-  font-size: 11.5px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--color-espresso, #150A06);
-  line-height: 1.15;
+  line-height: 1;
   letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
 }
 
-.floating-whatsapp-text-ta {
-  font-family: var(--font-tamil), sans-serif;
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--color-garnet, #492201); /* Festive highlight */
-  line-height: 1.15;
+:global(.lang-ta) .floating-whatsapp-text,
+.floating-whatsapp-text:lang(ta) {
+  font-family: var(--font-tamil), var(--font-body), sans-serif;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 /* Floating WhatsApp Action Button */
@@ -115,36 +92,6 @@
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.18));
 }
 
-/* Subtle Pulsing Ring */
-.floating-whatsapp-pulse {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 0;
-  background-color: #25d366;
-  opacity: 0.6;
-  z-index: 1;
-  animation: waPulse 2.8s ease-out infinite;
-  pointer-events: none;
-}
-
-@keyframes waPulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1.3);
-    opacity: 0;
-  }
-}
-
 /* Mobile Adjustments */
 @media (max-width: 640px) {
   .floating-whatsapp-container {
@@ -154,16 +101,17 @@
   }
 
   .floating-whatsapp-info {
-    padding: 5px 9px;
-    gap: 6px;
+    height: 44px; /* Same height as mobile WhatsApp button */
+    padding: 0 12px;
   }
 
-  .floating-whatsapp-text-en {
-    font-size: 10px;
+  .floating-whatsapp-text {
+    font-size: 13.5px;
   }
 
-  .floating-whatsapp-text-ta {
-    font-size: 9px;
+  :global(.lang-ta) .floating-whatsapp-text,
+  .floating-whatsapp-text:lang(ta) {
+    font-size: 12.5px;
   }
 
   .floating-whatsapp-btn {

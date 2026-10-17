@@ -18,6 +18,7 @@ import { CartEntry, StoreCartDrawer } from "./components/StoreCartDrawer";
 import { StoreFooter } from "./components/StoreFooter";
 import { StoreHero } from "./components/StoreHero";
 import { StoreNavbar } from "./components/StoreNavbar";
+import { WelcomeModal } from "./components/WelcomeModal";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact" | "checkout" | "receipt">("home");
@@ -197,6 +198,17 @@ export default function App() {
         </main>
 
         <FloatingWhatsApp />
+        <WelcomeModal
+          onStartBooking={() => {
+            handleGoToProducts();
+            setTimeout(() => {
+              const table = document.querySelector(".combo-table-wrapper");
+              if (table) {
+                table.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            }, 100);
+          }}
+        />
 
         <StoreCartDrawer
           isOpen={isCartOpen}
