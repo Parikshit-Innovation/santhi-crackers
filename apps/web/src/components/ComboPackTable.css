@@ -1,35 +1,106 @@
 /* =========================================================
-   ComboPackTable CSS - Wholesale Price List Table
-   Exact match to uploaded specification with decreased font size
+   ComboPackTable CSS - Compact Card Listing System
+   Strictly Square Corners (border-radius: 0),
+   NO Glassmorphism, Pure Crisp Colors (#FFFFFF, Garnet, Mustard, Copper)
+   Ultra Compact Spacing for Mobile & Desktop
    ========================================================= */
 
 .combo-table-wrapper {
   width: 100%;
   background-color: #FFFFFF;
   margin: 0;
-  padding: 0 0 32px 0;
+  padding: 8px 0 28px 0;
   box-sizing: border-box;
   font-family: inherit;
 }
 
 .combo-table-inner {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 10px 8px;
+  padding: 0 10px;
   box-sizing: border-box;
 }
 
 /* ---------------------------------------------------------
-   Search & Filters Bar
+   1. Floating Top Summary Banner (Items, Total, View Cart)
+   Sticky at top below navbar with high z-index and elevation
    --------------------------------------------------------- */
-.combo-toolbar {
+.combo-summary-banner {
+  position: sticky;
+  top: 76px; /* Sits comfortably below floating navbar */
+  z-index: 950;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-  background-color: #FFFFFF;
+  background-color: var(--color-softivory, #F8EEBD);
+  border: 1.5px solid var(--border-cream, #CDB462);
+  border-radius: 0; /* Strictly square corners, NO glassmorphism */
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 14px rgba(73, 34, 1, 0.12);
   box-sizing: border-box;
+}
+
+@media (max-width: 840px) {
+  .combo-summary-banner {
+    top: 54px; /* Matches mobile navbar height */
+  }
+}
+
+.combo-summary-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.combo-summary-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-garnet, #492201);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.combo-summary-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-espresso, #150A06);
+  line-height: 1.1;
+}
+
+.combo-summary-cart-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  background-color: var(--color-garnet, #492201);
+  border: 1px solid var(--color-copper, #BF7F35);
+  border-radius: 0;
+  color: #FFFFFF;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(73, 34, 1, 0.15);
+}
+
+.combo-summary-cart-btn:hover {
+  background-color: #381a01;
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------
+   2. Single-Line Search & Filter Bar
+   --------------------------------------------------------- */
+.combo-search-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  width: 100%;
 }
 
 .combo-search-container {
@@ -37,20 +108,28 @@
   position: relative;
   display: flex;
   align-items: center;
+  min-width: 0;
+}
+
+.combo-search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--color-copper, #BF7F35);
+  pointer-events: none;
 }
 
 .combo-search-input {
   width: 100%;
   height: 34px;
-  padding: 0 28px 0 12px;
+  padding: 0 30px 0 34px;
   border: 1.5px solid var(--color-mustard, #CDB462);
-  border-radius: 0;
-  background-color: #FAFAFA;
+  border-radius: 0; /* Strictly square corners, NO glassmorphism */
+  background-color: #FFFFFF;
   color: var(--color-espresso, #150A06);
   font-size: 12px;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
 .combo-search-input::placeholder {
@@ -60,39 +139,42 @@
 }
 
 .combo-search-input:focus {
-  background-color: #FFFFFF;
-  border-color: var(--color-copper, #BF7F35);
+  border-color: var(--color-garnet, #492201);
   box-shadow: 0 0 0 2px rgba(205, 180, 98, 0.25);
 }
 
-.combo-search-icon {
+.combo-search-clear {
   position: absolute;
-  right: 10px;
-  color: var(--color-copper, #BF7F35);
-  pointer-events: none;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: #8C7464;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
 }
 
+/* Filter Dropdown */
 .combo-filters-wrap {
   position: relative;
+  flex-shrink: 0;
 }
 
 .combo-filters-btn {
   height: 34px;
-  padding: 0 14px;
-  border: 1.5px solid var(--color-copper, #BF7F35);
+  padding: 0 12px;
+  border: 1.5px solid var(--border-cream, #CDB462);
   border-radius: 0;
   background-color: #FFFFFF;
   color: var(--color-garnet, #492201);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   outline: none;
-  white-space: nowrap;
   transition: all 0.15s ease;
-  box-shadow: 0 2px 6px rgba(73, 34, 1, 0.08);
 }
 
 .combo-filters-btn:hover,
@@ -102,52 +184,50 @@
 }
 
 .combo-filters-arrow {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-copper, #BF7F35);
 }
 
 .combo-filters-active-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   background-color: var(--color-copper, #BF7F35);
   border-radius: 0;
-  display: inline-block;
 }
 
 .combo-filters-menu {
   position: absolute;
   top: calc(100% + 4px);
   right: 0;
-  width: 220px;
+  width: 200px;
   background-color: #FFFFFF;
   border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
-  box-shadow: 0 10px 28px rgba(205, 180, 98, 0.22), 0 4px 12px rgba(73, 34, 1, 0.1);
-  padding: 12px;
+  box-shadow: 0 8px 20px rgba(73, 34, 1, 0.15);
+  padding: 10px;
   z-index: 100;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .combo-filter-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .combo-filter-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--color-garnet, #492201);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .combo-filter-select {
   width: 100%;
-  padding: 6px 8px;
-  font-size: 12px;
+  padding: 5px 6px;
+  font-size: 11.5px;
   border: 1.5px solid var(--color-mustard, #CDB462);
   border-radius: 0;
   color: var(--color-espresso, #150A06);
@@ -156,348 +236,350 @@
 }
 
 .combo-filter-clear-btn {
-  padding: 6px;
-  font-size: 11.5px;
+  padding: 5px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--color-garnet, #492201);
   background: transparent;
-  border: 1.5px dashed var(--color-copper, #BF7F35);
+  border: 1px dashed var(--color-copper, #BF7F35);
   border-radius: 0;
   cursor: pointer;
   text-align: center;
+}
+
+/* ---------------------------------------------------------
+   4. Category Accordion Section
+   --------------------------------------------------------- */
+.combo-catalog-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.combo-category-accordion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.combo-cat-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Category Header Bar */
+.combo-cat-header-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--border-cream, #CDB462);
+  border-left: 4px solid var(--color-garnet, #492201);
+  border-radius: 0; /* Strictly square corners, NO glassmorphism */
+  padding: 7px 10px;
+  cursor: pointer;
+  outline: none;
   transition: all 0.15s ease;
-}
-
-.combo-filter-clear-btn:hover {
-  background-color: var(--color-eggnog, #F9EDC5);
-}
-
-/* ---------------------------------------------------------
-   Table Card & Highlighted Golden Container
-   --------------------------------------------------------- */
-.combo-table-card {
-  width: 100%;
-  background-color: #FFFFFF;
-  border: 2px solid var(--color-mustard, #CDB462);
-  box-shadow: 0 10px 30px rgba(205, 180, 98, 0.22), 0 2px 10px rgba(73, 34, 1, 0.06);
   box-sizing: border-box;
 }
 
-.combo-table-responsive {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+.combo-cat-header-btn:hover {
+  background-color: #FFFDF7;
 }
 
-/* ---------------------------------------------------------
-   Table Layout & Headers - Deep Royal Garnet with Gold Accents
-   --------------------------------------------------------- */
-.combo-grid-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  background-color: #FFFFFF;
-  box-sizing: border-box;
+.combo-cat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Header Cells - Royal Garnet with Golden Frame and Crisp White Text */
-.combo-grid-table th {
-<<<<<<< Updated upstream
-  background-color: var(--color-garnet, #492201);
-  color: #FFFFFF;
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 7px 3px;
-  text-align: center;
-  vertical-align: middle;
-  border: 1px solid rgba(205, 180, 98, 0.35);
-  border-bottom: 3px solid var(--color-mustard, #CDB462); /* Rich Golden Accent Border */
-  line-height: 1.15;
-=======
-  background-color: #faebe0; /* Light warm cream/peach from screenshot */
-  color: #1f2937;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 8px 3px;
-  text-align: center;
-  vertical-align: middle;
-  border: 1px solid #d1d5db;
-  line-height: 1.2;
->>>>>>> Stashed changes
-  box-sizing: border-box;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.th-actual-line {
-  display: block;
-}
-
-/* Column Widths (Desktop / Tablet) - 7 Columns */
-.th-img, .td-img {
-  width: 46px;
-  text-align: center;
-}
-
-.th-name, .td-name {
-  width: auto;
-  min-width: 160px;
-  text-align: center;
-  vertical-align: middle;
-  padding-left: 6px !important;
-  padding-right: 6px !important;
-}
-
-.th-content, .td-content {
-  width: 72px;
-  max-width: 80px;
-  text-align: center;
-  padding-left: 4px !important;
-  padding-right: 4px !important;
-}
-
-.th-actual, .td-actual {
-  width: 52px;
-  text-align: center;
-}
-
-.th-price, .td-price {
-  width: 52px;
-  text-align: center;
-}
-
-.th-qty, .td-qty {
-  width: 60px;
-  text-align: center;
-}
-
-.th-total, .td-total {
-  width: 54px;
-  text-align: center;
-}
-
-/* ---------------------------------------------------------
-   Terracotta Category Section Row (Festive Highlight Banner)
-   --------------------------------------------------------- */
-.combo-cat-row {
-  background-color: var(--color-terracotta, #492201);
-}
-
-.combo-cat-cell {
-  background-color: var(--color-terracotta, #492201) !important;
-  color: #FFFFFF !important;
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: center;
-<<<<<<< Updated upstream
-  padding: 7px 8px;
-  border-top: 2px solid var(--color-mustard, #CDB462) !important;
-  border-bottom: 2px solid var(--color-mustard, #CDB462) !important;
-  border-left: 1px solid var(--color-copper, #BF7F35) !important;
-  border-right: 1px solid var(--color-copper, #BF7F35) !important;
-=======
-  padding: 8px 8px;
-  border: 1px solid #d1d5db !important;
->>>>>>> Stashed changes
-  line-height: 1.25;
-}
-
-/* ---------------------------------------------------------
-   Product Rows & Cells - Crisp White with Faint Cream Zebra
-   --------------------------------------------------------- */
-.combo-data-row {
-  background-color: #FFFFFF;
-  transition: background-color 0.12s ease;
-  height: 42px;
-}
-
-.combo-data-row:nth-child(even) {
-  background-color: #FDFBF7;
-}
-
-.combo-data-row:hover {
-  background-color: rgba(205, 180, 98, 0.12); /* Subtle Gold hover */
-}
-
-.combo-grid-table td {
-<<<<<<< Updated upstream
-  border: 1px solid #EAE0C8;
-  padding: 4px 2px;
-=======
-  border: 1px solid #d1d5db;
-  padding: 6px 3px;
->>>>>>> Stashed changes
-  vertical-align: middle;
-  background-color: transparent;
-  box-sizing: border-box;
-}
-
-/* Image Thumbnail */
-.combo-img-thumbnail {
-  width: 34px;
-  height: 34px;
-  margin: 0 auto;
-  border: 1.5px solid var(--color-mustard, #CDB462);
-  border-radius: 0;
-  overflow: hidden;
+.combo-cat-icon-box {
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border: 1px solid var(--border-soft, #eddca8);
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  background-color: #ffffff;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.combo-img-thumbnail img {
+.combo-cat-icon-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
-/* Code */
-.combo-cell-code {
-  font-size: 10.5px;
-  color: var(--color-terracotta, #492201);
-  font-weight: 700;
-  display: block;
-  text-align: center;
-  word-break: break-word;
+.combo-cat-title-wrap {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 }
 
-/* Name */
-.combo-cell-name {
-<<<<<<< Updated upstream
-  font-size: 11.5px;
-  color: var(--color-espresso, #150A06);
-  font-weight: 700;
-  line-height: 1.25;
-=======
-  font-size: 11px;
-  color: #111827;
-  font-weight: 500;
-  line-height: 1.3;
->>>>>>> Stashed changes
-  display: block;
-  text-align: center;
-  word-break: break-word;
-}
-
-/* Content */
-.combo-cell-content {
-  font-size: 10px;
-  color: var(--color-espresso, #150A06);
-  font-weight: 600;
-  opacity: 0.85;
-  display: block;
-  text-align: center;
-  line-height: 1.25;
-}
-
-/* Actual Price (Strikethrough) */
-.combo-cell-actual {
-  font-size: 10.5px;
-  color: var(--color-terracotta, #492201);
-  opacity: 0.8;
-  text-decoration: line-through;
-  white-space: nowrap;
-  display: block;
-  text-align: center;
-}
-
-/* Discounted Price (Garnet) */
-.combo-cell-price {
-  font-size: 11.5px;
+.combo-cat-name {
+  margin: 0;
+  font-size: 14px;
   font-weight: 800;
-  color: var(--color-garnet, #492201);
-  white-space: nowrap;
-  display: block;
-  text-align: center;
+  color: var(--color-espresso, #150A06);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
-/* Quantity Input */
-.combo-input-qty {
-  width: 100%;
-  max-width: 48px;
-<<<<<<< Updated upstream
-  height: 25px;
-  border: 1.5px solid var(--color-mustard, #CDB462);
-  border-radius: 0;
-  background-color: #FFFFFF;
-  color: var(--color-espresso, #150A06);
-  font-size: 11px;
-  font-weight: 700;
-=======
-  height: 29px;
-  border: 1px solid #c8c8c8;
-  border-radius: 0;
-  background-color: #ffffff;
-  color: #111827;
-  font-size: 11.5px;
+.combo-cat-count {
+  font-size: 10px;
   font-weight: 600;
->>>>>>> Stashed changes
-  text-align: center;
+  color: var(--color-terracotta, #492201);
+}
+
+.combo-cat-chevron {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-garnet, #492201);
+  transition: transform 0.2s ease;
+}
+
+.combo-cat-chevron.collapsed {
+  transform: rotate(180deg);
+}
+
+/* ---------------------------------------------------------
+   5. Compact Product Cards Grid
+   Strictly Square Corners (border-radius: 0), Solid Colors
+   --------------------------------------------------------- */
+.combo-product-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.combo-product-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-cream, #CDB462);
+  border-radius: 0; /* Strictly square corners, NO glassmorphism */
+  padding: 8px 10px;
   box-sizing: border-box;
-  padding: 0 2px;
-  outline: none;
-  margin: 0 auto;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.combo-input-qty:focus {
+.combo-product-card:hover {
   border-color: var(--color-copper, #BF7F35);
-  box-shadow: 0 0 0 2px rgba(205, 180, 98, 0.3);
+  box-shadow: 0 2px 8px rgba(73, 34, 1, 0.08);
 }
 
-.combo-input-qty::-webkit-outer-spin-button,
-.combo-input-qty::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.combo-input-qty[type="number"] {
-  -moz-appearance: textfield;
+/* Top row: Thumb & Product Name Details */
+.combo-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* Total Box */
-.combo-cell-total-box {
-  width: 100%;
-  max-width: 48px;
-<<<<<<< Updated upstream
-  height: 25px;
-  background-color: var(--color-eggnog, #F9EDC5);
-  border: 1.5px solid var(--color-copper, #BF7F35);
-  border-radius: 0;
-  color: var(--color-garnet, #492201);
-  font-size: 11px;
-  font-weight: 800;
-=======
-  height: 29px;
-  background-color: #f3f4f6; /* Gray box matching screenshot */
-  border: 1px solid #d4d4d4;
-  border-radius: 0;
-  color: #111827;
-  font-size: 11px;
-  font-weight: 600;
->>>>>>> Stashed changes
+.combo-card-thumb-wrap {
+  width: 48px;
+  height: 48px;
+  background-color: #FAFAFA;
+  border: 1px solid var(--border-cream, #CDB462);
+  border-radius: 0; /* Strictly square */
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  margin: 0 auto;
+}
+
+.combo-card-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.combo-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.combo-card-title-en {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-espresso, #150A06);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.combo-card-title-ta {
+  margin: 0;
+  font-family: var(--font-tamil), sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--color-garnet, #492201);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.combo-card-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #166534; /* Green matching standard Sivakasi brand marker */
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.combo-card-brand-dot {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.combo-card-content-pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: var(--color-softivory, #F8EEBD);
+  color: var(--color-garnet, #492201);
+  border: 1px solid rgba(205, 180, 98, 0.6);
+  border-radius: 2px;
+  line-height: 1.2;
+}
+
+/* Bottom row: Price, Stepper, Subtotal */
+.combo-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(205, 180, 98, 0.35);
+  padding-top: 6px;
+  gap: 8px;
+}
+
+.combo-card-price-col {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 65px;
+}
+
+.combo-card-actual-price {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.combo-card-sale-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-espresso, #150A06);
+}
+
+/* Stepper (- 0 +) */
+.combo-card-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--border-cream, #CDB462);
+  border-radius: 0; /* Strictly square corners */
+  background-color: #FFFFFF;
+  height: 28px;
+  overflow: hidden;
+}
+
+.combo-stepper-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFFFF;
+  border: none;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-garnet, #492201);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  outline: none;
+  padding: 0;
+}
+
+.combo-stepper-btn:hover:not(:disabled) {
+  background-color: var(--color-eggnog, #F9EDC5);
+}
+
+.combo-stepper-btn:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.combo-stepper-input {
+  width: 32px;
+  height: 28px;
+  border: none;
+  border-left: 1px solid var(--border-cream, #CDB462);
+  border-right: 1px solid var(--border-cream, #CDB462);
+  border-radius: 0;
+  background-color: #FFFFFF;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--color-espresso, #150A06);
+  outline: none;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+
+.combo-stepper-input::-webkit-outer-spin-button,
+.combo-stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Subtotal column */
+.combo-card-total-col {
+  min-width: 55px;
+  text-align: right;
+}
+
+.combo-card-total-val {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-garnet, #492201);
 }
 
 /* ---------------------------------------------------------
-   Lightbox Modal
+   6. Lightbox Preview Dialog
    --------------------------------------------------------- */
 .combo-lightbox-backdrop {
   position: fixed;
-  inset: 0;
-  background-color: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(4px);
-  z-index: 2000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(21, 10, 6, 0.7);
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -505,89 +587,84 @@
 }
 
 .combo-lightbox-dialog {
-  background-color: #ffffff;
-  border-radius: 0;
-  overflow: hidden;
-  max-width: 420px;
-  width: 100%;
   position: relative;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-  animation: lightboxScaleUp 0.18s ease-out;
-}
-
-@keyframes lightboxScaleUp {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  background-color: #FFFFFF;
+  border: 2px solid var(--color-mustard, #CDB462);
+  border-radius: 0;
+  max-width: 360px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 .combo-lightbox-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: none;
+  top: 8px;
+  right: 8px;
   width: 28px;
   height: 28px;
   border-radius: 0;
-  cursor: pointer;
+  background-color: #FFFFFF;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
   font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0f172a;
 }
 
 .combo-lightbox-img {
   width: 100%;
-  max-height: 320px;
-  object-fit: cover;
+  height: 200px;
+  object-fit: contain;
   display: block;
+  background-color: #FFFFFF;
 }
 
 .combo-lightbox-info {
-  padding: 14px 18px;
+  padding: 12px 14px;
   background-color: var(--color-softivory, #F8EEBD);
+  border-top: 1px solid var(--border-cream, #CDB462);
 }
 
 .combo-lightbox-info h3 {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   margin: 0 0 4px;
   color: var(--color-espresso, #150A06);
 }
 
 .combo-lightbox-info p {
-  font-size: 12.5px;
+  font-size: 11.5px;
   color: var(--color-terracotta, #492201);
   margin: 0;
 }
 
 /* ---------------------------------------------------------
-   Empty State & Loading
+   7. Empty & Loading States
    --------------------------------------------------------- */
 .combo-loading-box,
 .combo-empty-bucket-box,
 .combo-empty-search-box {
   text-align: center;
-  padding: 36px 16px;
+  padding: 28px 14px;
   background-color: var(--color-softivory, #F8EEBD);
+  border: 1px solid var(--border-cream, #CDB462);
+  border-radius: 0;
   color: var(--color-terracotta, #492201);
 }
 
 .combo-loading-spinner {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border: 3px solid var(--color-eggnog, #F9EDC5);
   border-top-color: var(--color-copper, #BF7F35);
   border-radius: 50%;
   animation: comboSpin 0.7s linear infinite;
-  margin: 0 auto 12px;
+  margin: 0 auto 10px;
 }
 
 @keyframes comboSpin {
@@ -599,23 +676,23 @@
 .combo-loading-text,
 .combo-empty-bucket-title,
 .combo-empty-search-title {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--color-espresso, #150A06);
-  margin: 0 0 6px;
+  margin: 0 0 4px;
 }
 
 .combo-empty-bucket-desc {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--color-terracotta, #492201);
-  margin: 0 0 14px;
+  margin: 0 0 10px;
 }
 
 .combo-empty-refresh-btn,
 .combo-clear-search-btn {
-  padding: 6px 14px;
-  font-size: 11.5px;
-  font-weight: 600;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--color-softivory, #F8EEBD);
   background-color: var(--color-garnet, #492201);
   border: none;
@@ -624,111 +701,65 @@
 }
 
 /* ---------------------------------------------------------
-   Mobile Responsive Rules: Fits 100% on Phone Screens
-   Exact layout from screenshot (all 8 columns visible)
+   8. Mobile Specific Adjustments
    --------------------------------------------------------- */
-@media (max-width: 600px) {
-  .combo-table-wrapper {
-    padding-bottom: 50px;
-  }
-
+@media (max-width: 480px) {
   .combo-table-inner {
-    padding: 4px 2px;
+    padding: 0 6px;
   }
 
-  .combo-toolbar {
-    padding: 0 2px;
-    margin-bottom: 6px;
+  .combo-summary-banner {
+    padding: 6px 10px;
   }
 
-  .combo-search-input {
-    height: 30px;
-    font-size: 11px;
+  .combo-summary-label {
+    font-size: 9px;
   }
 
-  .combo-filters-btn {
+  .combo-summary-value {
+    font-size: 14px;
+  }
+
+  .combo-summary-cart-btn {
     height: 30px;
     padding: 0 10px;
     font-size: 11px;
   }
 
-  /* Compact Column Widths to fit mobile screens (~360px - 400px) */
-  .th-img, .td-img { width: 34px; }
-  .th-name, .td-name { width: auto; min-width: 90px; text-align: center; padding-left: 4px !important; padding-right: 4px !important; }
-  .th-content, .td-content { width: 50px; min-width: 46px; max-width: 54px; text-align: center; padding-left: 2px !important; padding-right: 2px !important; }
-  .th-actual, .td-actual { width: 44px; }
-  .th-price, .td-price { width: 40px; }
-  .th-qty, .td-qty { width: 48px; }
-  .th-total, .td-total { width: 42px; }
-
-  /* Compact Headers */
-  .combo-grid-table th {
-    font-size: 9.5px;
-    padding: 6px 1px;
-    line-height: 1.15;
+  .combo-card-thumb-wrap {
+    width: 44px;
+    height: 44px;
   }
 
-  /* Compact Category Banner */
-  .combo-cat-cell {
-    font-size: 10px;
-    padding: 7px 4px;
+  .combo-card-title-en {
+    font-size: 14px;
   }
 
-  /* Compact Data Cells */
-  .combo-grid-table td {
-    padding: 5px 1px;
+  .combo-card-title-ta {
+    font-size: 13px;
   }
 
-  .combo-data-row {
-    height: 36px;
+  .combo-card-sale-price {
+    font-size: 13px;
   }
 
-  .combo-img-thumbnail {
+  .combo-card-total-val {
+    font-size: 13px;
+  }
+
+  .combo-card-stepper {
+    height: 26px;
+  }
+
+  .combo-stepper-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .combo-stepper-input {
     width: 28px;
-    height: 28px;
-  }
-
-  .combo-cell-code {
-    font-size: 9px;
-  }
-
-  .combo-cell-name {
-    font-size: 9.5px;
-    line-height: 1.15;
-  }
-
-  .combo-cell-content {
-    font-size: 9px;
-  }
-
-  .combo-cell-actual {
-    font-size: 9px;
-  }
-
-  .combo-cell-price {
-    font-size: 9.5px;
-  }
-
-  .combo-input-qty {
     height: 26px;
-    max-width: 40px;
-    font-size: 10px;
-  }
-
-  .combo-cell-total-box {
-    height: 26px;
-    max-width: 40px;
-    font-size: 9.5px;
-  }
-
-  .combo-bottom-bar {
-    height: 38px;
-    gap: 6px;
-    padding: 0 10px;
-  }
-
-  .combo-bottom-text,
-  .combo-bottom-view-cart {
     font-size: 11px;
   }
 }

@@ -22,6 +22,38 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
     activePage === "about" ? "About" : activePage === "contact" ? "Contact us" : "Home",
   );
   const [searchVal, setSearchVal] = useState("");
+  const [isVisible, setIsVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const handleScroll = () => {
+      const currentScrollY = Math.max(0, window.pageYOffset || document.documentElement.scrollTop || 0);
+
+      // At top (within 20px): always show navbar and remove floating shadow
+      if (currentScrollY <= 20) {
+        setIsVisible(true);
+        setIsScrolled(false);
+      } else {
+        setIsScrolled(true);
+        const delta = currentScrollY - lastScrollY;
+
+        // Sliding down: hide navbar
+        if (delta > 5) {
+          setIsVisible(false);
+        }
+        // Sliding up: show floating navbar
+        else if (delta < -5) {
+          setIsVisible(true);
+        }
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (activePage === "about") {
@@ -88,7 +120,9 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
   return (
     <>
       {/* Top Navbar */}
-      <header className="store-nav-header">
+      <header
+        className={`store-nav-header ${isVisible ? "nav-visible" : "nav-hidden"} ${isScrolled ? "nav-scrolled" : ""}`}
+      >
         <div className="store-nav-container">
           {/* Brand Logo & Name */}
           <div
@@ -209,7 +243,10 @@ export const StoreNavbar: React.FC<StoreNavbarProps> = ({
 
       {/* Mobile Bottom Navigation Bar: Home, Cart, About, Location */}
       {!hideBottomNav && (
-        <nav className="store-bottom-nav" aria-label={t("Mobile navigation")}>
+        <nav
+          className={`store-bottom-nav ${isVisible ? "bottom-nav-visible" : "bottom-nav-hidden"}`}
+          aria-label={t("Mobile navigation")}
+        >
           {/* 1. Home Icon */}
           <button
             type="button"

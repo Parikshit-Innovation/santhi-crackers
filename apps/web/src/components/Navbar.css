@@ -7,8 +7,26 @@
   background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.09);
-  position: relative;
-  z-index: 100;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.sr-navbar.nav-hidden {
+  transform: translateY(-100%);
+  box-shadow: none;
+}
+
+.sr-navbar.nav-visible {
+  transform: translateY(0);
+}
+
+.sr-navbar.nav-scrolled {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
 }
 
 /* ---------------- 1. TOP PURPLE STRIP ---------------- */
