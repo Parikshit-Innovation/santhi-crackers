@@ -415,7 +415,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
               type="text"
               placeholder={
                 language === "ta"
-                  ? "பொருளை பெயர் அல்லது வகை மூலம் தேடுக..."
+                  ? "உங்களுக்குப் பிடித்த பட்டாசுகளைத் தேடுங்கள்..."
                   : "Search products by name, code, or category..."
               }
               value={searchQuery}
