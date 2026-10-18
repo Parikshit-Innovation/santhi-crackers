@@ -115,32 +115,34 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
       >
         {/* Header */}
         <div className="store-drawer-header">
-          <div>
-            <h2 className="store-drawer-title">
-              {t("Your Cart")}{" "}
-              {totalItemCount > 0 && `(${t("{count} items", { count: totalItemCount })})`}
-            </h2>
-          </div>
-          <button
-            type="button"
-            className="store-drawer-close"
-            onClick={onClose}
-            aria-label={t("Close cart")}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <div className="store-drawer-header-inner">
+            <div>
+              <h2 className="store-drawer-title">
+                {t("Your Cart")}{" "}
+                {totalItemCount > 0 && `(${t("{count} items", { count: totalItemCount })})`}
+              </h2>
+            </div>
+            <button
+              type="button"
+              className="store-drawer-close"
+              onClick={onClose}
+              aria-label={t("Close cart")}
             >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Content Area */}
@@ -237,58 +239,60 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
 
             {/* Pinned Bottom Footer Section */}
             <div className="store-drawer-footer">
-              {/* Discount Code Form */}
-              <div className="store-discount-group">
-                <input
-                  type="text"
-                  placeholder={t("Discount code")}
-                  value={discountCode}
-                  onChange={(e) => {
-                    setDiscountCode(e.target.value);
-                    setDiscountError("");
-                  }}
-                  className="store-discount-input"
-                  disabled={discountApplied}
-                />
+              <div className="store-drawer-footer-inner">
+                {/* Discount Code Form */}
+                <div className="store-discount-group">
+                  <input
+                    type="text"
+                    placeholder={t("Discount code")}
+                    value={discountCode}
+                    onChange={(e) => {
+                      setDiscountCode(e.target.value);
+                      setDiscountError("");
+                    }}
+                    className="store-discount-input"
+                    disabled={discountApplied}
+                  />
+                  <button
+                    type="button"
+                    className="store-discount-btn"
+                    onClick={handleApplyDiscount}
+                    disabled={discountApplied}
+                  >
+                    {discountApplied ? t("Applied") : t("Apply")}
+                  </button>
+                </div>
+                {discountError && <span className="store-discount-error">{discountError}</span>}
+                {discountApplied && (
+                  <span className="store-discount-success">
+                    {t("10% festive discount applied!")}
+                  </span>
+                )}
+
+                {/* Subtotal */}
+                <div className="store-subtotal-row">
+                  <span className="store-subtotal-label">{t("Subtotal")}</span>
+                  <span className="store-subtotal-amount">{formatPrice(finalSubtotal)}</span>
+                </div>
+
+                {/* Note */}
+                <p className="store-shipping-note">{t("Shipping calculated at checkout")}</p>
+
+                {/* Checkout CTA */}
                 <button
                   type="button"
-                  className="store-discount-btn"
-                  onClick={handleApplyDiscount}
-                  disabled={discountApplied}
+                  className="store-checkout-btn"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut}
                 >
-                  {discountApplied ? t("Applied") : t("Apply")}
+                  {isCheckingOut ? t("Processing...") : t("Checkout")}
+                </button>
+
+                {/* Continue Shopping Link */}
+                <button type="button" className="store-continue-shopping-link" onClick={onClose}>
+                  {t("Continue Shopping")}
                 </button>
               </div>
-              {discountError && <span className="store-discount-error">{discountError}</span>}
-              {discountApplied && (
-                <span className="store-discount-success">
-                  {t("10% festive discount applied!")}
-                </span>
-              )}
-
-              {/* Subtotal */}
-              <div className="store-subtotal-row">
-                <span className="store-subtotal-label">{t("Subtotal")}</span>
-                <span className="store-subtotal-amount">{formatPrice(finalSubtotal)}</span>
-              </div>
-
-              {/* Note */}
-              <p className="store-shipping-note">{t("Shipping calculated at checkout")}</p>
-
-              {/* Checkout CTA */}
-              <button
-                type="button"
-                className="store-checkout-btn"
-                onClick={handleCheckout}
-                disabled={isCheckingOut}
-              >
-                {isCheckingOut ? t("Processing...") : t("Checkout")}
-              </button>
-
-              {/* Continue Shopping Link */}
-              <button type="button" className="store-continue-shopping-link" onClick={onClose}>
-                {t("Continue Shopping")}
-              </button>
             </div>
           </div>
         )}

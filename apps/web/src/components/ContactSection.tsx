@@ -221,7 +221,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
                     </span>
                   </div>
                   <p className="contact-branch-text">
-                    {t("15A, College Division, Karattupalyam, Gobichettipalayam.")}
+                    {t("15A, College Division, Karattadipalyam, Gobichettipalayam.")}
                   </p>
                 </a>
 
@@ -244,7 +244,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
                     </span>
                   </div>
                   <p className="contact-branch-text">
-                    {t("1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.")}
+                    {t("1/1, Kalingiam Main Road, Kalingiam, Gobichettipalayam.")}
                   </p>
                 </a>
               </div>

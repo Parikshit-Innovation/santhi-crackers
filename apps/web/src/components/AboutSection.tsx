@@ -384,7 +384,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
                   <p>
                     <strong>{t("Never use enclosed spaces:")}</strong>
                     {t(
-                      " Never burst crackers inside bottles, cans, or closed containers. ",
+                      " Never burst crackers inside bottles, cans, or closed containers.",
                     )}
                   </p>
                 </div>
