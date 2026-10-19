@@ -3,7 +3,9 @@
  * In production on Vercel: VITE_API_URL=https://YOUR-RENDER-BACKEND.onrender.com
  * In local development: defaults to relative /api (proxied by Vite) or localhost:3007 fallback.
  */
-const rawBaseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.trim() || "";
+const rawBaseUrl =
+  ((import.meta.env.VITE_API_URL as string | undefined) ||
+    (import.meta.env.VITE_URL as string | undefined))?.trim() || "";
 export const API_BASE_URL = rawBaseUrl.replace(/\/$/, "");
 
 /**

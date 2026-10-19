@@ -74,6 +74,10 @@ export const formatCart = (cart: CartWithItems): CartResponse => {
 const PRODUCTION_ORIGINS: readonly string[] = [
   "https://shanthicrackers.in",
   "https://www.shanthicrackers.in",
+  "https://admin.shanthicrackers.in",
+  "https://santhicrackers.in",
+  "https://www.santhicrackers.in",
+  "https://admin.santhicrackers.in",
 ];
 
 export const isAllowedOrigin = (origin: string): boolean => {
@@ -91,6 +95,11 @@ export const isAllowedOrigin = (origin: string): boolean => {
 
   // Local development origins
   if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+    return true;
+  }
+
+  // Production domains & subdomains (shanthicrackers.in, santhicrackers.in, etc.)
+  if (/^https:\/\/(?:[a-z0-9-]+\.)?s?hanthicrackers\.(in|com)$/.test(origin)) {
     return true;
   }
 

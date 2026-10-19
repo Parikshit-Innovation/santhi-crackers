@@ -3,7 +3,9 @@
  * In production: VITE_API_URL=https://YOUR-RENDER-BACKEND.onrender.com
  * In local dev: defaults to relative /api or localhost:3007
  */
-const rawBaseUrl = (import.meta.env.VITE_API_URL as string | undefined)?.trim() || "";
+const rawBaseUrl =
+  ((import.meta.env.VITE_API_URL as string | undefined) ||
+    (import.meta.env.VITE_URL as string | undefined))?.trim() || "";
 export const API_BASE_URL = rawBaseUrl.replace(/\/$/, "");
 
 /**

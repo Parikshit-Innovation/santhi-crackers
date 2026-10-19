@@ -8,7 +8,8 @@
     "ADMIN_PASSWORD_HASH",
     "ADMIN_SESSION_SECRET",
     "CONTACT_EMAIL",
-    "VITE_API_URL"
+    "VITE_API_URL",
+    "VITE_URL"
   ],
   "tasks": {
     "build": {

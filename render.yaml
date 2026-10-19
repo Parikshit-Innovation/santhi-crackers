@@ -23,4 +23,4 @@ services:
       - key: CONTACT_EMAIL
         sync: false
       - key: ALLOWED_ORIGINS
-        value: https://shanthicrackers.in,https://www.shanthicrackers.in
+        value: https://shanthicrackers.in,https://www.shanthicrackers.in,https://admin.shanthicrackers.in,https://santhicrackers.in,https://www.santhicrackers.in,https://admin.santhicrackers.in,https://santhicrackers.vercel.app,https://santhicrackers-admin.vercel.app
