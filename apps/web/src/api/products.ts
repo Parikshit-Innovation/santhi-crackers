@@ -146,6 +146,7 @@ export const mapBackendProductToComboItem = (
     price: priceNum,
     image,
     sortOrder: typeof prod.sortOrder === "number" ? prod.sortOrder : 0,
+    isActive: prod.isActive !== undefined ? prod.isActive : true,
   };
 };
 
