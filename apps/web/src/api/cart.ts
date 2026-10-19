@@ -30,12 +30,13 @@ export interface GetCartResponse {
 export const CART_STORAGE_KEY = "santhi_crackers_cart_items_v1";
 export const CART_ID_KEY = "santhi_crackers_cart_id_v1";
 
+import { getApiEndpoints } from "./config";
+
 /**
- * Connects to GET localhost:3007/api/cart (or via Vite proxy /api/cart)
- * with cookie credentials to get or initialize the server guest cart.
+ * Connects to GET /api/cart with cookie credentials to get or initialize the server guest cart.
  */
 export async function fetchBackendCart(): Promise<BackendCart | null> {
-  const endpoints = ["/api/cart", "http://localhost:3007/api/cart"];
+  const endpoints = getApiEndpoints("/api/cart");
 
   for (const url of endpoints) {
     try {

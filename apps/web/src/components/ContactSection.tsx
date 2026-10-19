@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./ContactSection.css";
 import { useLanguage } from "../context/LanguageContext";
+import { getApiUrl } from "../api/config";
 
 interface ContactSectionProps {
   onNavigateHome?: () => void;
@@ -22,7 +23,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
     setIsSubmitting(true);
     setErrorMessage("");
     try {
-      const response = await fetch("/api/queries", {
+      const response = await fetch(getApiUrl("/api/queries"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -7,23 +7,32 @@ config({ path: path.resolve(currentDir, "../../.env") });
 config({ path: path.resolve(currentDir, "../../../.env") });
 config();
 
-import cookieParser from "cookie-parser";
-import express from "express";
-import apiRoute from "./src/routes.js";
+import app from "./src/app.js";
 
-const app = express();
 const port = Number(process.env.PORT ?? 3007);
+const host = "0.0.0.0";
 
-app.use(express.json());
-app.use(cookieParser());
-
-app.use("/api", apiRoute);
-
-
-app.get("/health", (_request, response) => {
-  response.json({ status: "ok" });
+const server = app.listen(port, host, () => {
+  console.log(`API server listening on http://${host}:${port}`);
 });
 
-app.listen(port, () => {
-  console.log(`API server listening on http://localhost:${port}`);
+server.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.syscall !== "listen") {
+    throw error;
+  }
+  console.error(`API server failed to start on ${host}:${port} -`, error.message);
+  process.exit(1);
 });
+
+const shutdown = (signal: string) => {
+  console.log(`Received ${signal}. Shutting down gracefully...`);
+  server.close(() => {
+    console.log("API server closed.");
+    process.exit(0);
+  });
+};
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
+
+export default app;

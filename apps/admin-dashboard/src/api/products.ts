@@ -58,15 +58,10 @@ export interface GetProductsResponse {
   items: BackendProductItem[];
 }
 
-const API_PRODUCT_ENDPOINTS = [
-  "http://localhost:3007/api/product",
-  "/api/product",
-];
+import { getApiEndpoints } from "./config";
 
-const API_PRODUCTS_ENDPOINTS = [
-  "http://localhost:3007/api/products",
-  "/api/products",
-];
+const API_PRODUCT_ENDPOINTS = getApiEndpoints("/api/product");
+const API_PRODUCTS_ENDPOINTS = getApiEndpoints("/api/products");
 
 export async function createProductApi(input: CreateProductInput): Promise<CreateProductResponse> {
   let lastError: Error = new Error("Failed to create product");
@@ -177,12 +172,7 @@ export async function updateProductApi(
   input: UpdateProductInput
 ): Promise<UpdateProductResponse> {
   const idStr = encodeURIComponent(String(id).trim());
-  const endpoints = [
-    `http://localhost:3007/api/product/${idStr}`,
-    `http://localhost:3007/api/products/${idStr}`,
-    `/api/product/${idStr}`,
-    `/api/products/${idStr}`,
-  ];
+  const endpoints = getApiEndpoints(`/api/product/${idStr}`);
 
   const bodyData: Record<string, any> = {};
   if (input.code !== undefined) bodyData.code = input.code ? input.code.trim().toUpperCase() : "";
@@ -241,12 +231,7 @@ export async function updateProductApi(
 
 export async function deleteProductApi(id: string | number): Promise<DeleteProductResponse> {
   const idStr = encodeURIComponent(String(id).trim());
-  const endpoints = [
-    `http://localhost:3007/api/product/${idStr}`,
-    `http://localhost:3007/api/products/${idStr}`,
-    `/api/product/${idStr}`,
-    `/api/products/${idStr}`,
-  ];
+  const endpoints = getApiEndpoints(`/api/product/${idStr}`);
 
   let lastError: Error = new Error("Failed to delete product");
 

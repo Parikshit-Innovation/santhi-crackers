@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
+  "main": "./dist/src/app.js",
+  "exports": {
+    ".": {
+      "types": "./dist/src/app.d.ts",
+      "import": "./dist/src/app.js",
+      "default": "./dist/src/app.js"
+    }
+  },
   "scripts": {
     "dev": "concurrently --kill-others-on-fail --names build,server \"tsc --watch --preserveWatchOutput\" \"tsx watch server.ts\"",
     "build": "tsc",
@@ -12,6 +20,7 @@
     "admin:hash-password": "node scripts/hash-admin-password.mjs"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.0",
     "@repo/db": "*",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",

@@ -40,10 +40,9 @@ export interface UpdateCategoryResponse {
   category: BackendCategoryItem;
 }
 
-const API_ENDPOINTS = [
-  "http://localhost:3007/api/categories",
-  "/api/categories",
-];
+import { getApiEndpoints } from "./config";
+
+const API_ENDPOINTS = getApiEndpoints("/api/categories");
 
 export async function createCategoryApi(input: CreateCategoryInput): Promise<CreateCategoryResponse> {
   let lastError: Error = new Error("Failed to create category");
@@ -94,12 +93,7 @@ export async function updateCategoryApi(
   input: UpdateCategoryInput
 ): Promise<UpdateCategoryResponse> {
   const param = encodeURIComponent(String(idOrSlug).trim());
-  const endpoints = [
-    `http://localhost:3007/api/categories/${param}`,
-    `http://localhost:3007/api/category/${param}`,
-    `/api/categories/${param}`,
-    `/api/category/${param}`,
-  ];
+  const endpoints = getApiEndpoints(`/api/categories/${param}`);
 
   const bodyData: Record<string, any> = {};
   if (input.nameEng !== undefined) bodyData.nameEng = input.nameEng ? input.nameEng.trim() : "";

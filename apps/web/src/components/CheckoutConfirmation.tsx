@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import "./CheckoutConfirmation.css";
 import { CartEntry } from "./StoreCartDrawer";
+import { getApiUrl } from "../api/config";
 
 export interface CustomerFormData {
   name: string;
@@ -230,7 +231,7 @@ export const CheckoutConfirmation: React.FC<CheckoutConfirmationProps> = ({
       let createdAt = new Date().toISOString();
 
       try {
-        const response = await fetch("/api/orders", {
+        const response = await fetch(getApiUrl("/api/orders"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

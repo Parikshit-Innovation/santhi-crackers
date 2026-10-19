@@ -147,11 +147,10 @@ export const mapBackendProductToComboItem = (
   };
 };
 
+import { getApiEndpoints } from "./config";
+
 export async function fetchBackendProducts(): Promise<BackendProduct[]> {
-  const endpoints = [
-    "/api/products",
-    "http://localhost:3007/api/products",
-  ];
+  const endpoints = getApiEndpoints("/api/products");
 
   for (const url of endpoints) {
     try {
@@ -173,10 +172,7 @@ export async function fetchBackendProducts(): Promise<BackendProduct[]> {
 }
 
 export async function fetchBackendCategories(): Promise<BackendCategory[]> {
-  const endpoints = [
-    "/api/categories",
-    "http://localhost:3007/api/categories",
-  ];
+  const endpoints = getApiEndpoints("/api/categories");
 
   for (const url of endpoints) {
     try {

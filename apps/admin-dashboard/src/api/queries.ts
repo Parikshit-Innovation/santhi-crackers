@@ -13,10 +13,9 @@ export interface FetchQueriesResponse {
   total: number;
 }
 
-const API_ENDPOINTS = [
-  "http://localhost:3007/api/queries",
-  "/api/queries",
-];
+import { getApiEndpoints } from "./config";
+
+const API_ENDPOINTS = getApiEndpoints("/api/queries");
 
 export async function fetchQueriesApi(): Promise<FetchQueriesResponse> {
   let lastError: Error = new Error("Failed to fetch customer queries");

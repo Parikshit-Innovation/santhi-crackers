@@ -22,6 +22,10 @@ const router = Router();
 
 router.use(corsMiddleware);
 
+router.get("/health", (_request, response) => {
+  response.status(200).json({ status: "ok" });
+});
+
 router.post("/admin/login", loginAdmin);
 router.get("/admin/orders", requireAdmin, getAdminOrders);
 router.get("/admin/orders/:id", requireAdmin, getAdminOrderById);

@@ -9,7 +9,7 @@ export const CART_COOKIE_NAME = "cart_id";
 export const getCartCookieOptions = (): CookieOptions => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
   path: "/",
 });
@@ -71,18 +71,54 @@ export const formatCart = (cart: CartWithItems): CartResponse => {
 
 // ── CORS ─────────────────────────────────────────────────────────────────────
 
+const PRODUCTION_ORIGINS: readonly string[] = [
+  "https://shanthicrackers.in",
+  "https://www.shanthicrackers.in",
+];
+
+export const isAllowedOrigin = (origin: string): boolean => {
+  if (PRODUCTION_ORIGINS.includes(origin)) {
+    return true;
+  }
+
+  const customOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (customOrigins.includes(origin)) {
+    return true;
+  }
+
+  // Local development origins
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+    return true;
+  }
+
+  // Vercel preview deployments
+  if (
+    /^https:\/\/[a-z0-9-]+-parikshit-innovations?-projects\.vercel\.app$/.test(origin) ||
+    /^https:\/\/santhicrackers[a-z0-9-]*\.vercel\.app$/.test(origin)
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const corsMiddleware = (request: Request, response: Response, next: NextFunction): void => {
   const origin = request.headers.origin;
 
-  if (origin) {
+  if (origin && isAllowedOrigin(origin)) {
     response.setHeader("Access-Control-Allow-Origin", origin);
     response.setHeader("Access-Control-Allow-Credentials", "true");
-  } else {
-    response.setHeader("Access-Control-Allow-Origin", "*");
   }
 
+  response.setHeader("Vary", "Origin");
   response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-  response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+  response.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With, Accept, Origin",
+  );
 
   if (request.method === "OPTIONS") {
     response.sendStatus(204);
