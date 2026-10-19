@@ -28,6 +28,7 @@ export interface ComboItem {
   price: number;
   image: string;
   sortOrder?: number;
+  isActive?: boolean;
 }
 
 interface ComboPackTableProps {
@@ -215,9 +216,9 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
     }
   };
 
-  // Filtered items
+  // Filtered items (excludes inactive products from storefront)
   const filteredItems = useMemo(() => {
-    let result = [...items];
+    let result = items.filter((it) => it.isActive !== false);
 
     if (selectedCategory !== "all") {
       result = result.filter((it) => it.category === selectedCategory);
