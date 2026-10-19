@@ -24,7 +24,7 @@ import {
     X
 } from "lucide-react";
 import type { FormEvent } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createCategoryApi, fetchCategoriesApi, updateCategoryApi } from "./api/categories";
 import { createProductApi, deleteProductApi, fetchProductsApi, updateProductApi } from "./api/products";
 import { type CustomerQuery, fetchQueriesApi } from "./api/queries";
@@ -127,16 +127,6 @@ const getStoredSession = (): AdminSessionData | null => {
   }
 };
 
-const formatRemainingTime = (minutes: number): string => {
-  if (minutes <= 0) return "Expiring soon";
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (hours > 0) {
-    return `${hours}h ${mins}m`;
-  }
-  return `${mins}m`;
-};
-
 const getInitialRoute = (isAuth: boolean): string => {
   if (!isAuth) return "/admin/login";
 
@@ -165,10 +155,6 @@ export default function App() {
   const initialSession = getStoredSession();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => Boolean(initialSession));
   const [sessionData, setSessionData] = useState<AdminSessionData | null>(initialSession);
-  const [sessionRemainingMinutes, setSessionRemainingMinutes] = useState<number>(() => {
-    if (!initialSession) return 0;
-    return Math.max(0, Math.round((initialSession.expiresAt - Date.now()) / (60 * 1000)));
-  });
   const [sessionExpiredMsg, setSessionExpiredMsg] = useState<string | null>(null);
 
   // Form & Route State
@@ -180,6 +166,13 @@ export default function App() {
   const [rememberMe, setRememberMe] = useState(true);
 
 
+
+  // Categories State
+  const [categoriesList, setCategoriesList] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [categorySearch, setCategorySearch] = useState("");
+  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
 
   // Products State
   const [productsList, setProductsList] = useState<Product[]>(INITIAL_PRODUCTS);
@@ -613,26 +606,47 @@ export default function App() {
     }
   };
 
-  const filteredProducts = productsList.filter(p => {
-    const q = productSearch.trim().toLowerCase();
-    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
-    const matchesCategory = productCategoryFilter === "All" || p.category.toLowerCase() === productCategoryFilter.toLowerCase();
-    const matchesStatus = productStatusFilter === "All" || p.status === productStatusFilter;
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+  // Create a map from category slug/name to its sort order
+  const categorySortMap = useMemo(() => {
+    const map = new Map<string, number>();
+    categoriesList.forEach(c => {
+      if (c.slug) map.set(c.slug.toLowerCase(), c.sort);
+      if (c.name) map.set(c.name.toLowerCase(), c.sort);
+      if (c.nameEng) map.set(c.nameEng.toLowerCase(), c.sort);
+    });
+    return map;
+  }, [categoriesList]);
+
+  const filteredProducts = productsList
+    .filter(p => {
+      const q = productSearch.trim().toLowerCase();
+      const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.code.toLowerCase().includes(q);
+      const matchesCategory = productCategoryFilter === "All" || p.category.toLowerCase() === productCategoryFilter.toLowerCase();
+      const matchesStatus = productStatusFilter === "All" || p.status === productStatusFilter;
+      return matchesSearch && matchesCategory && matchesStatus;
+    })
+    .sort((a, b) => {
+      // 1. Sort primarily by category sortOrder
+      const sortA = categorySortMap.get((a.categorySlug || "").toLowerCase()) 
+        ?? categorySortMap.get((a.category || "").toLowerCase()) 
+        ?? 999;
+      const sortB = categorySortMap.get((b.categorySlug || "").toLowerCase()) 
+        ?? categorySortMap.get((b.category || "").toLowerCase()) 
+        ?? 999;
+
+      if (sortA !== sortB) {
+        return sortA - sortB;
+      }
+
+      // 2. Secondary sort by product code / name
+      return a.code.localeCompare(b.code, undefined, { numeric: true });
+    });
 
   const totalProductPages = Math.ceil(filteredProducts.length / productsPerPage) || 1;
   const paginatedProducts = filteredProducts.slice(
     (productCurrentPage - 1) * productsPerPage,
     productCurrentPage * productsPerPage
   );
-
-  // Categories State
-  const [categoriesList, setCategoriesList] = useState<Category[]>(INITIAL_CATEGORIES);
-  const [categorySearch, setCategorySearch] = useState("");
-  const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
 
   // Form State
   const [catName, setCatName] = useState("");
@@ -707,6 +721,32 @@ export default function App() {
   const [queriesSearch, setQueriesSearch] = useState("");
   const [isQueriesLoading, setIsQueriesLoading] = useState(false);
   const [selectedQuery, setSelectedQuery] = useState<CustomerQuery | null>(null);
+  const [readQueryIds, setReadQueryIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("admin_read_query_ids");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const handleOpenQueryDetails = (query: CustomerQuery) => {
+    setSelectedQuery(query);
+    if (query.id && !readQueryIds.includes(query.id)) {
+      setReadQueryIds(prev => {
+        const updated = [...prev, query.id];
+        try {
+          localStorage.setItem("admin_read_query_ids", JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
+    }
+  };
+
+  const unreadQueriesCount = useMemo(() => {
+    return queriesList.filter(q => !readQueryIds.includes(q.id)).length;
+  }, [queriesList, readQueryIds]);
+
   const [queriesCurrentPage, setQueriesCurrentPage] = useState(1);
   const queriesPerPage = 10;
 
@@ -737,7 +777,6 @@ export default function App() {
       if (!activeSession) {
         setIsAuthenticated(false);
         setSessionData(null);
-        setSessionRemainingMinutes(0);
         setCurrentRoute("/admin/login");
         return;
       }
@@ -780,16 +819,11 @@ export default function App() {
       if (!activeSession) {
         setIsAuthenticated(false);
         setSessionData(null);
-        setSessionRemainingMinutes(0);
         setSessionExpiredMsg("Your session has timed out. Please sign in again.");
         setCurrentRoute("/admin/login");
         try {
           window.history.replaceState({ path: "/admin/login" }, "", "/admin/login");
         } catch {}
-      } else {
-        const remainingMs = activeSession.expiresAt - Date.now();
-        const mins = Math.max(0, Math.round(remainingMs / (60 * 1000)));
-        setSessionRemainingMinutes(mins);
       }
     };
 
@@ -1011,7 +1045,9 @@ export default function App() {
     } : c));
   };
 
-  const handleMoveCategorySort = (id: number | string, direction: "up" | "down") => {
+  const handleMoveCategorySort = async (id: number | string, direction: "up" | "down") => {
+    let affectedCategories: Category[] = [];
+
     setCategoriesList(prev => {
       // Create new shallow copies of objects sorted by current sort order
       const list = prev.map(item => ({ ...item })).sort((a, b) => a.sort - b.sort);
@@ -1033,16 +1069,32 @@ export default function App() {
         item.sort = i + 1;
       });
 
+      affectedCategories = [list[index], list[targetIndex]];
       return list;
     });
+
+    // Sync swapped categories to backend API
+    for (const cat of affectedCategories) {
+      try {
+        await updateCategoryApi(cat.id, { sortOrder: cat.sort });
+      } catch (err) {
+        console.warn(`Failed to sync category sort for ${cat.name}:`, err);
+      }
+    }
   };
 
-  const handleDirectSortChange = (id: number | string, newSort: number) => {
+  const handleDirectSortChange = async (id: number | string, newSort: number) => {
     const val = Math.max(1, Math.floor(newSort) || 1);
     setCategoriesList(prev => {
       const updated = prev.map(c => c.id === id ? { ...c, sort: val } : { ...c });
       return updated.sort((a, b) => a.sort - b.sort);
     });
+
+    try {
+      await updateCategoryApi(id, { sortOrder: val });
+    } catch (err) {
+      console.warn(`Failed to sync direct category sort for ${id}:`, err);
+    }
   };
 
   const filteredCategories = categoriesList
@@ -1095,7 +1147,6 @@ export default function App() {
     setSessionData(newSession);
     setIsAuthenticated(true);
     setSessionExpiredMsg(null);
-    setSessionRemainingMinutes(Math.round(duration / (60 * 1000)));
 
     const nextRoute = getInitialRoute(true);
     navigate(nextRoute === "/admin/login" ? "/admin" : nextRoute, true);
@@ -1109,7 +1160,6 @@ export default function App() {
     setIsAuthenticated(false);
     setSessionData(null);
     setSessionExpiredMsg(null);
-    setSessionRemainingMinutes(0);
     navigate("/admin/login", true);
   };
 
@@ -1234,7 +1284,7 @@ export default function App() {
           <NavItem icon={LayoutDashboard} label={t("Dashboard")} path="/admin" />
           <NavItem icon={Package} label={t("Products")} path="/admin/products" />
           <NavItem icon={ListTree} label={t("Categories")} path="/admin/categories" />
-          <NavItem icon={MessageSquare} label={t("Queries")} path="/admin/queries" badge={queriesList.length > 0 ? queriesList.length : undefined} />
+          <NavItem icon={MessageSquare} label={t("Queries")} path="/admin/queries" badge={unreadQueriesCount > 0 ? unreadQueriesCount : undefined} />
         </nav>
       </div>
 
@@ -1266,17 +1316,6 @@ export default function App() {
         </div>
       </div>
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        {/* Session Timer Badge */}
-        {sessionRemainingMinutes > 0 && (
-          <div 
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-blue-50/90 border border-blue-200/80 rounded-xl text-blue-700 text-xs font-bold shrink-0 shadow-2xs"
-            title={`Security timeout: automatic logout in ${formatRemainingTime(sessionRemainingMinutes)}`}
-          >
-            <Clock size={13} className="text-blue-600 shrink-0" />
-            <span className="hidden xs:inline">{t("Session") || "Session"}:</span>
-            <span className="font-mono">{formatRemainingTime(sessionRemainingMinutes)}</span>
-          </div>
-        )}
         {/* Language switch button */}
         <button
           type="button"
@@ -1492,23 +1531,23 @@ export default function App() {
           </div>
         </div>
 
-        {/* Products Table */}
-        <div className="overflow-x-auto admin-scroll">
-          <table className="w-full text-left border-collapse min-w-[700px]">
+        {/* Products Table & Responsive Mobile View */}
+        {/* Desktop / Tablet View (md and up) */}
+        <div className="hidden md:block overflow-x-auto admin-scroll">
+          <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
                 <th className="py-3.5 px-5">{t("Product Details")}</th>
-                <th className="py-3.5 px-5">{t("Category")}</th>
-                <th className="py-3.5 px-5">{t("Pricing")}</th>
-                <th className="py-3.5 px-5">{t("Stock Level")}</th>
-                <th className="py-3.5 px-5">{t("Status")}</th>
+                <th className="py-3.5 px-4">{t("Category")}</th>
+                <th className="py-3.5 px-4">{t("Pricing")}</th>
+                <th className="py-3.5 px-4">{t("Status")}</th>
                 <th className="py-3.5 px-5 text-right">{t("Actions")}</th>
               </tr>
             </thead>
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
               {paginatedProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center">
+                  <td colSpan={5} className="py-12 text-center">
                     <div className="max-w-md mx-auto space-y-2">
                       <Package size={40} className="mx-auto text-black" />
                       <h3 className="text-base font-bold text-black">{t("No products found")}</h3>
@@ -1526,17 +1565,11 @@ export default function App() {
                 </tr>
               ) : (
                 paginatedProducts.map((p) => {
-                  const categoryBadgeColor = 
-                    p.category.includes("Fancy") ? "bg-purple-50 text-purple-700 border-purple-200" :
-                    p.category.includes("Rocket") ? "bg-rose-50 text-rose-700 border-rose-200" :
-                    p.category.includes("Flower") ? "bg-amber-50 text-amber-700 border-amber-200" :
-                    p.category.includes("Ground") ? "bg-blue-50 text-blue-700 border-blue-200" : "bg-emerald-50 text-emerald-700 border-emerald-200";
-
                   return (
                     <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 px-5">
                         <div className="flex items-center gap-3.5">
-                          <div className={`w-11 h-11 rounded-xl flex flex-shrink-0 items-center justify-center font-bold text-xs border overflow-hidden relative bg-slate-100 ${categoryBadgeColor}`}>
+                          <div className="w-11 h-11 rounded-xl flex flex-shrink-0 items-center justify-center font-bold text-xs border border-slate-200 overflow-hidden relative bg-slate-100">
                             <span className="text-slate-500">{p.name.slice(0, 2).toUpperCase()}</span>
                             {p.imageUrl && (
                               <img
@@ -1575,12 +1608,12 @@ export default function App() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-3.5 px-5">
-                        <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold border ${categoryBadgeColor}`}>
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">
                           {tCategory(p.categorySlug, p.category)}
                         </span>
                       </td>
-                      <td className="py-3.5 px-5">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex flex-col">
                           <div className="flex items-center gap-1.5">
                             <span className="font-extrabold text-sm text-black">₹{p.sellingPrice}</span>
@@ -1595,18 +1628,7 @@ export default function App() {
                           )}
                         </div>
                       </td>
-                      <td className="py-3.5 px-5">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${
-                          p.stock === 0 ? 'bg-rose-50 text-rose-700 border-rose-200' :
-                          p.stock < 10 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${
-                            p.stock === 0 ? 'bg-rose-500' : p.stock < 10 ? 'bg-amber-500' : 'bg-emerald-500'
-                          }`}></span>
-                          <span>{p.stock === 0 ? t('Out of Stock') : p.stock < 10 ? `${t('Low Stock')} (${p.stock})` : `${t('In Stock')} (${p.stock})`}</span>
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-5">
+                      <td className="py-3.5 px-4 whitespace-nowrap">
                         <button
                           onClick={() => handleToggleProductStatus(p.id)}
                           title="Click to toggle visibility status"
@@ -1620,7 +1642,7 @@ export default function App() {
                           <span>{p.status === "Active" ? t("Active") : t("Inactive")}</span>
                         </button>
                       </td>
-                      <td className="py-3.5 px-5 text-right">
+                      <td className="py-3.5 px-5 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           <button 
                             onClick={() => setViewingProduct(p)}
@@ -1651,6 +1673,130 @@ export default function App() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View (Below md): All columns in one line, no sliding, actions below each product */}
+        <div className="block md:hidden divide-y divide-slate-100">
+          {paginatedProducts.length === 0 ? (
+            <div className="py-12 text-center px-4">
+              <Package size={36} className="mx-auto text-black mb-2" />
+              <h3 className="text-sm font-bold text-black">{t("No products found")}</h3>
+              <p className="text-xs text-slate-500 mt-1 mb-3">
+                No items match your search or filter options.
+              </p>
+              <button 
+                onClick={() => { setProductSearch(""); setProductCategoryFilter("All"); setProductStatusFilter("All"); setProductCurrentPage(1); }}
+                className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-lg transition-colors cursor-pointer"
+              >
+                Clear Filters
+              </button>
+            </div>
+          ) : (
+            paginatedProducts.map((p) => (
+              <div key={p.id} className="p-3.5 space-y-2.5 hover:bg-slate-50/50 transition-colors">
+                {/* Product Info Row */}
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-xl flex flex-shrink-0 items-center justify-center font-bold text-xs border border-slate-200 overflow-hidden relative bg-slate-100">
+                    <span className="text-slate-500">{p.name.slice(0, 2).toUpperCase()}</span>
+                    {p.imageUrl && (
+                      <img
+                        src={p.imageUrl}
+                        alt={p.name}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.style.display = "none"; }}
+                      />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <p className="font-extrabold text-sm text-black leading-tight truncate">
+                        {isTamil ? (p.nameTam || p.nameEng || p.name) : (p.nameEng || p.name)}
+                      </p>
+                      {p.featured && (
+                        <span className="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.2 bg-amber-50 text-amber-700 border border-amber-200 rounded">
+                          <Star size={9} className="fill-amber-500 text-amber-500" />
+                          <span>Featured</span>
+                        </span>
+                      )}
+                    </div>
+                    {!isTamil && p.nameTam ? (
+                      <p className="text-[11px] text-blue-700 font-medium truncate mt-0.5">{p.nameTam}</p>
+                    ) : isTamil && (p.nameEng || p.name) ? (
+                      <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">{p.nameEng || p.name}</p>
+                    ) : null}
+                    <div className="flex items-center gap-2 text-[11px] text-slate-500 font-mono mt-0.5">
+                      <span>{p.code}</span>
+                      {(p.contentEng || p.content) && (
+                        <span className="text-slate-400 font-sans">
+                          • {isTamil && p.contentTam ? p.contentTam : (p.contentEng || p.content)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Details in One Line without horizontal sliding: Category, Price, Status */}
+                <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 text-xs">
+                  {/* Category in one line with no badge background */}
+                  <div className="text-xs font-semibold text-slate-700 truncate max-w-[38%]">
+                    {tCategory(p.categorySlug, p.category)}
+                  </div>
+
+                  {/* Pricing */}
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="font-extrabold text-sm text-black">₹{p.sellingPrice}</span>
+                    {p.discount ? (
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1 rounded">
+                        {p.discount}%
+                      </span>
+                    ) : null}
+                    {p.actualPrice > p.sellingPrice && (
+                      <span className="text-[10px] text-slate-400 line-through">₹{p.actualPrice}</span>
+                    )}
+                  </div>
+
+                  {/* Status Toggle */}
+                  <button
+                    onClick={() => handleToggleProductStatus(p.id)}
+                    title="Click to toggle status"
+                    className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border transition-all cursor-pointer whitespace-nowrap ${
+                      p.status === "Active" 
+                        ? "text-emerald-700 bg-emerald-50 border-emerald-200" 
+                        : "text-black bg-slate-100 border-slate-200"
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${p.status === "Active" ? "bg-emerald-500" : "bg-slate-400"}`}></span>
+                    <span>{p.status === "Active" ? t("Active") : t("Inactive")}</span>
+                  </button>
+                </div>
+
+                {/* Actions Below Each Product */}
+                <div className="flex items-center justify-end gap-2 pt-1.5 border-t border-slate-50">
+                  <button 
+                    onClick={() => setViewingProduct(p)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-lg text-xs font-bold border border-slate-200 transition-colors cursor-pointer"
+                  >
+                    <Eye size={14} />
+                    <span>{t("View")}</span>
+                  </button>
+                  <button 
+                    onClick={() => handleOpenEditProduct(p)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-lg text-xs font-bold border border-slate-200 transition-colors cursor-pointer"
+                  >
+                    <Edit size={14} />
+                    <span>{t("Edit")}</span>
+                  </button>
+                  <button 
+                    onClick={() => setDeletingProduct(p)}
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 bg-slate-50 hover:bg-rose-50 text-slate-700 hover:text-rose-700 rounded-lg text-xs font-bold border border-slate-200 transition-colors cursor-pointer"
+                  >
+                    <Trash2 size={14} />
+                    <span>{t("Delete")}</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Results Summary & Pagination Footer */}
@@ -2625,13 +2771,13 @@ export default function App() {
           </div>
         </div>
 
-        {/* Categories Table */}
-        <div className="overflow-x-auto admin-scroll">
-          <table className="w-full text-left border-collapse min-w-[620px]">
+        {/* Categories Table & Responsive Mobile View */}
+        {/* Desktop / Tablet View (md and up) */}
+        <div className="hidden md:block overflow-x-auto admin-scroll">
+          <table className="w-full text-left border-collapse">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
                 <th className="py-3.5 px-5">{t("Category Name")}</th>
-                <th className="py-3.5 px-5">{t("Slug Route")}</th>
                 <th className="py-3.5 px-5 text-center">{t("Product Count")}</th>
                 <th className="py-3.5 px-5 text-center">{t("Sort Order")}</th>
                 <th className="py-3.5 px-5 text-center">{t("Status")}</th>
@@ -2641,7 +2787,7 @@ export default function App() {
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
               {filteredCategories.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center">
+                  <td colSpan={5} className="py-12 text-center">
                     <div className="max-w-md mx-auto space-y-2">
                       <Layers size={40} className="mx-auto text-black" />
                       <h3 className="text-base font-bold text-black">{t("No categories found")}</h3>
@@ -2676,11 +2822,6 @@ export default function App() {
                               <span className="font-extrabold text-sm text-black">
                                 {isTamil ? (c.nameTam || c.nameEng || c.name) : (c.nameEng || c.name)}
                               </span>
-                              {typeof c.id === "string" && (
-                                <span className="font-mono text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title={`ID: ${c.id}`}>
-                                  {c.id.slice(0, 8)}...
-                                </span>
-                              )}
                             </div>
                             {!isTamil && c.nameTam ? (
                               <div className="text-[11px] text-blue-700 font-medium mt-0.5">{c.nameTam}</div>
@@ -2695,10 +2836,9 @@ export default function App() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-3.5 px-5 text-black font-mono text-xs">/{c.slug}</td>
                       <td className="py-3.5 px-5 text-center">
-                        <span className="px-2.5 py-0.5 bg-slate-100 text-black text-xs font-bold rounded-full border border-slate-200">
-                          {count} {t("products")}
+                        <span className="text-base font-extrabold text-black">
+                          {count}
                         </span>
                       </td>
                       <td className="py-3.5 px-5 text-center">
@@ -2769,6 +2909,131 @@ export default function App() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View (Below md): All columns in one line, no sliding, actions below each category */}
+        <div className="block md:hidden divide-y divide-slate-100">
+          {filteredCategories.length === 0 ? (
+            <div className="py-12 text-center px-4">
+              <Layers size={36} className="mx-auto text-black mb-2" />
+              <h3 className="text-sm font-bold text-black">{t("No categories found")}</h3>
+              <p className="text-xs text-slate-500 mt-1">Try searching for a different keyword or create a new category.</p>
+            </div>
+          ) : (
+            filteredCategories.map((c, index) => {
+              const count = typeof c.count === "number" ? c.count : 0;
+              return (
+                <div key={c.id} className="p-3.5 space-y-2.5 hover:bg-slate-50/50 transition-colors">
+                  {/* Category Info Row */}
+                  <div className="flex items-start gap-3">
+                    <div className="w-11 h-11 rounded-xl border border-slate-200 shrink-0 overflow-hidden relative bg-slate-100 flex items-center justify-center">
+                      <span className="font-bold text-xs text-slate-500 uppercase select-none">
+                        {c.name.slice(0, 2)}
+                      </span>
+                      {c.imageUrl && (
+                        <img 
+                          src={c.imageUrl} 
+                          alt={c.name} 
+                          className="absolute inset-0 w-full h-full object-cover" 
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }} 
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-extrabold text-sm text-black truncate">
+                          {isTamil ? (c.nameTam || c.nameEng || c.name) : (c.nameEng || c.name)}
+                        </span>
+                      </div>
+                      {!isTamil && c.nameTam ? (
+                        <div className="text-[11px] text-blue-700 font-medium truncate mt-0.5">{c.nameTam}</div>
+                      ) : isTamil && (c.nameEng || c.name) ? (
+                        <div className="text-[11px] text-slate-500 font-normal truncate mt-0.5">{c.nameEng || c.name}</div>
+                      ) : null}
+                      {(c.descriptionEng || c.description || c.descriptionTam) && (
+                        <div className="text-xs text-slate-500 font-normal line-clamp-1 mt-0.5">
+                          {isTamil && c.descriptionTam ? c.descriptionTam : (c.descriptionEng || c.description)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Details in One Line: Count, Sort Order, Status */}
+                  <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 text-xs">
+                    {/* Products Count */}
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-base font-extrabold text-black">{count}</span>
+                      <span className="text-[11px] font-semibold text-slate-500">{t("items")}</span>
+                    </div>
+
+                    {/* Sort Order Stepper */}
+                    <div className="inline-flex items-center gap-1 bg-slate-100/80 px-1.5 py-0.5 rounded-lg border border-slate-200">
+                      <button 
+                        type="button"
+                        disabled={index === 0}
+                        onClick={() => handleMoveCategorySort(c.id, "up")} 
+                        title="Move 1 step up"
+                        className="p-1 text-black hover:text-black hover:bg-white rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                      >
+                        <ArrowUp size={12} />
+                      </button>
+                      <input 
+                        type="number"
+                        min={1}
+                        value={c.sort}
+                        onChange={(e) => handleDirectSortChange(c.id, Number(e.target.value))}
+                        className="w-8 text-center font-extrabold text-xs bg-transparent outline-none border-b border-transparent focus:border-blue-600 focus:bg-white rounded text-black"
+                        title="Type sort number directly"
+                      />
+                      <button 
+                        type="button"
+                        disabled={index === filteredCategories.length - 1}
+                        onClick={() => handleMoveCategorySort(c.id, "down")} 
+                        title="Move 1 step down"
+                        className="p-1 text-black hover:text-black hover:bg-white rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                      >
+                        <ArrowDown size={12} />
+                      </button>
+                    </div>
+
+                    {/* Status Toggle */}
+                    <button
+                      onClick={() => handleToggleCategoryStatus(c.id)}
+                      title="Click to toggle status"
+                      className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border transition-all cursor-pointer whitespace-nowrap ${
+                        c.status === "Active" 
+                          ? "text-emerald-700 bg-emerald-50 border-emerald-200" 
+                          : "text-black bg-slate-100 border-slate-200"
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${c.status === "Active" ? "bg-emerald-500" : "bg-slate-400"}`}></span>
+                      <span>{c.status === "Active" ? t("Active") : t("Inactive")}</span>
+                    </button>
+                  </div>
+
+                  {/* Actions Below Each Category */}
+                  <div className="flex items-center justify-end gap-2 pt-1.5 border-t border-slate-50">
+                    <button 
+                      onClick={() => handleOpenEditCategory(c)}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-lg text-xs font-bold border border-slate-200 transition-colors cursor-pointer"
+                    >
+                      <Edit size={14} />
+                      <span>{t("Edit")}</span>
+                    </button>
+                    <button 
+                      onClick={() => setDeletingCategory(c)}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 bg-slate-50 hover:bg-rose-50 text-slate-700 hover:text-rose-700 rounded-lg text-xs font-bold border border-slate-200 transition-colors cursor-pointer"
+                    >
+                      <Trash2 size={14} />
+                      <span>{t("Delete")}</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -3310,23 +3575,95 @@ export default function App() {
           </div>
         </div>
 
-        {/* Queries Table */}
-        <div className="overflow-x-auto admin-scroll">
-          <table className="w-full text-left border-collapse text-xs min-w-[640px]">
+        {/* Mobile View: Cards */}
+        <div className="md:hidden divide-y divide-slate-100">
+          {paginatedQueries.length === 0 ? (
+            <div className="py-12 px-4 text-center text-slate-500">
+              <div className="flex flex-col items-center justify-center gap-2">
+                <MessageSquare size={36} className="text-slate-300" />
+                <p className="font-bold text-sm text-slate-800">{t("No queries found")}</p>
+                <p className="text-xs text-slate-400 max-w-xs">
+                  Customer contact requests submitted via the website will appear here in real time.
+                </p>
+              </div>
+            </div>
+          ) : (
+            paginatedQueries.map((q, idx) => {
+              const cleanPhone = q.mobileNumber.replace(/\D/g, "");
+              const waLink = `https://wa.me/91${cleanPhone}?text=${encodeURIComponent("வணக்கம்! சாந்தி சிவகாசி பட்டாசுகள் சார்பாக உங்களைத் தொடர்பு கொள்கிறோம்.")}`;
+              const formattedDate = new Date(q.createdAt).toLocaleString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              const isUnread = !readQueryIds.includes(q.id);
+
+              return (
+                <div
+                  key={q.id || idx}
+                  onClick={() => handleOpenQueryDetails(q)}
+                  className={`p-3.5 sm:p-4 hover:bg-blue-50/40 active:bg-blue-50/60 transition-colors cursor-pointer ${
+                    isUnread ? "bg-blue-50/20" : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <div className="flex items-center gap-2 min-w-0">
+                      {isUnread && (
+                        <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" title="Unread" />
+                      )}
+                      <span className="font-extrabold text-slate-900 text-sm truncate">
+                        {q.mobileNumber}
+                      </span>
+                      <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <a
+                          href={`tel:${q.mobileNumber}`}
+                          title="Call customer directly"
+                          className="p-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors"
+                        >
+                          <Phone size={13} />
+                        </a>
+                        <a
+                          href={waLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Open WhatsApp chat with customer"
+                          className="p-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors"
+                        >
+                          <MessageSquare size={13} />
+                        </a>
+                      </div>
+                    </div>
+                    <span className="text-[11px] text-slate-500 whitespace-nowrap font-medium shrink-0">
+                      {formattedDate}
+                    </span>
+                  </div>
+
+                  <p className="text-slate-800 text-xs font-medium line-clamp-2 leading-relaxed">
+                    {q.message}
+                  </p>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop View: Table */}
+        <div className="hidden md:block overflow-x-auto admin-scroll">
+          <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200/80 text-black font-extrabold uppercase tracking-wider text-[11px]">
-                <th className="py-3.5 px-4">#</th>
+                <th className="py-3.5 px-4 w-12">#</th>
                 <th className="py-3.5 px-4">{t("Mobile Number")}</th>
                 <th className="py-3.5 px-4">{t("Inquiry Message") || "Message"}</th>
-                <th className="py-3.5 px-4">{t("Received Date") || "Date"}</th>
-                <th className="py-3.5 px-4">{t("Status")}</th>
-                <th className="py-3.5 px-4 text-right">{t("Action")}</th>
+                <th className="py-3.5 px-4 text-right whitespace-nowrap">{t("Received Date") || "Date"}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
               {paginatedQueries.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-14 text-center text-slate-500">
+                  <td colSpan={4} className="py-14 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <MessageSquare size={38} className="text-slate-300" />
                       <p className="font-bold text-sm text-slate-800">{t("No queries found")}</p>
@@ -3347,33 +3684,47 @@ export default function App() {
                     hour: "2-digit",
                     minute: "2-digit",
                   });
+                  const isUnread = !readQueryIds.includes(q.id);
 
                   return (
-                    <tr key={q.id || idx} className="hover:bg-slate-50/70 transition-colors">
+                    <tr
+                      key={q.id || idx}
+                      onClick={() => handleOpenQueryDetails(q)}
+                      className={`hover:bg-blue-50/50 transition-colors cursor-pointer ${
+                        isUnread ? "bg-blue-50/20 font-semibold" : ""
+                      }`}
+                    >
                       <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400">
-                        {(queriesCurrentPage - 1) * queriesPerPage + idx + 1}
+                        <div className="flex items-center gap-1.5">
+                          {isUnread && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0" title="Unread" />
+                          )}
+                          <span>{(queriesCurrentPage - 1) * queriesPerPage + idx + 1}</span>
+                        </div>
                       </td>
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <span className="font-extrabold text-slate-900 text-sm">
                             {q.mobileNumber}
                           </span>
-                          <a
-                            href={`tel:${q.mobileNumber}`}
-                            title="Call customer directly"
-                            className="p-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors cursor-pointer"
-                          >
-                            <Phone size={13} />
-                          </a>
-                          <a
-                            href={waLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            title="Open WhatsApp chat with customer"
-                            className="p-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors cursor-pointer"
-                          >
-                            <MessageSquare size={13} />
-                          </a>
+                          <span onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1.5">
+                            <a
+                              href={`tel:${q.mobileNumber}`}
+                              title="Call customer directly"
+                              className="p-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors cursor-pointer"
+                            >
+                              <Phone size={13} />
+                            </a>
+                            <a
+                              href={waLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Open WhatsApp chat with customer"
+                              className="p-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-colors cursor-pointer"
+                            >
+                              <MessageSquare size={13} />
+                            </a>
+                          </span>
                         </div>
                       </td>
                       <td className="py-3.5 px-4 max-w-md">
@@ -3381,22 +3732,8 @@ export default function App() {
                           {q.message}
                         </p>
                       </td>
-                      <td className="py-3.5 px-4 whitespace-nowrap text-slate-500 text-xs font-medium">
+                      <td className="py-3.5 px-4 text-right whitespace-nowrap text-slate-500 text-xs font-medium">
                         {formattedDate}
-                      </td>
-                      <td className="py-3.5 px-4 whitespace-nowrap">
-                        <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 text-[11px] font-extrabold rounded-md uppercase tracking-wider">
-                          {q.status || "PENDING"}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                        <button
-                          onClick={() => setSelectedQuery(q)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-xs rounded-lg transition-all cursor-pointer shadow-2xs"
-                        >
-                          <Eye size={13} />
-                          <span>{t("View")}</span>
-                        </button>
                       </td>
                     </tr>
                   );

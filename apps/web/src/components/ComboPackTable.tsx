@@ -252,25 +252,10 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
     return result;
   }, [items, searchQuery, selectedCategory]);
 
-  // Grouped categories for table display
+  // Grouped categories for table display (follows dynamic backend category sort order)
   const groupedCategories = useMemo(() => {
-    const categoryOrder = [
-      "Combo Packs & Gift Boxes",
-      "Gift Box",
-      "One Sound Crackers",
-      "Sound Crackers",
-      "Flash Sound Crackers",
-      "Sparklers",
-      "Ground Chakkars",
-      "Flower Pots & Fountains",
-      "Flower Pots",
-      "Rockets",
-      "Rockets & Aerial Skyshots",
-      "Atom Bombs",
-      "Deluxe Crackers",
-      "Bijili Crackers",
-      "Garlands",
-    ];
+    // 1. First prioritize the dynamic ordered categories from the backend categories list
+    const categoryOrder = categoriesList;
 
     const groups: { category: string; items: ComboItem[] }[] = [];
     const processed = new Set<string>();
@@ -283,8 +268,9 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
       }
     }
 
+    // 2. Add any remaining items whose category was not in the backend categories list
     for (const it of filteredItems) {
-      if (!processed.has(it.category)) {
+      if (it.category && !processed.has(it.category)) {
         processed.add(it.category);
         const matched = filteredItems.filter((x) => x.category === it.category);
         groups.push({ category: it.category, items: matched });
@@ -292,7 +278,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
     }
 
     return groups;
-  }, [filteredItems]);
+  }, [filteredItems, categoriesList]);
 
   // Category banner title calculation (without discount)
   const getCategoryHeaderTitle = useCallback(

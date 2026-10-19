@@ -106,7 +106,11 @@ export const getCrackersData = async (request: Request, response: Response): Pro
 
     const items = await db.product.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: [
+        { category: { sortOrder: "asc" } },
+        { category: { name: "asc" } },
+        { createdAt: "desc" },
+      ],
       include: {
         category: {
           select: {

@@ -12,6 +12,7 @@ import {
   getProductById,
   getQueries,
   handleContactForm,
+  updateCategory,
   updateProduct,
 } from "./controller.js";
 import { getAdminInventory, updateProductStock } from "./inventory.js";
@@ -56,6 +57,8 @@ router.delete("/products/:id", deleteProduct);
 router.get("/categories", getCategories);
 router.get("/categories/:slug", getCategoryBySlug);
 router.post("/categories", createCategory);
+router.put("/categories/:id", updateCategory);
+router.patch("/categories/:id", updateCategory);
 router.get("/cart", getCart);
 
 // Contact / Mail / Queries APIs
