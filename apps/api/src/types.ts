@@ -20,6 +20,7 @@ export type CreateProductBody = {
   categorySlug?: string | null;
   isActive?: boolean;
   isFeatured?: boolean;
+  sortOrder?: number;
 };
 
 export type UpdateProductBody = Partial<CreateProductBody>;
@@ -75,6 +76,7 @@ export type CatalogProductResponse = {
   categorySlug?: string | null;
   isActive: boolean;
   isFeatured: boolean;
+  sortOrder: number;
 };
 
 export type ProductPaginationResponse = {

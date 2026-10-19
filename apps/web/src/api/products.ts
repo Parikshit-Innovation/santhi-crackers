@@ -24,6 +24,7 @@ export interface BackendProduct {
   createdAt?: string;
   updatedAt?: string;
   categorySlug?: string | null;
+  sortOrder?: number;
 }
 
 export interface BackendCategory {
@@ -144,6 +145,7 @@ export const mapBackendProductToComboItem = (
     actualPrice: actualPriceNum,
     price: priceNum,
     image,
+    sortOrder: typeof prod.sortOrder === "number" ? prod.sortOrder : 0,
   };
 };
 

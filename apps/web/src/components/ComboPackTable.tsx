@@ -27,6 +27,7 @@ export interface ComboItem {
   actualPrice: number;
   price: number;
   image: string;
+  sortOrder?: number;
 }
 
 interface ComboPackTableProps {
@@ -260,10 +261,21 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
     const groups: { category: string; items: ComboItem[] }[] = [];
     const processed = new Set<string>();
 
+    const sortGroupItems = (list: ComboItem[]) => {
+      return [...list].sort((a, b) => {
+        const orderA = typeof a.sortOrder === "number" ? a.sortOrder : 0;
+        const orderB = typeof b.sortOrder === "number" ? b.sortOrder : 0;
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+        return (a.code || "").localeCompare(b.code || "", undefined, { numeric: true });
+      });
+    };
+
     for (const cat of categoryOrder) {
       const matched = filteredItems.filter((it) => it.category === cat);
       if (matched.length > 0) {
-        groups.push({ category: cat, items: matched });
+        groups.push({ category: cat, items: sortGroupItems(matched) });
         processed.add(cat);
       }
     }
@@ -273,7 +285,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
       if (it.category && !processed.has(it.category)) {
         processed.add(it.category);
         const matched = filteredItems.filter((x) => x.category === it.category);
-        groups.push({ category: it.category, items: matched });
+        groups.push({ category: it.category, items: sortGroupItems(matched) });
       }
     }
 

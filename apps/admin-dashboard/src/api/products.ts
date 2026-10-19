@@ -20,6 +20,7 @@ export interface CreateProductInput {
   categoryId?: string;
   isActive?: boolean;
   isFeatured?: boolean;
+  sortOrder?: number;
 }
 
 export interface BackendProductItem {
@@ -44,6 +45,7 @@ export interface BackendProductItem {
   categorySlug?: string;
   isActive: boolean;
   isFeatured: boolean;
+  sortOrder?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -196,6 +198,7 @@ export async function updateProductApi(
   if (input.categoryId !== undefined) bodyData.categoryId = input.categoryId || undefined;
   if (input.isActive !== undefined) bodyData.isActive = Boolean(input.isActive);
   if (input.isFeatured !== undefined) bodyData.isFeatured = Boolean(input.isFeatured);
+  if (input.sortOrder !== undefined) bodyData.sortOrder = Number(input.sortOrder);
 
   let lastError: Error = new Error("Failed to update product");
 

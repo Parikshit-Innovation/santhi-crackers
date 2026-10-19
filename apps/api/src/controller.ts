@@ -109,6 +109,8 @@ export const getCrackersData = async (request: Request, response: Response): Pro
       orderBy: [
         { category: { sortOrder: "asc" } },
         { category: { name: "asc" } },
+        { sortOrder: "asc" },
+        { code: "asc" },
         { createdAt: "desc" },
       ],
       include: {
@@ -215,6 +217,7 @@ export const createProduct = async (
         categoryId: resolvedCategoryId,
         isActive: isActive === undefined ? true : Boolean(isActive),
         isFeatured: isFeatured === undefined ? false : Boolean(isFeatured),
+        sortOrder: request.body.sortOrder !== undefined ? Number(request.body.sortOrder) : 0,
       },
       include: {
         category: {
@@ -380,6 +383,7 @@ export const updateProduct = async (
     if (imageUrl !== undefined) data.imageUrl = imageUrl;
     if (isActive !== undefined) data.isActive = Boolean(isActive);
     if (isFeatured !== undefined) data.isFeatured = Boolean(isFeatured);
+    if (request.body.sortOrder !== undefined) data.sortOrder = Number(request.body.sortOrder);
 
     if (resolvedCategoryId !== undefined) {
       if (resolvedCategoryId === null) {
@@ -921,6 +925,7 @@ export const getProductById = async (
       categorySlug: product.category?.slug ?? null,
       isActive: product.isActive,
       isFeatured: product.isFeatured,
+      sortOrder: (product as any).sortOrder ?? 0,
     };
 
     response.status(200).json(item);
@@ -1085,6 +1090,7 @@ export const getCategoryBySlug = async (
           categorySlug: product.category?.slug ?? null,
           isActive: product.isActive,
           isFeatured: product.isFeatured,
+          sortOrder: (product as any).sortOrder ?? 0,
         };
       },
     );
@@ -1220,3 +1226,30 @@ export const getQueries = async (_request: Request, response: Response): Promise
   }
 };
 
+export const updateQuery = async (request: Request<{ id?: string }>, response: Response): Promise<void> => {
+  const { id } = request.params;
+  const { status } = request.body;
+
+  if (!id) {
+    response.status(400).json({ error: "Query ID is required." });
+    return;
+  }
+
+  try {
+    const updated = await db.query.update({
+      where: { id: id.trim() },
+      data: {
+        status: status ? String(status).toUpperCase() : "READ",
+      },
+    });
+
+    response.status(200).json({
+      success: true,
+      message: "Query updated successfully.",
+      query: updated,
+    });
+  } catch (error) {
+    console.error("Failed to update query:", error);
+    response.status(500).json({ error: "Failed to update query." });
+  }
+};

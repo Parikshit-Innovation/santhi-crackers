@@ -14,6 +14,7 @@ import {
   handleContactForm,
   updateCategory,
   updateProduct,
+  updateQuery,
 } from "./controller.js";
 import { getAdminInventory, updateProductStock } from "./inventory.js";
 import { createOrder, getAdminOrderById, getAdminOrders, getOrderReceipt } from "./orders.js";
@@ -66,6 +67,8 @@ router.post("/contact", handleContactForm);
 router.post("/send-email", handleContactForm);
 router.post("/queries", createQuery);
 router.get("/queries", getQueries);
+router.put("/queries/:id", updateQuery);
+router.patch("/queries/:id", updateQuery);
 
 export default router;
 
