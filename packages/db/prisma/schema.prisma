@@ -59,6 +59,7 @@ model Product {
   // Status
   isActive       Boolean   @default(true)
   isFeatured     Boolean   @default(false)
+  sortOrder      Int       @default(0)
 
   // Metadata
   createdAt      DateTime  @default(now())

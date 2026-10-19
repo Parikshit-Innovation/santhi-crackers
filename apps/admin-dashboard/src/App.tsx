@@ -27,7 +27,7 @@ import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { createCategoryApi, fetchCategoriesApi, updateCategoryApi } from "./api/categories";
 import { createProductApi, deleteProductApi, fetchProductsApi, updateProductApi } from "./api/products";
-import { type CustomerQuery, fetchQueriesApi } from "./api/queries";
+import { type CustomerQuery, fetchQueriesApi, updateQueryApi } from "./api/queries";
 import { uploadImage } from "./api/upload";
 import "./App.css";
 import { useLanguage } from "./context/LanguageContext";
@@ -73,6 +73,7 @@ export interface Product {
   imageUrl?: string | null;
   status: "Active" | "Inactive";
   featured: boolean;
+  sortOrder?: number;
 }
 
 const INITIAL_PRODUCTS: Product[] = [
@@ -268,6 +269,7 @@ export default function App() {
             imageUrl: p.imageUrl || "",
             status: p.isActive === false ? "Inactive" : "Active",
             featured: Boolean(p.isFeatured),
+            sortOrder: typeof p.sortOrder === "number" ? p.sortOrder : 0,
           };
         });
         setProductsList(mapped);
@@ -606,6 +608,77 @@ export default function App() {
     }
   };
 
+  const handleMoveProductSort = async (id: number | string, direction: "up" | "down") => {
+    const targetProduct = productsList.find(p => String(p.id) === String(id));
+    if (!targetProduct) return;
+
+    // Filter products belonging to the same category
+    const catSlug = (targetProduct.categorySlug || "").toLowerCase();
+    const catName = (targetProduct.category || "").toLowerCase();
+    
+    // Get all products in the same category sorted by sortOrder
+    const sameCategoryProducts = productsList
+      .filter(p => {
+        const pSlug = (p.categorySlug || "").toLowerCase();
+        const pName = (p.category || "").toLowerCase();
+        return (catSlug && pSlug === catSlug) || (catName && pName === catName);
+      })
+      .sort((a, b) => {
+        const sortA = typeof a.sortOrder === "number" ? a.sortOrder : 0;
+        const sortB = typeof b.sortOrder === "number" ? b.sortOrder : 0;
+        if (sortA !== sortB) return sortA - sortB;
+        return a.code.localeCompare(b.code, undefined, { numeric: true });
+      });
+
+    const index = sameCategoryProducts.findIndex(p => String(p.id) === String(id));
+    if (index < 0) return;
+
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= sameCategoryProducts.length) return;
+
+    // Swap elements
+    const temp = sameCategoryProducts[index];
+    sameCategoryProducts[index] = sameCategoryProducts[targetIndex];
+    sameCategoryProducts[targetIndex] = temp;
+
+    // Re-assign sequential 1-based sort order
+    const updatedCategoryProducts = sameCategoryProducts.map((p, i) => ({
+      ...p,
+      sortOrder: i + 1,
+    }));
+
+    // Update state
+    setProductsList(prev => {
+      const map = new Map<string, number>();
+      updatedCategoryProducts.forEach(p => map.set(String(p.id), p.sortOrder!));
+      return prev.map(p => {
+        const newSort = map.get(String(p.id));
+        return newSort !== undefined ? { ...p, sortOrder: newSort } : p;
+      });
+    });
+
+    // Persist swapped products to database
+    const itemsToSync = [updatedCategoryProducts[index], updatedCategoryProducts[targetIndex]];
+    for (const p of itemsToSync) {
+      try {
+        await updateProductApi(p.id, { sortOrder: p.sortOrder });
+      } catch (err) {
+        console.warn(`Failed to sync product sort for ${p.name}:`, err);
+      }
+    }
+  };
+
+  const handleDirectProductSortChange = async (id: number | string, newSort: number) => {
+    const val = Math.max(1, Math.floor(newSort) || 1);
+    setProductsList(prev => prev.map(p => String(p.id) === String(id) ? { ...p, sortOrder: val } : p));
+
+    try {
+      await updateProductApi(id, { sortOrder: val });
+    } catch (err) {
+      console.warn(`Failed to sync direct product sort for ${id}:`, err);
+    }
+  };
+
   // Create a map from category slug/name to its sort order
   const categorySortMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -638,7 +711,14 @@ export default function App() {
         return sortA - sortB;
       }
 
-      // 2. Secondary sort by product code / name
+      // 2. Sort by product sortOrder within the category
+      const prodSortA = typeof a.sortOrder === "number" ? a.sortOrder : 0;
+      const prodSortB = typeof b.sortOrder === "number" ? b.sortOrder : 0;
+      if (prodSortA !== prodSortB) {
+        return prodSortA - prodSortB;
+      }
+
+      // 3. Fallback secondary sort by product code / name
       return a.code.localeCompare(b.code, undefined, { numeric: true });
     });
 
@@ -730,8 +810,10 @@ export default function App() {
     }
   });
 
-  const handleOpenQueryDetails = (query: CustomerQuery) => {
+  const handleOpenQueryDetails = async (query: CustomerQuery) => {
     setSelectedQuery(query);
+
+    // 1. Update in local state & localStorage immediately
     if (query.id && !readQueryIds.includes(query.id)) {
       setReadQueryIds(prev => {
         const updated = [...prev, query.id];
@@ -741,10 +823,26 @@ export default function App() {
         return updated;
       });
     }
+
+    // 2. Mark query as READ in queriesList state
+    setQueriesList(prev => prev.map(q => q.id === query.id ? { ...q, status: "READ" } : q));
+
+    // 3. Persist globally to the database
+    if (query.id && query.status !== "READ") {
+      try {
+        await updateQueryApi(query.id, "READ");
+      } catch (err) {
+        console.warn("Failed to persist query read status to DB:", err);
+      }
+    }
   };
 
   const unreadQueriesCount = useMemo(() => {
-    return queriesList.filter(q => !readQueryIds.includes(q.id)).length;
+    return queriesList.filter(q => {
+      const isLocallyRead = readQueryIds.includes(q.id);
+      const isDbRead = q.status === "READ" || q.status === "RESOLVED" || q.status === "CONTACTED";
+      return !isLocallyRead && !isDbRead;
+    }).length;
   }, [queriesList, readQueryIds]);
 
   const [queriesCurrentPage, setQueriesCurrentPage] = useState(1);
@@ -1038,43 +1136,49 @@ export default function App() {
     setDeletingCategory(null);
   };
 
-  const handleToggleCategoryStatus = (id: number | string) => {
+  const handleToggleCategoryStatus = async (id: number | string) => {
+    const target = categoriesList.find(c => c.id === id);
+    if (!target) return;
+    const newIsActive = target.status !== "Active";
+
     setCategoriesList(prev => prev.map(c => c.id === id ? {
       ...c,
-      status: c.status === "Active" ? "Inactive" : "Active"
+      status: newIsActive ? "Active" : "Inactive"
     } : c));
+
+    try {
+      await updateCategoryApi(id, { isActive: newIsActive });
+    } catch (err) {
+      console.warn(`Failed to sync category status for ${target.name}:`, err);
+    }
   };
 
   const handleMoveCategorySort = async (id: number | string, direction: "up" | "down") => {
-    let affectedCategories: Category[] = [];
+    // 1. Calculate new order from current categoriesList
+    const list = [...categoriesList].sort((a, b) => a.sort - b.sort);
+    const index = list.findIndex(c => String(c.id) === String(id));
+    if (index < 0) return;
 
-    setCategoriesList(prev => {
-      // Create new shallow copies of objects sorted by current sort order
-      const list = prev.map(item => ({ ...item })).sort((a, b) => a.sort - b.sort);
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= list.length) return;
 
-      // Find current index in sorted list
-      const index = list.findIndex(c => c.id === id);
-      if (index < 0) return prev;
+    // Swap elements
+    const temp = list[index];
+    list[index] = list[targetIndex];
+    list[targetIndex] = temp;
 
-      const targetIndex = direction === "up" ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= list.length) return prev;
+    // Re-assign sequential 1-based sort order
+    const updatedList = list.map((item, i) => ({
+      ...item,
+      sort: i + 1,
+    }));
 
-      // Swap elements cleanly in the array
-      const temp = list[index];
-      list[index] = list[targetIndex];
-      list[targetIndex] = temp;
+    // Update UI state immediately
+    setCategoriesList(updatedList);
 
-      // Re-assign 1-based sequential sort numbers to new copies
-      list.forEach((item, i) => {
-        item.sort = i + 1;
-      });
-
-      affectedCategories = [list[index], list[targetIndex]];
-      return list;
-    });
-
-    // Sync swapped categories to backend API
-    for (const cat of affectedCategories) {
+    // Persist swapped categories to database via API
+    const itemsToSync = [updatedList[index], updatedList[targetIndex]];
+    for (const cat of itemsToSync) {
       try {
         await updateCategoryApi(cat.id, { sortOrder: cat.sort });
       } catch (err) {
@@ -1539,6 +1643,7 @@ export default function App() {
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
                 <th className="py-3.5 px-5">{t("Product Details")}</th>
                 <th className="py-3.5 px-4">{t("Category")}</th>
+                <th className="py-3.5 px-4 text-center">Order</th>
                 <th className="py-3.5 px-4">{t("Pricing")}</th>
                 <th className="py-3.5 px-4">{t("Status")}</th>
                 <th className="py-3.5 px-5 text-right">{t("Actions")}</th>
@@ -1547,7 +1652,7 @@ export default function App() {
             <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
               {paginatedProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center">
+                  <td colSpan={6} className="py-12 text-center">
                     <div className="max-w-md mx-auto space-y-2">
                       <Package size={40} className="mx-auto text-black" />
                       <h3 className="text-base font-bold text-black">{t("No products found")}</h3>
@@ -1612,6 +1717,34 @@ export default function App() {
                         <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">
                           {tCategory(p.categorySlug, p.category)}
                         </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1 bg-slate-100/80 px-1.5 py-0.5 rounded-lg border border-slate-200">
+                          <button 
+                            type="button"
+                            onClick={() => handleMoveProductSort(p.id, "up")} 
+                            title="Move product 1 step up in this category"
+                            className="p-1 text-black hover:text-black hover:bg-white rounded transition-colors cursor-pointer"
+                          >
+                            <ArrowUp size={13} />
+                          </button>
+                          <input 
+                            type="number"
+                            min={1}
+                            value={p.sortOrder ?? 0}
+                            onChange={(e) => handleDirectProductSortChange(p.id, Number(e.target.value))}
+                            className="w-10 text-center font-extrabold text-xs bg-transparent outline-none border-b border-transparent focus:border-blue-600 focus:bg-white rounded text-black"
+                            title="Type sort order number for this product"
+                          />
+                          <button 
+                            type="button"
+                            onClick={() => handleMoveProductSort(p.id, "down")} 
+                            title="Move product 1 step down in this category"
+                            className="p-1 text-black hover:text-black hover:bg-white rounded transition-colors cursor-pointer"
+                          >
+                            <ArrowDown size={13} />
+                          </button>
+                        </div>
                       </td>
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex flex-col">
@@ -1738,8 +1871,36 @@ export default function App() {
                 {/* Details in One Line without horizontal sliding: Category, Price, Status */}
                 <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 text-xs">
                   {/* Category in one line with no badge background */}
-                  <div className="text-xs font-semibold text-slate-700 truncate max-w-[38%]">
+                  <div className="text-xs font-semibold text-slate-700 truncate max-w-[32%]">
                     {tCategory(p.categorySlug, p.category)}
+                  </div>
+
+                  {/* Product Sort Order Controls */}
+                  <div className="inline-flex items-center gap-0.5 bg-slate-100 px-1 py-0.5 rounded border border-slate-200">
+                    <button 
+                      type="button"
+                      onClick={() => handleMoveProductSort(p.id, "up")} 
+                      title="Move up"
+                      className="p-0.5 text-black hover:bg-white rounded transition-colors cursor-pointer"
+                    >
+                      <ArrowUp size={11} />
+                    </button>
+                    <input 
+                      type="number"
+                      min={1}
+                      value={p.sortOrder ?? 0}
+                      onChange={(e) => handleDirectProductSortChange(p.id, Number(e.target.value))}
+                      className="w-7 text-center font-extrabold text-[11px] bg-transparent outline-none text-black"
+                      title="Order"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => handleMoveProductSort(p.id, "down")} 
+                      title="Move down"
+                      className="p-0.5 text-black hover:bg-white rounded transition-colors cursor-pointer"
+                    >
+                      <ArrowDown size={11} />
+                    </button>
                   </div>
 
                   {/* Pricing */}
@@ -3598,7 +3759,7 @@ export default function App() {
                 hour: "2-digit",
                 minute: "2-digit",
               });
-              const isUnread = !readQueryIds.includes(q.id);
+              const isUnread = !readQueryIds.includes(q.id) && q.status !== "READ" && q.status !== "RESOLVED" && q.status !== "CONTACTED";
 
               return (
                 <div
@@ -3684,7 +3845,7 @@ export default function App() {
                     hour: "2-digit",
                     minute: "2-digit",
                   });
-                  const isUnread = !readQueryIds.includes(q.id);
+                  const isUnread = !readQueryIds.includes(q.id) && q.status !== "READ" && q.status !== "RESOLVED" && q.status !== "CONTACTED";
 
                   return (
                     <tr

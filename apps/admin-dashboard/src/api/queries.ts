@@ -43,3 +43,26 @@ export async function fetchQueriesApi(): Promise<FetchQueriesResponse> {
 
   throw lastError;
 }
+
+export async function updateQueryApi(id: string, status: string = "READ"): Promise<void> {
+  const endpoints = getApiEndpoints(`/api/queries/${encodeURIComponent(id)}`);
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        return;
+      }
+    } catch {
+      // Try next endpoint fallback
+    }
+  }
+}
