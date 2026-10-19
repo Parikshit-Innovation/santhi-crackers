@@ -22,18 +22,18 @@
   "dependencies": {
     "@prisma/client": "^6.19.0",
     "@repo/db": "*",
-    "cookie-parser": "^1.4.7",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "nodemailer": "^10.1.0"
-  },
-  "devDependencies": {
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.5",
     "@types/node": "26.4.1",
     "@types/nodemailer": "^8.0.2",
-    "concurrently": "^9.2.1",
-    "tsx": "^4.20.6",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "nodemailer": "^10.1.0",
     "typescript": "7.0.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "tsx": "^4.20.6"
   }
 }
