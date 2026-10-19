@@ -395,6 +395,41 @@
   border-color: var(--color-copper, #BF7F35);
 }
 
+.contact-branch-box.active-branch-box {
+  background-color: #FFFDF7;
+  border-color: var(--color-garnet, #492201);
+  box-shadow: 0 0 0 1.5px var(--color-garnet, #492201);
+}
+
+.contact-branch-map-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.contact-branch-map-header {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-garnet, #492201);
+}
+
+.contact-branch-map-iframe-box {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  background-color: #fafafa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.contact-branch-map-iframe-box iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .contact-branch-badge {
   display: inline-flex;
   align-items: center;

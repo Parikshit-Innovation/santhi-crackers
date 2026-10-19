@@ -41,22 +41,21 @@ export const OrderReceipt: React.FC<OrderReceiptProps> = ({
     }
   };
 
-  // Build the prefilled WhatsApp message with order details
+  // Build the comprehensive prefilled WhatsApp message containing everything in the receipt
   const generateWhatsAppMessage = (): string => {
     const lines = [
       "🎆 *SHANTHI SIVAKASI CRACKERS - ORDER CONFIRMATION* 🎆",
       "━━━━━━━━━━━━━━━━━━━━━━━━━",
       `*Order ID:* #${order.id}`,
       `*Date:* ${formatDate(order.createdAt)}`,
-      `*Payment Status:* ${isPaid ? "PAID ✓" : order.paymentStatus || "PENDING"}`,
       "",
       "👤 *Customer Information:*",
       `• *Name:* ${order.customerName}`,
       `• *Mobile:* ${order.customerPhone}`,
       order.customerEmail ? `• *Email:* ${order.customerEmail}` : "",
-      `• *State:* Tamil Nadu`,
       order.city ? `• *City:* ${order.city}` : "",
       `• *Delivery Address:* ${order.deliveryAddress}`,
+      `• *State:* Tamil Nadu`,
       "",
       "📦 *Ordered Products:*",
     ];
@@ -81,16 +80,300 @@ export const OrderReceipt: React.FC<OrderReceiptProps> = ({
     lines.push(`*Overall Amount:* ${formatPrice(order.total)}`);
     lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━");
     lines.push("");
-    if (isPaid) {
-      lines.push("Payment has been completed. Kindly confirm dispatch of my order. Thank you! 🙏");
-    } else {
-      lines.push("Order details submitted. Kindly share payment / dispatch instructions. Thank you! 🙏");
-    }
+    lines.push("🏬 *Store Branches:*");
+    lines.push("• Branch 1: 15A, College Division, Karattadipalayam, Gobichettipalayam");
+    lines.push("• Branch 2: 1/1, Kalingiam Main Road, Kalingiam, Gobichettipalayam");
+    lines.push("• Contact: +91 73732 92931 / +91 98652 40462");
+    lines.push("");
+    lines.push("Order details submitted. Kindly share payment / dispatch instructions. Thank you! 🙏");
 
     return lines.filter(Boolean).join("\n");
   };
 
+  const handleDownloadPDF = () => {
+    const printWindow = window.open("", "_blank", "width=850,height=950");
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    const itemsRows = order.items
+      .map(
+        (item, idx) => `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 10px; text-align: center; color: #64748b; font-size: 13px;">${idx + 1}</td>
+          <td style="padding: 10px;">
+            <div style="font-weight: 700; color: #492201; font-size: 14px;">${item.productName}</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Code: ${item.productCode}</div>
+          </td>
+          <td style="padding: 10px; text-align: center; font-weight: 600; font-size: 13px;">${item.quantity}</td>
+          <td style="padding: 10px; text-align: right; color: #334155; font-size: 13px;">₹${Number(item.unitPrice).toFixed(2)}</td>
+          <td style="padding: 10px; text-align: right; font-weight: 700; color: #0f172a; font-size: 13px;">₹${(Number(item.lineTotal) || Number(item.unitPrice) * item.quantity).toFixed(2)}</td>
+        </tr>
+      `
+      )
+      .join("");
+
+    const logoSrc = window.location.origin + "/home/logo-santhi.png";
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Order Receipt - #${order.id}</title>
+          <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+              padding: 30px;
+              color: #150A06;
+              background: #fff;
+              line-height: 1.45;
+            }
+            .invoice-box {
+              max-width: 780px;
+              margin: auto;
+              border: 1.5px solid #CDB462;
+              border-radius: 8px;
+              padding: 28px 32px;
+              box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+              background: #ffffff;
+            }
+            .header-bar {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 2px solid #BF7F35;
+              padding-bottom: 18px;
+              margin-bottom: 20px;
+            }
+            .brand-left {
+              display: flex;
+              align-items: center;
+              gap: 14px;
+            }
+            .brand-logo {
+              width: 58px;
+              height: 58px;
+              object-fit: contain;
+              border: 1.5px solid #CDB462;
+              padding: 2px;
+              background: #fff;
+            }
+            .brand-title {
+              font-size: 22px;
+              font-weight: 800;
+              color: #492201;
+              line-height: 1.15;
+            }
+            .brand-tamil {
+              font-size: 14px;
+              color: #BF7F35;
+              font-weight: 700;
+              margin-top: 2px;
+            }
+            .order-meta-box {
+              text-align: right;
+            }
+            .order-title {
+              font-size: 11px;
+              text-transform: uppercase;
+              font-weight: 700;
+              color: #64748b;
+              letter-spacing: 0.05em;
+            }
+            .order-id {
+              font-size: 17px;
+              font-weight: 800;
+              color: #492201;
+              margin-top: 2px;
+            }
+            .order-date {
+              font-size: 12px;
+              color: #64748b;
+              margin-top: 3px;
+            }
+            .info-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 16px;
+              margin-bottom: 22px;
+            }
+            .info-panel {
+              background: #FAF5DE;
+              border: 1px solid #CDB462;
+              border-radius: 6px;
+              padding: 14px 16px;
+            }
+            .info-panel-title {
+              font-size: 11px;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              color: #492201;
+              border-bottom: 1px solid rgba(191, 127, 53, 0.35);
+              padding-bottom: 6px;
+              margin-bottom: 8px;
+            }
+            .info-line {
+              font-size: 13px;
+              color: #150A06;
+              margin-bottom: 4px;
+            }
+            .info-line strong {
+              color: #492201;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 20px;
+            }
+            th {
+              background: #FAF5DE;
+              color: #492201;
+              font-size: 11.5px;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.04em;
+              padding: 10px;
+              border-top: 1.5px solid #CDB462;
+              border-bottom: 1.5px solid #CDB462;
+            }
+            .summary-wrap {
+              display: flex;
+              justify-content: flex-end;
+              margin-bottom: 20px;
+            }
+            .summary-box {
+              width: 300px;
+              background: #FAF5DE;
+              border: 1.5px solid #CDB462;
+              border-radius: 6px;
+              padding: 12px 16px;
+            }
+            .summary-row {
+              display: flex;
+              justify-content: space-between;
+              font-size: 13.5px;
+              padding: 4px 0;
+              color: #334155;
+            }
+            .summary-row.total {
+              border-top: 1.5px solid #BF7F35;
+              margin-top: 6px;
+              padding-top: 8px;
+              font-size: 16px;
+              font-weight: 800;
+              color: #492201;
+            }
+            .footer-note {
+              border-top: 1px dashed #CDB462;
+              padding-top: 14px;
+              text-align: center;
+              font-size: 12px;
+              color: #64748b;
+              line-height: 1.5;
+            }
+            @media print {
+              body { padding: 0; background: #fff; }
+              .invoice-box { border: none; box-shadow: none; padding: 0; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="invoice-box">
+            <div class="header-bar">
+              <div class="brand-left">
+                <img src="${logoSrc}" alt="Shanthi Crackers Logo" class="brand-logo" onerror="this.style.display='none'" />
+                <div>
+                  <div class="brand-title">Shanthi Crackers</div>
+                  <div class="brand-tamil">சாந்தி பட்டாசுகள் · சிவகாசி</div>
+                </div>
+              </div>
+              <div class="order-meta-box">
+                <div class="order-title">Official Order Receipt</div>
+                <div class="order-id">#${order.id}</div>
+                <div class="order-date">${formatDate(order.createdAt)}</div>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-panel">
+                <div class="info-panel-title">Customer Details</div>
+                <div class="info-line"><strong>Name:</strong> ${order.customerName}</div>
+                <div class="info-line"><strong>Mobile No:</strong> ${order.customerPhone}</div>
+                ${order.customerEmail ? `<div class="info-line"><strong>Email:</strong> ${order.customerEmail}</div>` : ""}
+                <div class="info-line"><strong>Delivery:</strong> ${order.deliveryAddress}</div>
+                ${order.city ? `<div class="info-line"><strong>City:</strong> ${order.city}, Tamil Nadu</div>` : ""}
+              </div>
+              <div class="info-panel">
+                <div class="info-panel-title">Store & Depot Branches</div>
+                <div class="info-line"><strong>Branch 1:</strong> 15A, College Division, Karattadipalayam, Gobichettipalayam</div>
+                <div class="info-line"><strong>Branch 2:</strong> 1/1, Kalingiam Main Road, Kalingiam, Gobichettipalayam</div>
+                <div class="info-line"><strong>Contact / WhatsApp:</strong> +91 73732 92931 / +91 98652 40462</div>
+              </div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align: center; width: 40px;">#</th>
+                  <th style="text-align: left;">Product Description</th>
+                  <th style="text-align: center; width: 60px;">Qty</th>
+                  <th style="text-align: right; width: 100px;">Price</th>
+                  <th style="text-align: right; width: 110px;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsRows}
+              </tbody>
+            </table>
+
+            <div class="summary-wrap">
+              <div class="summary-box">
+                <div class="summary-row">
+                  <span>Subtotal</span>
+                  <span>${formatPrice(order.subtotal)}</span>
+                </div>
+                ${order.packingCharges ? `
+                <div class="summary-row">
+                  <span>Packing Charges</span>
+                  <span>₹ ${order.packingCharges}</span>
+                </div>` : ""}
+                ${order.roundOff !== 0 && order.roundOff !== undefined ? `
+                <div class="summary-row">
+                  <span>Round Off</span>
+                  <span>${formatPrice(order.roundOff)}</span>
+                </div>` : ""}
+                <div class="summary-row total">
+                  <span>Total Amount</span>
+                  <span>${formatPrice(order.total)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="footer-note">
+              <strong>Thank you for choosing Shanthi Crackers!</strong><br />
+              Direct Sivakasi Crackers · Quality & Safety Assured · Gobichettipalayam
+            </div>
+          </div>
+
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                window.print();
+              }, 300);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const handleSendWhatsApp = () => {
+    // Directly opens WhatsApp with pre-filled message including viewable receipt link
     const text = generateWhatsAppMessage();
     const url = `https://wa.me/${WHATSAPP_CONTACT_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -119,7 +402,17 @@ export const OrderReceipt: React.FC<OrderReceiptProps> = ({
         <div className="receipt-drawer-body">
           {/* Header */}
           <div className="simple-receipt-header">
-            <h2 className="simple-receipt-title">{t("Santhi Sivakasi Crackers")}</h2>
+            <div className="receipt-brand-row">
+              <img
+                src="/home/logo-santhi.png"
+                alt="Shanthi Crackers Logo"
+                className="receipt-brand-logo receipt-print-allowed"
+              />
+              <div className="receipt-brand-text">
+                <h2 className="simple-receipt-title">{t("Shanthi Sivakasi Crackers")}</h2>
+                <span className="receipt-brand-subtitle">சாந்தி பட்டாசுகள்</span>
+              </div>
+            </div>
 
             <div className="simple-receipt-meta-grid">
               <div className="simple-receipt-meta-row">
@@ -129,14 +422,6 @@ export const OrderReceipt: React.FC<OrderReceiptProps> = ({
               <div className="simple-receipt-meta-row">
                 <span className="simple-receipt-meta-label">{t("Date:")}</span>
                 <span className="simple-receipt-meta-val">{formatDate(order.createdAt)}</span>
-              </div>
-              <div className="simple-receipt-meta-row">
-                <span className="simple-receipt-meta-label">{t("Payment:")}</span>
-                <span
-                  className={`simple-receipt-meta-val ${isPaid ? "paid" : "pending"}`}
-                >
-                  {isPaid ? t("PAID ✓") : t("PENDING")}
-                </span>
               </div>
             </div>
           </div>
@@ -228,7 +513,7 @@ export const OrderReceipt: React.FC<OrderReceiptProps> = ({
             </div>
           </div>
 
-          {/* Action Buttons: WhatsApp (Green) & Continue Shopping (Red) */}
+          {/* Action Buttons: WhatsApp (Green), Download PDF, & Continue Shopping (Red) */}
           <div className="simple-receipt-actions no-print">
             <button
               type="button"
@@ -242,11 +527,24 @@ export const OrderReceipt: React.FC<OrderReceiptProps> = ({
               <span>{t("Send WhatsApp Confirmation")}</span>
             </button>
 
-            {!isPaid && (
-              <p className="receipt-payment-pending-note no-print">
-                {t("You can send order details to WhatsApp for payment & dispatch confirmation.")}
-              </p>
-            )}
+            {/* Download Receipt PDF button */}
+            <button
+              type="button"
+              className="simple-btn-receipt-download"
+              onClick={handleDownloadPDF}
+              title={t("Download Receipt PDF")}
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span>{t("Download Receipt PDF")}</span>
+            </button>
+
+            <p className="receipt-payment-pending-note no-print">
+              {t("Tap Send WhatsApp Confirmation to share your order with us directly. You can also download the receipt PDF anytime.")}
+            </p>
 
             <button
               type="button"

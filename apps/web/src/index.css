@@ -1,11 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
 
 :root {
-  /* =========================================================
-     Centralized Typography System
-     Font Family: Geist Sans (Vercel & Basement Studio) paired with Noto Sans Tamil
-     Weight: Regular / Normal (font-weight: 400)
-     ========================================================= */
   --font-geist: 'Geist', 'Geist Sans', 'Noto Sans Tamil', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-display: var(--font-geist);
   --font-promo: var(--font-geist);
@@ -14,67 +9,54 @@
   --font-tamil: var(--font-geist);
   --font-premium: var(--font-geist);
 
-  /* =========================================================
-     Selected Warm Luxury Color System:
-     Egg Nog: #F9EDC5 | Mustard: #CDB462 | Copper: #BF7F35
-     Garnet: #492201  | Terracotta Brown: #492201
-     Soft Ivory: #F8EEBD | Espresso Black: #150A06
-     ========================================================= */
   --color-eggnog: #F9EDC5;
   --color-mustard: #CDB462;
   --color-copper: #BF7F35;
   --color-garnet: #492201;
   --color-terracotta: #492201;
   --color-softivory: #F8EEBD;
-  --color-ivory-light: #FAF5DE;     /* Lighter than Soft Ivory - Highlighted container fill */
+  --color-ivory-light: #FAF5DE;     
   --color-espresso: #150A06;
 
-  /* Crisp White Canvas & Luxury Golden Accents System */
   --bg-canvas: #FFFFFF;
   --bg-canvas-deep: #FDFBF7;
   --bg-gradient-blue: linear-gradient(180deg, #FFFFFF 0%, #FDFBF7 50%, #FFFFFF 100%);
   --bg-gradient-blue-h: linear-gradient(90deg, #FFFFFF 0%, #FDFBF7 50%, #FFFFFF 100%);
   --bg-surface: #FFFFFF;
 
-  /* Brand Accents - Garnet & Terracotta Brown with Golden Mustard & Copper */
-  --primary-blue: #492201;          /* Royal Garnet Brown - Primary brand */
-  --primary-blue-deep: #492201;     /* Festive Terracotta Brown - Rich secondary */
-  --primary-blue-dark: #150A06;     /* Espresso Black - Deep contrast */
-  --primary-blue-accent: #BF7F35;   /* Metallic Copper */
-  --alert-red: #492201;             /* Garnet */
-  --alert-red-dark: #492201;        /* Terracotta Brown */
-  --warning-yellow: #CDB462;        /* Golden Mustard */
-  --success-green: #15803d;         /* Fresh festive emerald */
+  --primary-blue: #492201;         
+  --primary-blue-deep: #492201;    
+  --primary-blue-dark: #150A06;    
+  --primary-blue-accent: #BF7F35;   
+  --alert-red: #492201;             
+  --alert-red-dark: #492201;        
+  --warning-yellow: #CDB462;        
+  --success-green: #15803d;        
 
-  /* Highlighted Container & Cards System */
-  --bg-box-cream: #FAF5DE;          /* Highlighted Ivory Container Fill (lighter than soft ivory) */
-  --bg-box-cream-card: #FFFFFF;     /* Crisp White Inner Card */
-  --bg-box-cream-alt: #FDFBF7;      /* Subtle Gold-Ivory Tint */
-  --bg-box-cream-subtle: #FAF8F2;   /* Soft Luxury Tint */
-  --bg-box-cream-deep: #F9EDC5;     /* Warm Egg Nog Highlight */
+  --bg-box-cream: #FAF5DE;         
+  --bg-box-cream-card: #FFFFFF;     
+  --bg-box-cream-alt: #FDFBF7;     
+  --bg-box-cream-subtle: #FAF8F2;   
+  --bg-box-cream-deep: #F9EDC5;     
 
-  /* Golden & Copper Borders System */
-  --border-cream: #CDB462;          /* Golden Mustard border */
-  --border-cream-dark: #BF7F35;     /* Metallic Copper border */
-  --border-cream-light: rgba(205, 180, 98, 0.35); /* Subtle Golden divider */
+  --border-cream: #CDB462;         
+  --border-cream-dark: #BF7F35;     
+  --border-cream-light: rgba(205, 180, 98, 0.35); 
   --border-white-subtle: rgba(73, 34, 1, 0.12);
 
-  /* Buttons System */
-  --btn-cream: #F9EDC5;             /* Egg Nog button */
-  --btn-cream-hover: #F8EEBD;       /* Soft Ivory hover */
-  --btn-cream-active: #CDB462;      /* Mustard active */
-  --btn-cream-border: #BF7F35;      /* Copper border */
-  --btn-cream-text: #492201;        /* Garnet text on button */
+  --btn-cream: #F9EDC5;            
+  --btn-cream-hover: #F8EEBD;       
+  --btn-cream-active: #CDB462;     
+  --btn-cream-border: #BF7F35;      
+  --btn-cream-text: #492201;        
 
-  /* Text Colors */
-  --text-main: #150A06;             /* Crisp Espresso Black for high readability on white */
-  --text-muted: #492201;            /* Terracotta Brown secondary */
-  --text-light: #BF7F35;            /* Copper caption */
-  --text-on-cream: #150A06;         /* Espresso Black */
-  --text-on-cream-muted: #492201;   /* Terracotta */
-  --text-on-cream-light: #BF7F35;   /* Copper */
+  --text-main: #150A06;            
+  --text-muted: #492201;            
+  --text-light: #BF7F35;           
+  --text-on-cream: #150A06;         
+  --text-on-cream-muted: #492201;   
+  --text-on-cream-light: #BF7F35;   
 
-  /* Harmonized helper shades */
   --primary-blue-hover: #492201;
   --primary-blue-light: rgba(73, 34, 1, 0.08);
   --primary-blue-glow: rgba(73, 34, 1, 0.25);
@@ -195,8 +177,6 @@ body.lang-ta select,
 body.lang-ta textarea,
 body.lang-ta .combo-heading,
 body.lang-ta .combo-discount-badge,
-body.lang-ta .store-brand-text,
-body.lang-ta .store-footer-brand-name,
 body.lang-ta .store-footer-brand-desc,
 body.lang-ta .about-hero-title,
 body.lang-ta .about-section-heading,
@@ -207,6 +187,11 @@ body.lang-ta .about-why-desc,
 body.lang-ta .about-why-left .about-eyebrow {
   font-family: var(--font-geist);
   font-weight: 400;
+}
+
+body.lang-ta .store-brand-text,
+.store-brand-text {
+  font-weight: 700 !important;
 }
 
 /* =========================================================

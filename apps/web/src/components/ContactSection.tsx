@@ -15,6 +15,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showFaq, setShowFaq] = useState(false);
+  const [activeBranch, setActiveBranch] = useState<1 | 2>(1);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,51 +204,93 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
               </div>
 
               <div className="contact-branches-list">
-                <a
-                  href="https://maps.google.com/?q=15A,+College+Division,+Karattupalyam,+Gobichettipalayam"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="contact-branch-box"
-                  style={{ textDecoration: "none", color: "inherit" }}
+                <div
+                  className={`contact-branch-box ${activeBranch === 1 ? "active-branch-box" : ""}`}
+                  onClick={() => setActiveBranch(1)}
+                  style={{ cursor: "pointer" }}
                   title={t("View Branch 1 on Google Maps")}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span className="contact-branch-badge">{t("Branch 1")}</span>
-                    <span style={{ fontSize: "12px", color: "var(--primary-blue, #0433ff)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                    <a
+                      href="https://maps.google.com/?q=15A,+College+Division,+Karattadipalayam,+Gobichettipalayam"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ fontSize: "12px", color: "var(--primary-blue, #0433ff)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "4px", textDecoration: "none" }}
+                    >
                       {t("View Map")}
                       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2">
                         <line x1="7" y1="17" x2="17" y2="7" />
                         <polyline points="7 7 17 7 17 17" />
                       </svg>
-                    </span>
+                    </a>
                   </div>
                   <p className="contact-branch-text">
-                    {t("15A, College Division, Karattadipalyam, Gobichettipalayam.")}
+                    {t("15A, College Division, Karattadipalayam, Gobichettipalayam.")}
                   </p>
-                </a>
+                </div>
 
-                <a
-                  href="https://maps.google.com/?q=1/1,+Kalingiyam+Main+Road,+Kalingiyam,+Gobichettipalayam"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="contact-branch-box"
-                  style={{ textDecoration: "none", color: "inherit" }}
+                <div
+                  className={`contact-branch-box ${activeBranch === 2 ? "active-branch-box" : ""}`}
+                  onClick={() => setActiveBranch(2)}
+                  style={{ cursor: "pointer" }}
                   title={t("View Branch 2 on Google Maps")}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span className="contact-branch-badge">{t("Branch 2")}</span>
-                    <span style={{ fontSize: "12px", color: "var(--primary-blue, #0433ff)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                    <a
+                      href="https://maps.google.com/?q=1/1,+Kalingiam+Main+Road,+Kalingiam,+Gobichettipalayam"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ fontSize: "12px", color: "var(--primary-blue, #0433ff)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "4px", textDecoration: "none" }}
+                    >
                       {t("View Map")}
                       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2">
                         <line x1="7" y1="17" x2="17" y2="7" />
                         <polyline points="7 7 17 7 17 17" />
                       </svg>
-                    </span>
+                    </a>
                   </div>
                   <p className="contact-branch-text">
                     {t("1/1, Kalingiam Main Road, Kalingiam, Gobichettipalayam.")}
                   </p>
-                </a>
+                </div>
+              </div>
+
+              {/* Embedded Interactive Google Map for the Branches */}
+              <div className="contact-branch-map-wrap">
+                <div className="contact-branch-map-header">
+                  <span className="contact-branch-map-label">
+                    {activeBranch === 1 ? t("Branch 1 Map (Karattadipalayam)") : t("Branch 2 Map (Kalingiam)")}
+                  </span>
+                </div>
+                <div className="contact-branch-map-iframe-box">
+                  {activeBranch === 1 ? (
+                    <iframe
+                      title="Branch 1 Karattadipalayam Map"
+                      src="https://maps.google.com/maps?q=15A%2C+College+Division%2C+Karattadipalayam%2C+Gobichettipalayam&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                      width="100%"
+                      height="180"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  ) : (
+                    <iframe
+                      title="Branch 2 Kalingiam Map"
+                      src="https://maps.google.com/maps?q=1%2F1%2C+Kalingiam+Main+Road%2C+Kalingiam%2C+Gobichettipalayam&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                      width="100%"
+                      height="180"
+                      style={{ border: 0 }}
+                      allowFullScreen
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -395,9 +438,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onNavigateHome }
               <p className="contact-faq-a">
                 {t("We have two branches in Gobichettipalayam:")}
                 <br />
-                • <strong>{t("Branch 1")}:</strong> {t("15A, College Division, Karattupalyam, Gobichettipalayam.")}
+                • <strong>{t("Branch 1")}:</strong> {t("15A, College Division, Karattadipalayam, Gobichettipalayam.")}
                 <br />
-                • <strong>{t("Branch 2")}:</strong> {t("1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.")}
+                • <strong>{t("Branch 2")}:</strong> {t("1/1, Kalingiam Main Road, Kalingiam, Gobichettipalayam.")}
               </p>
             </div>
             <div className="contact-faq-item">

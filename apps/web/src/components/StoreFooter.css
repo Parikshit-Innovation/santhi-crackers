@@ -4,9 +4,9 @@
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: #FFFFFF;
-  border-top: 3px solid var(--color-mustard, #CDB462);
-  color: var(--color-espresso, #150A06);
+  background-color: #ffffff;
+  border-top: 3px solid var(--color-mustard, #cdb462);
+  color: var(--color-espresso, #150a06);
   font-family: var(--font-body);
   box-sizing: border-box;
 }
@@ -51,8 +51,8 @@
   object-fit: contain;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  background-color: #FFFFFF;
-  border: 1.5px solid var(--color-mustard, #CDB462);
+  background-color: #ffffff;
+  border: 1.5px solid var(--color-mustard, #cdb462);
 }
 
 .store-footer-brand-titles {
@@ -83,7 +83,7 @@
   font-family: var(--font-body);
   font-size: 13.5px;
   line-height: 1.6;
-  color: var(--color-espresso, #150A06);
+  color: var(--color-espresso, #150a06);
   opacity: 0.85;
   margin: 0 0 18px 0;
   max-width: 380px;
@@ -99,8 +99,8 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-garnet, #492201);
-  background-color: #FAFAFA;
-  border: 1.5px solid var(--color-mustard, #CDB462);
+  background-color: #fafafa;
+  border: 1.5px solid var(--color-mustard, #cdb462);
   padding: 6px 12px;
   border-radius: 0;
   width: fit-content;
@@ -108,8 +108,8 @@
 }
 
 .store-footer-badge svg {
-  color: var(--color-copper, #BF7F35);
-  fill: var(--color-copper, #BF7F35);
+  color: var(--color-copper, #bf7f35);
+  fill: var(--color-copper, #bf7f35);
   stroke: var(--color-terracotta, #492201);
 }
 
@@ -122,7 +122,7 @@
   letter-spacing: 0.05em;
   color: var(--color-garnet, #492201);
   margin: 0 0 20px 0;
-  border-bottom: 2.5px solid var(--color-copper, #BF7F35);
+  border-bottom: 2.5px solid var(--color-copper, #bf7f35);
   width: fit-content;
   padding-bottom: 4px;
 }
@@ -142,7 +142,7 @@
   padding: 0;
   margin: 0;
   font-size: 13.5px;
-  color: var(--color-espresso, #150A06);
+  color: var(--color-espresso, #150a06);
   cursor: pointer;
   text-align: left;
   font-family: inherit;
@@ -161,7 +161,7 @@
   font-style: normal;
   font-size: 13.5px;
   line-height: 1.55;
-  color: var(--color-espresso, #150A06);
+  color: var(--color-espresso, #150a06);
   opacity: 0.85;
   margin: 0 0 18px 0;
 }
@@ -186,8 +186,8 @@
   font-size: 12.5px;
   font-weight: 700;
   color: var(--color-garnet, #492201);
-  background-color: var(--color-softivory, #F8EEBD);
-  border: 1.5px solid var(--color-copper, #BF7F35);
+  background-color: var(--color-softivory, #f8eebd);
+  border: 1.5px solid var(--color-copper, #bf7f35);
   border-radius: 0;
   text-decoration: none;
   transition: all 0.15s ease;
@@ -195,7 +195,7 @@
 }
 
 .store-footer-phone-pill:hover {
-  background-color: var(--color-eggnog, #F9EDC5);
+  background-color: var(--color-eggnog, #f9edc5);
   border-color: var(--color-garnet, #492201);
 }
 
@@ -212,7 +212,9 @@
   border-radius: 0;
   text-decoration: none;
   width: fit-content;
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
   box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
 }
 
@@ -231,8 +233,8 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--color-garnet, #492201);
-  background-color: var(--color-softivory, #F8EEBD);
-  border: 1.5px solid var(--color-copper, #BF7F35);
+  background-color: var(--color-softivory, #f8eebd);
+  border: 1.5px solid var(--color-copper, #bf7f35);
   border-radius: 0;
   text-decoration: none;
   width: fit-content;
@@ -242,7 +244,7 @@
 
 .store-footer-email-btn:hover,
 .store-footer-email-link:hover {
-  background-color: var(--color-eggnog, #F9EDC5);
+  background-color: var(--color-eggnog, #f9edc5);
   border-color: var(--color-garnet, #492201);
 }
 
@@ -264,8 +266,8 @@
   height: 175px;
   border-radius: 0;
   overflow: hidden;
-  border: 1.5px solid var(--color-mustard, #CDB462);
-  background-color: #FAFAFA;
+  border: 1.5px solid var(--color-mustard, #cdb462);
+  background-color: #fafafa;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
@@ -281,9 +283,9 @@
   gap: 8px;
   padding: 8px 14px;
   background-color: var(--color-garnet, #492201);
-  border: 1.5px solid var(--color-copper, #BF7F35);
+  border: 1.5px solid var(--color-copper, #bf7f35);
   border-radius: 0;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 12.5px;
   font-weight: 700;
   text-decoration: none;
@@ -294,14 +296,14 @@
 
 .store-footer-map-link:hover {
   background-color: var(--color-terracotta, #492201);
-  border-color: var(--color-mustard, #CDB462);
+  border-color: var(--color-mustard, #cdb462);
 }
 
 /* 3. Bottom Legal Bar - Crisp Light */
 .store-footer-bottom {
-  border-top: 1.5px solid var(--color-mustard, #CDB462);
+  border-top: 1.5px solid var(--color-mustard, #cdb462);
   padding: 20px 24px;
-  background-color: #FAFAF8;
+  background-color: #fafaf8;
 }
 
 .store-footer-bottom-container {
@@ -312,12 +314,37 @@
   justify-content: space-between;
   gap: 16px;
   font-size: 13px;
-  color: var(--color-espresso, #150A06);
+  color: var(--color-espresso, #150a06);
   opacity: 0.85;
 }
 
+.store-footer-legal-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .store-footer-copy {
-  color: var(--color-espresso, #150A06);
+  color: var(--color-espresso, #150a06);
+}
+
+.store-footer-developer-credit {
+  font-size: 11px;
+  color: var(--color-espresso, #150a06);
+  opacity: 0.72;
+  letter-spacing: 0.01em;
+}
+
+.store-footer-developer-link {
+  color: var(--color-copper, #bf7f35);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.store-footer-developer-link:hover {
+  color: var(--color-garnet, #492201);
 }
 
 .store-footer-notice {

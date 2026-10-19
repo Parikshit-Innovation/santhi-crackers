@@ -13,19 +13,6 @@ export const FloatingWhatsApp: React.FC = () => {
 
   return (
     <div className="floating-whatsapp-container">
-      {/* Information badge placed directly before the floating WhatsApp button */}
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="floating-whatsapp-info"
-        title={isTa ? "ஆன்லைன் ஆர்டர் அக் 25 வரை மட்டுமே" : "Delivery available till Oct 25"}
-      >
-        <span className="floating-whatsapp-text">
-          {isTa ? "ஆன்லைன் ஆர்டர் அக் 25 வரை மட்டுமே" : "Delivery available till Oct 25"}
-        </span>
-      </a>
-
       {/* Floating WhatsApp Action Button */}
       <a
         href={whatsappUrl}

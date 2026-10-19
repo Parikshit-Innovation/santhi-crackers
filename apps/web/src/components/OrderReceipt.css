@@ -78,13 +78,43 @@
   margin-bottom: 14px;
 }
 
+.receipt-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.receipt-brand-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border: 1.5px solid var(--color-mustard, #CDB462);
+  padding: 2px;
+  background-color: #ffffff;
+  flex-shrink: 0;
+}
+
+.receipt-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
 .simple-receipt-title {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 800;
   color: var(--color-garnet, #492201);
   font-family: var(--font-geist, inherit);
-  margin: 0 0 10px;
+  margin: 0;
+  line-height: 1.2;
   letter-spacing: -0.01em;
+}
+
+.receipt-brand-subtitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-copper, #BF7F35);
+  margin-top: 2px;
 }
 
 .simple-receipt-meta-grid {
@@ -289,6 +319,33 @@
   opacity: 0.75;
   box-shadow: none;
   transform: none;
+}
+
+/* Download PDF Button - Warm Luxury Ivory & Mustard */
+.simple-btn-receipt-download {
+  width: 100%;
+  background-color: var(--color-softivory, #F8EEBD);
+  color: var(--color-garnet, #492201);
+  border: 1.5px solid var(--color-copper, #BF7F35);
+  border-radius: 0;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-geist, inherit);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.simple-btn-receipt-download:hover {
+  background-color: var(--color-eggnog, #F9EDC5);
+  border-color: var(--color-garnet, #492201);
+  transform: translateY(-1px);
 }
 
 .receipt-payment-pending-note {
