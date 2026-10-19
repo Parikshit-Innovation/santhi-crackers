@@ -3,7 +3,8 @@ import {
     ArrowUp,
     ChevronDown,
     ChevronLeft, ChevronRight,
-    Edit, Eye,
+    Clock,
+    Edit, Eye, EyeOff,
     ImageIcon,
     Layers,
     LayoutDashboard,
@@ -94,12 +95,89 @@ const INITIAL_CATEGORIES: Category[] = [
 
 
 
+// ── Admin Session & Route Storage ───────────────────────────────────────────
+const ADMIN_AUTH_KEY = "santhi_admin_session_auth";
+const ADMIN_LAST_ROUTE_KEY = "santhi_admin_last_route";
+
+// Standard session: 4 hours (14,400,000 ms). Extended ("Remember me"): 24 hours (86,400,000 ms).
+const DEFAULT_SESSION_DURATION = 4 * 60 * 60 * 1000;
+const REMEMBER_SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+interface AdminSessionData {
+  token: string;
+  email: string;
+  loginAt: number;
+  expiresAt: number;
+  rememberMe: boolean;
+}
+
+const getStoredSession = (): AdminSessionData | null => {
+  try {
+    const raw = localStorage.getItem(ADMIN_AUTH_KEY);
+    if (!raw) return null;
+    const data: AdminSessionData = JSON.parse(raw);
+    if (!data || !data.expiresAt) return null;
+    if (Date.now() > data.expiresAt) {
+      localStorage.removeItem(ADMIN_AUTH_KEY);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+};
+
+const formatRemainingTime = (minutes: number): string => {
+  if (minutes <= 0) return "Expiring soon";
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  if (hours > 0) {
+    return `${hours}h ${mins}m`;
+  }
+  return `${mins}m`;
+};
+
+const getInitialRoute = (isAuth: boolean): string => {
+  if (!isAuth) return "/admin/login";
+
+  const pathname = typeof window !== "undefined" ? window.location.pathname : "";
+  const validAdminRoutes = ["/admin", "/admin/products", "/admin/categories", "/admin/queries"];
+
+  if (validAdminRoutes.includes(pathname)) {
+    return pathname;
+  }
+
+  try {
+    const saved = localStorage.getItem(ADMIN_LAST_ROUTE_KEY);
+    if (saved && validAdminRoutes.includes(saved)) {
+      return saved;
+    }
+  } catch {}
+
+  return "/admin";
+};
+
 // ── Main App Component ───────────────────────────────────────────────────────
 export default function App() {
   const { language, toggleLanguage, t, tProduct, tCategory, isTamil } = useLanguage();
-  const [currentRoute, setCurrentRoute] = useState("/admin/login");
+  
+  // Session & Authentication State
+  const initialSession = getStoredSession();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => Boolean(initialSession));
+  const [sessionData, setSessionData] = useState<AdminSessionData | null>(initialSession);
+  const [sessionRemainingMinutes, setSessionRemainingMinutes] = useState<number>(() => {
+    if (!initialSession) return 0;
+    return Math.max(0, Math.round((initialSession.expiresAt - Date.now()) / (60 * 1000)));
+  });
+  const [sessionExpiredMsg, setSessionExpiredMsg] = useState<string | null>(null);
+
+  // Form & Route State
+  const [currentRoute, setCurrentRoute] = useState<string>(() => getInitialRoute(Boolean(initialSession)));
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("admin@deepakart.com");
+  const [loginPassword, setLoginPassword] = useState("password123");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
 
 
@@ -652,6 +730,85 @@ export default function App() {
     loadQueriesFromApi();
   }, []);
 
+  // Handle Browser Back / Forward Button and Route Sync
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      const activeSession = getStoredSession();
+      if (!activeSession) {
+        setIsAuthenticated(false);
+        setSessionData(null);
+        setSessionRemainingMinutes(0);
+        setCurrentRoute("/admin/login");
+        return;
+      }
+
+      const targetPath = e.state?.path || (typeof window !== "undefined" ? window.location.pathname : "") || "/admin";
+      if (targetPath === "/admin/login") {
+        setCurrentRoute("/admin");
+        try {
+          window.history.replaceState({ path: "/admin" }, "", "/admin");
+        } catch {}
+      } else {
+        setCurrentRoute(targetPath);
+        try {
+          localStorage.setItem(ADMIN_LAST_ROUTE_KEY, targetPath);
+        } catch {}
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Sync initial URL on mount if authenticated
+  useEffect(() => {
+    if (isAuthenticated && currentRoute !== "/admin/login") {
+      try {
+        if (window.location.pathname !== currentRoute) {
+          window.history.replaceState({ path: currentRoute }, "", currentRoute);
+        }
+      } catch {}
+    }
+  }, []);
+
+  // Session Expiration Monitoring & Activity Refresher
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const checkSession = () => {
+      const activeSession = getStoredSession();
+      if (!activeSession) {
+        setIsAuthenticated(false);
+        setSessionData(null);
+        setSessionRemainingMinutes(0);
+        setSessionExpiredMsg("Your session has timed out. Please sign in again.");
+        setCurrentRoute("/admin/login");
+        try {
+          window.history.replaceState({ path: "/admin/login" }, "", "/admin/login");
+        } catch {}
+      } else {
+        const remainingMs = activeSession.expiresAt - Date.now();
+        const mins = Math.max(0, Math.round(remainingMs / (60 * 1000)));
+        setSessionRemainingMinutes(mins);
+      }
+    };
+
+    checkSession();
+    const intervalId = setInterval(checkSession, 30000);
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        checkSession();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [isAuthenticated]);
+
   const filteredQueries = queriesList.filter((q) => {
     const term = queriesSearch.toLowerCase().trim();
     if (!term) return true;
@@ -898,20 +1055,62 @@ export default function App() {
 
 
 
-  const navigate = (path: string) => {
+  const navigate = (path: string, replace = false) => {
     setCurrentRoute(path);
     setSidebarOpen(false);
+    if (path !== "/admin/login") {
+      try {
+        localStorage.setItem(ADMIN_LAST_ROUTE_KEY, path);
+      } catch {}
+    }
+    try {
+      if (replace) {
+        window.history.replaceState({ path }, "", path);
+      } else if (window.location.pathname !== path) {
+        window.history.pushState({ path }, "", path);
+      }
+    } catch (e) {
+      console.warn("History navigation error:", e);
+    }
   };
 
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
+    const duration = rememberMe ? REMEMBER_SESSION_DURATION : DEFAULT_SESSION_DURATION;
+    const now = Date.now();
+    const newSession: AdminSessionData = {
+      token: "admin-" + Math.random().toString(36).substring(2) + "-" + now,
+      email: loginEmail || "admin@deepakart.com",
+      loginAt: now,
+      expiresAt: now + duration,
+      rememberMe,
+    };
+
+    try {
+      localStorage.setItem(ADMIN_AUTH_KEY, JSON.stringify(newSession));
+    } catch (err) {
+      console.warn("Could not save session to localStorage:", err);
+    }
+
+    setSessionData(newSession);
     setIsAuthenticated(true);
-    navigate("/admin");
+    setSessionExpiredMsg(null);
+    setSessionRemainingMinutes(Math.round(duration / (60 * 1000)));
+
+    const nextRoute = getInitialRoute(true);
+    navigate(nextRoute === "/admin/login" ? "/admin" : nextRoute, true);
   };
 
   const handleLogout = () => {
+    try {
+      localStorage.removeItem(ADMIN_AUTH_KEY);
+      localStorage.removeItem(ADMIN_LAST_ROUTE_KEY);
+    } catch {}
     setIsAuthenticated(false);
-    navigate("/admin/login");
+    setSessionData(null);
+    setSessionExpiredMsg(null);
+    setSessionRemainingMinutes(0);
+    navigate("/admin/login", true);
   };
 
   // ── Route: Login ─────────────────────────────────────────────────────────────
@@ -924,18 +1123,57 @@ export default function App() {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-black mb-1 sm:mb-2 tracking-tight">Shanthi Sivakasi Crackers</h1>
             <p className="text-base sm:text-lg text-black font-semibold">Manage your store.</p>
           </div>
+
+          {sessionExpiredMsg && (
+            <div className="mb-5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs sm:text-sm font-semibold flex items-center gap-2.5">
+              <Clock size={18} className="shrink-0 text-amber-600" />
+              <span>{sessionExpiredMsg}</span>
+            </div>
+          )}
+
           <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
             <div>
               <label className="block text-sm sm:text-base font-bold text-black mb-1.5 sm:mb-2">Email address</label>
-              <input type="email" required defaultValue="admin@deepakart.com" className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-base font-medium" />
+              <input 
+                type="email" 
+                required 
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-base font-medium" 
+              />
             </div>
             <div>
               <label className="block text-sm sm:text-base font-bold text-black mb-1.5 sm:mb-2">Password</label>
-              <input type="password" required defaultValue="password123" className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-base font-medium" />
+              <div className="relative flex items-center">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  required 
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  className="w-full pl-3.5 sm:pl-4 pr-11 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-base font-medium" 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 p-1.5 text-gray-500 hover:text-black cursor-pointer rounded-lg transition-colors flex items-center justify-center"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
             <div className="flex items-center">
-              <input type="checkbox" id="remember" className="w-4 h-4 sm:w-5 sm:h-5 text-[#0000FF] border-gray-300 rounded focus:ring-[#0000FF] cursor-pointer" />
-              <label htmlFor="remember" className="ml-2.5 sm:ml-3 block text-sm sm:text-base font-semibold text-black cursor-pointer">Remember me</label>
+              <input 
+                type="checkbox" 
+                id="remember" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 sm:w-5 sm:h-5 text-[#0000FF] border-gray-300 rounded focus:ring-[#0000FF] cursor-pointer" 
+              />
+              <label htmlFor="remember" className="ml-2.5 sm:ml-3 block text-sm sm:text-base font-semibold text-black cursor-pointer">
+                Remember me
+              </label>
             </div>
             <button type="submit" className="w-full py-3.5 sm:py-4 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-base sm:text-lg rounded-xl shadow-md transition-colors cursor-pointer">
               Log in
@@ -1028,6 +1266,17 @@ export default function App() {
         </div>
       </div>
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        {/* Session Timer Badge */}
+        {sessionRemainingMinutes > 0 && (
+          <div 
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-blue-50/90 border border-blue-200/80 rounded-xl text-blue-700 text-xs font-bold shrink-0 shadow-2xs"
+            title={`Security timeout: automatic logout in ${formatRemainingTime(sessionRemainingMinutes)}`}
+          >
+            <Clock size={13} className="text-blue-600 shrink-0" />
+            <span className="hidden xs:inline">{t("Session") || "Session"}:</span>
+            <span className="font-mono">{formatRemainingTime(sessionRemainingMinutes)}</span>
+          </div>
+        )}
         {/* Language switch button */}
         <button
           type="button"
@@ -1044,7 +1293,7 @@ export default function App() {
         </button>
         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-xl shrink-0">
           <img src="/logo-santhi.png" alt="Logo" className="w-5 h-5 object-contain" />
-          <span className="text-xs font-bold text-black">{t("Santhi Crackers Admin")}</span>
+          <span className="text-xs font-bold text-black truncate max-w-[150px]">{sessionData?.email || t("Santhi Crackers Admin")}</span>
         </div>
       </div>
     </header>
