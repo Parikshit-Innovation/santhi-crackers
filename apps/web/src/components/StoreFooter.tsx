@@ -1,6 +1,6 @@
 import React from "react";
-import "./StoreFooter.css";
 import { useLanguage } from "../context/LanguageContext";
+import "./StoreFooter.css";
 
 interface StoreFooterProps {
   onNavigate?: (page: string) => void;
@@ -59,11 +59,11 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
               <address className="store-footer-address">
                 <div style={{ marginBottom: "8px" }}>
                   <span style={{ fontWeight: 600, color: "#1e293b" }}>{t("Branch 1")}: </span>
-                  {t("15A, College Division, Karattupalyam, Gobichettipalayam.")}
+                  {t("15A, College Division, Karattadipalayam, Gobichettipalayam.")}
                 </div>
                 <div>
                   <span style={{ fontWeight: 600, color: "#1e293b" }}>{t("Branch 2")}: </span>
-                  {t("1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.")}
+                  {t("1/1, Kalingiam Main Road, Kalingiam, Gobichettipalayam.")}
                 </div>
               </address>
 
@@ -146,7 +146,7 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
                 <div className="store-footer-map-frame">
                   <iframe
                     title="Shanthi Crackers Gobichettipalayam Depot Location Map"
-                    src="https://maps.google.com/maps?q=1%2F1%2C+Kalingiyam+Main+Road%2C+Kalingiyam%2C+Gobichettipalayam&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    src="https://maps.google.com/maps?q=1%2F1%2C+Kalingiam+Main+Road%2C+Kalingiam%2C+Gobichettipalayam&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     width="100%"
                     height="175"
                     style={{ border: 0 }}
@@ -156,7 +156,7 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
                   />
                 </div>
                 <a
-                  href="https://maps.google.com/?q=1%2F1%2C+Kalingiyam+Main+Road%2C+Kalingiyam%2C+Gobichettipalayam"
+                  href="https://maps.google.com/?q=1%2F1%2C+Kalingiam+Main+Road%2C+Kalingiam%2C+Gobichettipalayam"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="store-footer-map-link"
@@ -196,10 +196,21 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
       {/* 3. Bottom Legal & Copyright Bar */}
       <div className="store-footer-bottom">
         <div className="store-footer-bottom-container">
-          <div className="store-footer-copy">
-            {t("© {year} Shanthi Crackers | சாந்தி பட்டாசுகள். All rights reserved.", {
-              year: new Date().getFullYear(),
-            })}
+          <div className="store-footer-legal-wrap">
+            <div className="store-footer-copy">
+              {t("© {year} Shanthi Crackers | சாந்தி பட்டாசுகள். All rights reserved.", {
+                year: new Date().getFullYear(),
+              })}
+            </div>
+            <div className="store-footer-developer-credit">
+              Developed by Parikshit Innovations &nbsp;·&nbsp; Contact :{" "}
+              <a
+                href="mailto:parikshitinnovations@gmail.com"
+                className="store-footer-developer-link"
+              >
+                parikshitinnovations@gmail.com
+              </a>
+            </div>
           </div>
           <button
             type="button"
@@ -225,4 +236,3 @@ export const StoreFooter: React.FC<StoreFooterProps> = () => {
     </footer>
   );
 };
-
