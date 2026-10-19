@@ -13,13 +13,13 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  topAddress = "15A, College Division, Karattupalyam, Gobichettipalayam | 1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam",
+  topAddress = "15A, College Division, Karattadipalayam, Gobichettipalayam | 1/1, Kalingiam Main Road, Kalingiam, Gobichettipalayam",
   storeName = "SANTHI SIVAKASI CRACKERS",
   brandTagline = "SANTHI CRACKERS",
   locationTitle = "Location",
   addressLines = [
-    "15A, College Division, Karattupalyam, Gobichettipalayam.",
-    "1/1, Kalingiyam Main Road, Kalingiyam, Gobichettipalayam.",
+    "15A, College Division, Karattadipalayam, Gobichettipalayam.",
+    "1/1, Kalingiam Main Road, Kalingiam, Gobichettipalayam.",
   ],
   activeTab = "Home",
   onTabChange,

@@ -19,6 +19,7 @@ import { StoreFooter } from "./components/StoreFooter";
 import { StoreHero } from "./components/StoreHero";
 import { StoreNavbar } from "./components/StoreNavbar";
 import { WelcomeModal } from "./components/WelcomeModal";
+import { getApiEndpoints } from "./api/config";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "about" | "contact" | "checkout" | "receipt">("home");
@@ -57,11 +58,47 @@ export default function App() {
     };
   }, []);
 
-  // Check URL params for checkout
+  // Check URL params for checkout or viewable receipt link
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("view") === "checkout") {
+      const receiptId = params.get("receipt") || params.get("orderId");
+      if (receiptId) {
+        // Fetch order details for the receipt
+        const endpoints = getApiEndpoints(`/api/orders/${receiptId}`);
+        const fetchOrderReceipt = async () => {
+          for (const url of endpoints) {
+            try {
+              const res = await fetch(url);
+              if (res.ok) {
+                const data = await res.json();
+                if (data && data.order) {
+                  const o = data.order;
+                  setCurrentOrder({
+                    id: o.id,
+                    customerName: o.customerName || o.customer?.name || "",
+                    customerPhone: o.customerPhone || o.customer?.phone || "",
+                    deliveryAddress: o.deliveryAddress || "",
+                    items: o.items || [],
+                    subtotal: o.subtotal || o.total || 0,
+                    packingCharges: 0,
+                    roundOff: 0,
+                    total: o.total || 0,
+                    paymentStatus: o.paymentStatus || "PENDING",
+                    orderStatus: o.status || o.orderStatus || "PENDING",
+                    createdAt: o.createdAt || new Date().toISOString(),
+                  });
+                  setCurrentPage("receipt");
+                  return;
+                }
+              }
+            } catch {
+              // try next endpoint
+            }
+          }
+        };
+        fetchOrderReceipt();
+      } else if (params.get("view") === "checkout") {
         setCurrentPage("checkout");
       }
     } catch {
@@ -165,9 +202,6 @@ export default function App() {
                 onAddToCart={handleAddToCart}
                 onCartClick={() => setIsCartOpen(true)}
               />
-              <StoreFooter
-                onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
-              />
               {currentPage === "checkout" && (
                 <CheckoutConfirmation
                   isOpen={true}
@@ -195,6 +229,10 @@ export default function App() {
               )}
             </>
           )}
+
+          <StoreFooter
+            onNavigate={(page) => setCurrentPage(page as "home" | "about" | "contact")}
+          />
         </main>
 
         <FloatingWhatsApp />

@@ -59,25 +59,25 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onStartBooking }) =>
 
         {/* Top Tag */}
         <div className="welcome-pill">
-          <span>{isTa ? "முன்பதிவு விற்பனை" : "PRE-BOOKING SALE"}</span>
+          <span>{isTa ? "நல்வரவு · தீபாவளி 2026" : "WELCOME · DIWALI 2026"}</span>
         </div>
 
         {/* Main Heading */}
         <h2 className="welcome-title">
-          {isTa ? "ஆன்லைன் முன்பதிவு தொடங்கியது" : "Online Pre-Booking Is Open"}
+          {isTa ? "சாந்தி பட்டாசுகளுக்கு நல்வரவு!" : "Welcome to Shanthi Crackers!"}
         </h2>
 
         {/* Subtitle brand */}
         <p className="welcome-subtitle">
           {isTa
-            ? "சாந்தி பட்டாசுகள் · தீபாவளி 2026"
-            : "Shanthi Crackers · Diwali 2026"}
+            ? "சிவகாசி நேரடி பட்டாசுகள் · தள்ளுபடி விலையில்"
+            : "Direct Sivakasi Crackers · Best Festive Discounts"}
         </p>
 
         {/* Language Selection Selector Bar */}
         <div className="welcome-lang-selector">
           <span className="welcome-lang-label">
-            {isTa ? "மொழியைத் தேர்ந்தெடுக்கவும்:" : "Choose Language:"}
+            {isTa ? "மொழியைத் தேர்ந்தெடுக்கவும் / Choose Language:" : "Choose Language / மொழியைத் தேர்ந்தெடுக்கவும்:"}
           </span>
           <div className="welcome-lang-toggle">
             <button
@@ -101,11 +101,11 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onStartBooking }) =>
         <p className="welcome-body-text">
           {isTa ? (
             <>
-              எங்கள் இணையதளத்தில் இப்போது உங்கள் <strong className="welcome-highlight">ஆன்லைன் முன்பதிவை</strong> பதிவு செய்யுங்கள். முன்பதிவுச் சலுகை <strong className="welcome-highlight">அக்டோபர் 25</strong> வரை மட்டுமே கிடைக்கும். பட்டாசுகளைக் கூடையில் சேர்த்து உங்கள் ஆர்டரை நிறைவு செய்யுங்கள்.
+              உங்கள் தீபாவளிக் கொண்டாட்டங்களை வண்ணமயமாக்க <strong className="welcome-highlight">சாந்தி பட்டாசுகள்</strong> உங்களை அன்புடன் வரவேற்கிறது. எங்களின் தரமான சிவகாசி பட்டாசுகளின் பட்டியலைப் பார்த்து, உங்களுக்கு விருப்பமானவற்றைத் தேர்வு செய்யுங்கள்.
             </>
           ) : (
             <>
-              Place your <strong className="welcome-highlight">online pre-booking</strong> on our website now. Pre-booking offer is available only before <strong className="welcome-highlight">October 25</strong>. Add items to cart and complete your order when you are ready.
+              <strong className="welcome-highlight">Shanthi Crackers</strong> warmly welcomes you to make your Diwali celebrations brighter! Explore our wide range of premium Sivakasi crackers and discover exclusive festive discounts.
             </>
           )}
         </p>
@@ -116,11 +116,12 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onStartBooking }) =>
           className="welcome-action-btn"
           onClick={handleStart}
         >
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12z" />
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polygon points="10 8 16 12 10 16 10 8" />
           </svg>
           <span>
-            {isTa ? "ஆன்லைன் முன்பதிவைத் தொடங்குங்கள்" : "Start online pre-booking"}
+            {isTa ? "பட்டாசுகளைப் பார்வையிடவும்" : "Explore Crackers"}
           </span>
         </button>
 
@@ -130,7 +131,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ onStartBooking }) =>
           className="welcome-dismiss-link"
           onClick={handleClose}
         >
-          {isTa ? "மூடு (Close)" : "Close"}
+          {isTa ? "தொடர்க (Continue)" : "Continue to Store"}
         </button>
       </div>
     </div>

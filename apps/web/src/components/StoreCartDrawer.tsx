@@ -30,11 +30,26 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
   isLoading,
   onProceedToCheckout,
 }) => {
-  const { t, tProduct } = useLanguage();
+  const { t, tProduct, language } = useLanguage();
   const [discountCode, setDiscountCode] = useState("");
   const [discountApplied, setDiscountApplied] = useState(false);
   const [discountError, setDiscountError] = useState("");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const getItemName = (item: ComboItem): string => {
+    if (language === "ta") {
+      if (item.nameTam && item.nameTam.trim()) {
+        return item.nameTam;
+      }
+      const rawName = item.nameEng || item.name;
+      const translated = tProduct(item.code, rawName);
+      if (translated && translated !== rawName) {
+        return translated;
+      }
+      return t(rawName);
+    }
+    return item.nameEng || item.name;
+  };
 
   // Close on Escape key & freeze body scrolling when open
   useEffect(() => {
@@ -180,16 +195,16 @@ export const StoreCartDrawer: React.FC<StoreCartDrawerProps> = ({
                 const lineTotal = item.price * quantity;
                 return (
                   <div key={item.id} className="store-drawer-item-row">
-                    <img src={item.image} alt={tProduct(item.code, item.name)} className="store-drawer-item-img" />
+                    <img src={item.image} alt={getItemName(item)} className="store-drawer-item-img" />
 
                     <div className="store-drawer-item-main">
                       <div className="store-drawer-item-top">
-                        <span className="store-drawer-item-title">{tProduct(item.code, item.name)}</span>
+                        <span className="store-drawer-item-title">{getItemName(item)}</span>
                         <button
                           type="button"
                           className="store-drawer-trash-btn"
                           onClick={() => onRemoveItem(item.id)}
-                          aria-label={t("Remove {name}", { name: tProduct(item.code, item.name) })}
+                          aria-label={t("Remove {name}", { name: getItemName(item) })}
                         >
                           <svg
                             viewBox="0 0 24 24"
