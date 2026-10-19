@@ -1,7 +1,11 @@
-import { config } from "dotenv";
 import { defineConfig } from "prisma/config";
 
-config({ path: "../../.env" });
+try {
+  const dotenv = await import("dotenv");
+  dotenv.config({ path: "../../.env" });
+} catch {
+  // Ignore missing dotenv in production where environment variables are already set
+}
 
 const databaseUrl =
   process.env.DATABASE_URL ||
