@@ -9,7 +9,11 @@
     "ADMIN_SESSION_SECRET",
     "CONTACT_EMAIL",
     "VITE_API_URL",
-    "VITE_URL"
+    "VITE_URL",
+    "CLOUDINARY_URL",
+    "CLOUDINARY_CLOUD_NAME",
+    "CLOUDINARY_API_KEY",
+    "CLOUDINARY_API_SECRET"
   ],
   "tasks": {
     "build": {

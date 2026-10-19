@@ -24,6 +24,8 @@ import {
     Star,
     Trash2,
     Truck, User,
+    Upload,
+    Loader2,
     X
 } from "lucide-react";
 import type { FormEvent } from "react";
@@ -31,6 +33,7 @@ import { useEffect, useState } from "react";
 import { createCategoryApi, fetchCategoriesApi, updateCategoryApi } from "./api/categories";
 import { createProductApi, deleteProductApi, fetchProductsApi, updateProductApi } from "./api/products";
 import { type CustomerQuery, fetchQueriesApi } from "./api/queries";
+import { uploadImage } from "./api/upload";
 import "./App.css";
 import { useLanguage } from "./context/LanguageContext";
 
@@ -322,6 +325,24 @@ export default function App() {
   const [prodMaxOrderQty, setProdMaxOrderQty] = useState<number>(5);
   const [prodImageUrl, setProdImageUrl] = useState("");
   const [prodStatus, setProdStatus] = useState<"Active" | "Inactive">("Active");
+  const [isUploadingProdImg, setIsUploadingProdImg] = useState(false);
+  const [uploadProdImgError, setUploadProdImgError] = useState<string | null>(null);
+
+  const handleProductImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingProdImg(true);
+    setUploadProdImgError(null);
+    try {
+      const url = await uploadImage(file, "santhi-crackers/products");
+      setProdImageUrl(url);
+    } catch (err: any) {
+      setUploadProdImgError(err.message || "Failed to upload image.");
+    } finally {
+      setIsUploadingProdImg(false);
+      e.target.value = "";
+    }
+  };
   const [prodIsFeatured, setProdIsFeatured] = useState<boolean>(true);
   const [prodIsSubmitting, setProdIsSubmitting] = useState(false);
   const [prodError, setProdError] = useState<string | null>(null);
@@ -732,6 +753,24 @@ export default function App() {
   const [catLangTab, setCatLangTab] = useState<"en" | "ta">("en");
   const [catImageUrl, setCatImageUrl] = useState("");
   const [catSort, setCatSort] = useState<number>(1);
+  const [isUploadingCatImg, setIsUploadingCatImg] = useState(false);
+  const [uploadCatImgError, setUploadCatImgError] = useState<string | null>(null);
+
+  const handleCategoryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingCatImg(true);
+    setUploadCatImgError(null);
+    try {
+      const url = await uploadImage(file, "santhi-crackers/categories");
+      setCatImageUrl(url);
+    } catch (err: any) {
+      setUploadCatImgError(err.message || "Failed to upload image.");
+    } finally {
+      setIsUploadingCatImg(false);
+      e.target.value = "";
+    }
+  };
   const [catStatus, setCatStatus] = useState<"Active" | "Inactive">("Active");
   const [catIsSubmitting, setCatIsSubmitting] = useState(false);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
@@ -2038,15 +2077,32 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Image URL */}
+              {/* Image URL & Upload */}
               <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Image URL</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-black uppercase">Product Image</label>
+                  <label className="text-xs font-semibold text-[#0000FF] hover:underline cursor-pointer flex items-center gap-1">
+                    {isUploadingProdImg ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5" />
+                    )}
+                    <span>{isUploadingProdImg ? "Uploading..." : "Upload File"}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      disabled={isUploadingProdImg}
+                      onChange={handleProductImageUpload}
+                      className="hidden" 
+                    />
+                  </label>
+                </div>
                 <div className="flex gap-2 items-center">
                   <input 
                     type="url" 
                     value={prodImageUrl}
                     onChange={(e) => setProdImageUrl(e.target.value)}
-                    placeholder="https://example.com/images/sparklers.jpg"
+                    placeholder="Paste image URL or click 'Upload File'"
                     className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                   {prodImageUrl && (
@@ -2058,6 +2114,9 @@ export default function App() {
                     />
                   )}
                 </div>
+                {uploadProdImgError && (
+                  <p className="text-xs text-red-600 mt-1">{uploadProdImgError}</p>
+                )}
               </div>
 
               {/* Status and Featured toggle */}
@@ -2360,14 +2419,32 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Image URL & Upload */}
               <div>
-                <label className="block text-xs font-bold text-black uppercase mb-1">Image URL</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-black uppercase">Product Image</label>
+                  <label className="text-xs font-semibold text-[#0000FF] hover:underline cursor-pointer flex items-center gap-1">
+                    {isUploadingProdImg ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5" />
+                    )}
+                    <span>{isUploadingProdImg ? "Uploading..." : "Upload File"}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      disabled={isUploadingProdImg}
+                      onChange={handleProductImageUpload}
+                      className="hidden" 
+                    />
+                  </label>
+                </div>
                 <div className="flex gap-2 items-center">
                   <input 
                     type="url" 
                     value={prodImageUrl}
                     onChange={(e) => setProdImageUrl(e.target.value)}
-                    placeholder="https://example.com/images/sparklers.jpg"
+                    placeholder="Paste image URL or click 'Upload File'"
                     className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                   {prodImageUrl && (
@@ -2379,6 +2456,9 @@ export default function App() {
                     />
                   )}
                 </div>
+                {uploadProdImgError && (
+                  <p className="text-xs text-red-600 mt-1">{uploadProdImgError}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-1">
@@ -2963,14 +3043,32 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Image URL & Upload */}
               <div>
-                <label className="block text-sm font-bold text-black mb-1">Image URL</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-sm font-bold text-black">Category Image</label>
+                  <label className="text-xs font-semibold text-[#0000FF] hover:underline cursor-pointer flex items-center gap-1">
+                    {isUploadingCatImg ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5" />
+                    )}
+                    <span>{isUploadingCatImg ? "Uploading..." : "Upload File"}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      disabled={isUploadingCatImg}
+                      onChange={handleCategoryImageUpload}
+                      className="hidden" 
+                    />
+                  </label>
+                </div>
                 <div className="flex gap-2 items-center">
                   <input 
                     type="url" 
                     value={catImageUrl}
                     onChange={(e) => setCatImageUrl(e.target.value)}
-                    placeholder="https://example.com/images/sparklers.jpg"
+                    placeholder="Paste image URL or click 'Upload File'"
                     className="flex-1 px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                   {catImageUrl && (
@@ -2982,6 +3080,9 @@ export default function App() {
                     />
                   )}
                 </div>
+                {uploadCatImgError && (
+                  <p className="text-xs text-red-600 mt-1">{uploadCatImgError}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -3167,14 +3268,32 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Image URL & Upload */}
               <div>
-                <label className="block text-sm font-bold text-black mb-1">Image URL</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-sm font-bold text-black">Category Image</label>
+                  <label className="text-xs font-semibold text-[#0000FF] hover:underline cursor-pointer flex items-center gap-1">
+                    {isUploadingCatImg ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5" />
+                    )}
+                    <span>{isUploadingCatImg ? "Uploading..." : "Upload File"}</span>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      disabled={isUploadingCatImg}
+                      onChange={handleCategoryImageUpload}
+                      className="hidden" 
+                    />
+                  </label>
+                </div>
                 <div className="flex gap-2 items-center">
                   <input 
                     type="url" 
                     value={catImageUrl}
                     onChange={(e) => setCatImageUrl(e.target.value)}
-                    placeholder="https://example.com/image.jpg"
+                    placeholder="Paste image URL or click 'Upload File'"
                     className="flex-1 px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#0000FF] focus:bg-white outline-none"
                   />
                   {catImageUrl && (
@@ -3186,6 +3305,9 @@ export default function App() {
                     />
                   )}
                 </div>
+                {uploadCatImgError && (
+                  <p className="text-xs text-red-600 mt-1">{uploadCatImgError}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">

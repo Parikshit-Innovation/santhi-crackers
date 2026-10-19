@@ -16,11 +16,15 @@ import {
 } from "./controller.js";
 import { getAdminInventory, updateProductStock } from "./inventory.js";
 import { createOrder, getAdminOrderById, getAdminOrders, getOrderReceipt } from "./orders.js";
+import { handleImageUpload, uploadMiddleware } from "./upload.js";
 import { corsMiddleware } from "./utils.js";
 
 const router = Router();
 
 router.use(corsMiddleware);
+
+router.post("/upload", uploadMiddleware, handleImageUpload);
+router.post("/admin/upload", uploadMiddleware, handleImageUpload);
 
 router.get("/health", (_request, response) => {
   response.status(200).json({ status: "ok" });

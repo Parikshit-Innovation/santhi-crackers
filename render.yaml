@@ -24,3 +24,12 @@ services:
         sync: false
       - key: ALLOWED_ORIGINS
         value: https://shanthicrackers.in,https://www.shanthicrackers.in,https://admin.shanthicrackers.in,https://santhicrackers.in,https://www.santhicrackers.in,https://admin.santhicrackers.in,https://santhicrackers.vercel.app,https://santhicrackers-admin.vercel.app
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        value: qpdmp8ci
+      - key: CLOUDINARY_API_KEY
+        value: "877533715621553"
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
