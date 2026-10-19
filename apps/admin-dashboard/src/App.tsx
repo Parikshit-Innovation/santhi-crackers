@@ -3,27 +3,21 @@ import {
     ArrowUp,
     ChevronDown,
     ChevronLeft, ChevronRight,
-    CreditCard,
     Edit, Eye,
-    FileText,
     ImageIcon,
     Layers,
     LayoutDashboard,
     ListTree,
     LogOut,
-    MapPin,
     Menu,
     MessageSquare,
     Package,
     Phone,
     Plus,
-    Printer,
     RefreshCw,
     Search,
-    ShoppingCart,
     Star,
     Trash2,
-    Truck, User,
     Upload,
     Loader2,
     X
@@ -38,36 +32,7 @@ import "./App.css";
 import { useLanguage } from "./context/LanguageContext";
 
 // ── Types & Data ─────────────────────────────────────────────────────────────
-export interface OrderItem {
-  id: number;
-  code: string;
-  name: string;
-  qty: number;
-  unitPrice: number;
-  total: number;
-}
 
-export interface Order {
-  id: string;
-  customer: string;
-  phone: string;
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-  count: number;
-  subtotal: number;
-  discount: number;
-  deliveryFee: number;
-  total: number;
-  payment: "Paid" | "Pending" | "Failed" | "Refunded";
-  paymentMethod: string;
-  status: "Processing" | "Pending" | "Confirmed" | "Shipped" | "Delivered" | "Cancelled";
-  date: string;
-  updatedAt: string;
-  items: OrderItem[];
-}
 
 export interface Category {
   id: number | string;
@@ -127,151 +92,7 @@ const INITIAL_CATEGORIES: Category[] = [
   { id: 6, name: "Kids Special", slug: "kids-special", count: 1, sort: 6, status: "Active" },
 ];
 
-const INITIAL_ORDERS: Order[] = [
-  {
-    id: "DK-10842",
-    customer: "Maya Srinivasan",
-    phone: "+91 98765 43210",
-    email: "maya.srinivasan@gmail.com",
-    address: "Door 42, Anna Nagar West, near Shanthi Bhavan",
-    city: "Chennai",
-    state: "Tamil Nadu",
-    pincode: "600040",
-    count: 3,
-    subtotal: 2450,
-    discount: 150,
-    deliveryFee: 235,
-    total: 2535,
-    payment: "Paid",
-    paymentMethod: "UPI (Google Pay)",
-    status: "Processing",
-    date: "9 Oct 2026",
-    updatedAt: "9 Oct 2026, 04:30 PM",
-    items: [
-      { id: 1, code: "GAR-1000-01", name: "1000 Wala Garland", qty: 2, unitPrice: 299, total: 598 },
-      { id: 2, code: "COM-DIW-24", name: "Diwali Celebration Combo", qty: 1, unitPrice: 1852, total: 1852 }
-    ]
-  },
-  {
-    id: "DK-10841",
-    customer: "Arun Kumar",
-    phone: "+91 94431 12345",
-    email: "arun.k@yahoo.com",
-    address: "15/B Main Street, Gandhi Nagar",
-    city: "Madurai",
-    state: "Tamil Nadu",
-    pincode: "625020",
-    count: 2,
-    subtotal: 750,
-    discount: 0,
-    deliveryFee: 60,
-    total: 810,
-    payment: "Paid",
-    paymentMethod: "Net Banking (HDFC)",
-    status: "Pending",
-    date: "8 Oct 2026",
-    updatedAt: "8 Oct 2026, 11:15 AM",
-    items: [
-      { id: 3, code: "FLP-ASH-08", name: "Ashoka Flower Pot", qty: 1, unitPrice: 670, total: 670 },
-      { id: 4, code: "RKT-FLR-05", name: "Anil Flower Rocket", qty: 1, unitPrice: 140, total: 140 }
-    ]
-  },
-  {
-    id: "DK-10840",
-    customer: "Kavitha Rajan",
-    phone: "+91 98220 99887",
-    email: "kavitha.rajan@gmail.com",
-    address: "78 Lotus Apartments, Cross Road 4",
-    city: "Coimbatore",
-    state: "Tamil Nadu",
-    pincode: "641002",
-    count: 3,
-    subtotal: 560,
-    discount: 50,
-    deliveryFee: 100,
-    total: 610,
-    payment: "Pending",
-    paymentMethod: "Cash on Delivery (COD)",
-    status: "Confirmed",
-    date: "8 Oct 2026",
-    updatedAt: "8 Oct 2026, 02:20 PM",
-    items: [
-      { id: 5, code: "GCK-DEL-10", name: "Deluxe Ground Chakkar", qty: 2, unitPrice: 155, total: 310 },
-      { id: 6, code: "RKT-FLR-05", name: "Anil Flower Rocket", qty: 1, unitPrice: 250, total: 250 }
-    ]
-  },
-  {
-    id: "DK-10839",
-    customer: "Vijayalakshmi S",
-    phone: "+91 97900 11223",
-    email: "vijayalakshmi.s@gmail.com",
-    address: "Plot 12, VIP Colony, Sivakasi West",
-    city: "Sivakasi",
-    state: "Tamil Nadu",
-    pincode: "626123",
-    count: 1,
-    subtotal: 1099,
-    discount: 50,
-    deliveryFee: 50,
-    total: 1099,
-    payment: "Paid",
-    paymentMethod: "Credit Card (Visa)",
-    status: "Shipped",
-    date: "7 Oct 2026",
-    updatedAt: "8 Oct 2026, 09:00 AM",
-    items: [
-      { id: 7, code: "GAR-DEL-10", name: "Deluxe Garland 5000", qty: 1, unitPrice: 1099, total: 1099 }
-    ]
-  },
-  {
-    id: "DK-10838",
-    customer: "R. Balaji",
-    phone: "+91 96001 88776",
-    email: "balaji.r@gmail.com",
-    address: "99 Temple Street, Palayamkottai",
-    city: "Tirunelveli",
-    state: "Tamil Nadu",
-    pincode: "627002",
-    count: 4,
-    subtotal: 800,
-    discount: 0,
-    deliveryFee: 45,
-    total: 845,
-    payment: "Failed",
-    paymentMethod: "UPI (Paytm)",
-    status: "Cancelled",
-    date: "6 Oct 2026",
-    updatedAt: "6 Oct 2026, 07:10 PM",
-    items: [
-      { id: 8, code: "GCK-DEL-10", name: "Deluxe Ground Chakkar", qty: 4, unitPrice: 200, total: 800 }
-    ]
-  },
-  {
-    id: "DK-10837",
-    customer: "Siddharth Verma",
-    phone: "+91 91234 56789",
-    email: "siddharth.v@gmail.com",
-    address: "Flat 402, Green Valley Enclave",
-    city: "Trichy",
-    state: "Tamil Nadu",
-    pincode: "620001",
-    count: 5,
-    subtotal: 3200,
-    discount: 200,
-    deliveryFee: 150,
-    total: 3150,
-    payment: "Paid",
-    paymentMethod: "UPI (PhonePe)",
-    status: "Delivered",
-    date: "5 Oct 2026",
-    updatedAt: "7 Oct 2026, 05:00 PM",
-    items: [
-      { id: 9, code: "COM-DIW-24", name: "Diwali Celebration Combo", qty: 1, unitPrice: 2155, total: 2155 },
-      { id: 10, code: "GAR-1000-01", name: "1000 Wala Garland", qty: 2, unitPrice: 299, total: 598 },
-      { id: 11, code: "RKT-FLR-05", name: "Anil Flower Rocket", qty: 2, unitPrice: 198, total: 396 }
-    ]
-  }
-];
+
 
 // ── Main App Component ───────────────────────────────────────────────────────
 export default function App() {
@@ -280,14 +101,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Orders State
-  const [ordersList, setOrdersList] = useState<Order[]>(INITIAL_ORDERS);
-  const [orderSearch, setOrderSearch] = useState("");
-  const [orderStatusFilter, setOrderStatusFilter] = useState("All");
-  const [paymentStatusFilter, setPaymentStatusFilter] = useState("All");
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [orderCurrentPage, setOrderCurrentPage] = useState(1);
-  const ordersPerPage = 5;
+
 
   // Products State
   const [productsList, setProductsList] = useState<Product[]>(INITIAL_PRODUCTS);
@@ -1081,160 +895,8 @@ export default function App() {
     })
     .sort((a, b) => a.sort - b.sort);
 
-  // Status & Payment Updates
-  const handleUpdateOrderStatus = (orderId: string, newStatus: Order["status"]) => {
-    const formattedDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) + ", " + new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-    setOrdersList(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus, updatedAt: formattedDate } : o));
-    if (selectedOrder && selectedOrder.id === orderId) {
-      setSelectedOrder(prev => prev ? { ...prev, status: newStatus, updatedAt: formattedDate } : null);
-    }
-  };
 
-  const handleUpdatePaymentStatus = (orderId: string, newPayment: Order["payment"]) => {
-    setOrdersList(prev => prev.map(o => o.id === orderId ? { ...o, payment: newPayment } : o));
-    if (selectedOrder && selectedOrder.id === orderId) {
-      setSelectedOrder(prev => prev ? { ...prev, payment: newPayment } : null);
-    }
-  };
 
-  // PDF Invoice Extraction
-  const handleExportPDF = (order: Order) => {
-    const printWindow = window.open("", "_blank", "width=850,height=950");
-    if (!printWindow) return;
-
-    const itemsRows = order.items.map((item, index) => `
-      <tr style="border-bottom: 1px solid #f1f5f9;">
-        <td style="padding: 12px; text-align: center; color: #64748b;">${index + 1}</td>
-        <td style="padding: 12px;">
-          <div style="font-weight: 700; color: #0f172a;">${item.name}</div>
-          <div style="font-size: 12px; color: #64748b;">Code: ${item.code}</div>
-        </td>
-        <td style="padding: 12px; text-align: center; font-weight: 600;">${item.qty}</td>
-        <td style="padding: 12px; text-align: right; color: #334155;">₹${item.unitPrice}</td>
-        <td style="padding: 12px; text-align: right; font-weight: 700; color: #0f172a;">₹${item.total}</td>
-      </tr>
-    `).join("");
-
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Order Invoice - ${order.id}</title>
-          <style>
-            * { box-sizing: border-box; margin: 0; padding: 0; }
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #0f172a; background: #fff; line-height: 1.5; }
-            .invoice-box { max-width: 800px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-            .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0000FF; padding-bottom: 20px; margin-bottom: 24px; }
-            .brand { font-size: 24px; font-weight: 800; color: #0000FF; text-transform: uppercase; letter-spacing: 0.5px; }
-            .subbrand { font-size: 13px; font-weight: 600; color: #64748b; margin-top: 2px; }
-            .order-title { text-align: right; }
-            .order-no { font-size: 20px; font-weight: 800; color: #0f172a; }
-            .order-date { font-size: 13px; color: #64748b; margin-top: 4px; }
-            .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; background: #f8fafc; padding: 20px; border: 1px solid #f1f5f9; border-radius: 8px; }
-            .block-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #475569; margin-bottom: 8px; }
-            .info-p { font-size: 14px; margin-bottom: 4px; color: #334155; }
-            .info-p strong { color: #0f172a; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-            th { background: #f1f5f9; padding: 12px; text-align: left; font-size: 11px; font-weight: 800; text-transform: uppercase; color: #475569; border-bottom: 2px solid #e2e8f0; }
-            .totals { width: 320px; margin-left: auto; margin-bottom: 24px; border-top: 1px solid #e2e8f0; padding-top: 12px; }
-            .total-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; color: #475569; }
-            .grand-total { display: flex; justify-content: space-between; padding: 12px 0; font-size: 18px; font-weight: 800; color: #0000FF; border-top: 2px solid #0f172a; margin-top: 8px; }
-            .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8; }
-            @media print {
-              body { padding: 0; }
-              .invoice-box { border: none; box-shadow: none; padding: 0; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="invoice-box">
-            <div class="header">
-              <div>
-                <div class="brand">Shanthi Sivakasi Crackers</div>
-                <div class="subbrand">Official Order Invoice & Summary</div>
-              </div>
-              <div class="order-title">
-                <div class="order-no">${order.id}</div>
-                <div class="order-date">Date: ${order.date}</div>
-              </div>
-            </div>
-
-            <div class="grid-2">
-              <div>
-                <div class="block-title">Customer & Delivery Details</div>
-                <div class="info-p"><strong>Customer:</strong> ${order.customer}</div>
-                <div class="info-p"><strong>Phone:</strong> ${order.phone}</div>
-                <div class="info-p"><strong>Email:</strong> ${order.email}</div>
-                <div class="info-p"><strong>Address:</strong> ${order.address}, ${order.city}, ${order.state} - ${order.pincode}</div>
-              </div>
-              <div>
-                <div class="block-title">Payment & Status Summary</div>
-                <div class="info-p"><strong>Payment Status:</strong> ${order.payment}</div>
-                <div class="info-p"><strong>Payment Mode:</strong> ${order.paymentMethod}</div>
-                <div class="info-p"><strong>Order Status:</strong> ${order.status}</div>
-                <div class="info-p"><strong>Last Updated:</strong> ${order.updatedAt}</div>
-              </div>
-            </div>
-
-            <div class="block-title">Ordered Items Breakdown</div>
-            <table>
-              <thead>
-                <tr>
-                  <th style="text-align: center; width: 40px;">#</th>
-                  <th>Item Description</th>
-                  <th style="text-align: center;">Qty</th>
-                  <th style="text-align: right;">Unit Price</th>
-                  <th style="text-align: right;">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${itemsRows}
-              </tbody>
-            </table>
-
-            <div class="totals">
-              <div class="total-row"><span>Subtotal</span><span>₹${order.subtotal}</span></div>
-              ${order.discount > 0 ? `<div class="total-row" style="color: #16a34a;"><span>Discount</span><span>-₹${order.discount}</span></div>` : ''}
-              <div class="total-row"><span>Delivery Fee</span><span>₹${order.deliveryFee}</span></div>
-              <div class="grand-total"><span>Grand Total</span><span>₹${order.total}</span></div>
-            </div>
-
-            <div class="footer">
-              Thank you for ordering with Shanthi Sivakasi Crackers!<br/>
-              Computer generated invoice summary.
-            </div>
-          </div>
-          <script>
-            window.onload = function() {
-              window.print();
-            };
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-  };
-
-  // Filtered Orders calculation
-  const filteredOrders = ordersList.filter((o) => {
-    const query = orderSearch.trim().toLowerCase();
-    const matchesSearch =
-      !query ||
-      o.id.toLowerCase().includes(query) ||
-      o.customer.toLowerCase().includes(query) ||
-      o.phone.toLowerCase().includes(query);
-
-    const matchesStatus = orderStatusFilter === "All" || o.status === orderStatusFilter;
-    const matchesPayment = paymentStatusFilter === "All" || o.payment === paymentStatusFilter;
-
-    return matchesSearch && matchesStatus && matchesPayment;
-  });
-
-  const totalOrderPages = Math.ceil(filteredOrders.length / ordersPerPage) || 1;
-  const paginatedOrders = filteredOrders.slice(
-    (orderCurrentPage - 1) * ordersPerPage,
-    orderCurrentPage * ordersPerPage
-  );
 
   const navigate = (path: string) => {
     setCurrentRoute(path);
@@ -1255,30 +917,27 @@ export default function App() {
   // ── Route: Login ─────────────────────────────────────────────────────────────
   if (!isAuthenticated || currentRoute === "/admin/login") {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-[#FAF8F4] p-6 text-black font-manrope">
-        <div className="w-full max-w-md bg-white border border-[#E5E5E5] rounded-xl p-8 shadow-lg">
-          <div className="text-center mb-8">
-            <img src="/logo-santhi.png" alt="Shanthi Sivakasi Crackers Logo" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-md rounded-2xl" />
-            <h1 className="text-3xl font-bold text-black mb-2">Shanthi Sivakasi Crackers</h1>
-            <p className="text-lg text-black font-semibold">Manage your store.</p>
+      <div className="min-h-screen w-full flex items-center justify-center bg-[#FAF8F4] p-4 sm:p-6 text-black font-manrope">
+        <div className="w-full max-w-md bg-white border border-[#E5E5E5] rounded-2xl p-5 sm:p-8 shadow-xl">
+          <div className="text-center mb-6 sm:mb-8">
+            <img src="/logo-santhi.png" alt="Shanthi Sivakasi Crackers Logo" className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 sm:mb-4 object-contain drop-shadow-md rounded-2xl" />
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-black mb-1 sm:mb-2 tracking-tight">Shanthi Sivakasi Crackers</h1>
+            <p className="text-base sm:text-lg text-black font-semibold">Manage your store.</p>
           </div>
-          <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg mb-6 flex items-center justify-center text-sm font-bold">
-            DEMO SIGN-IN
-          </div>
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
             <div>
-              <label className="block text-base font-bold text-black mb-2">Email address</label>
-              <input type="email" required defaultValue="admin@deepakart.com" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-lg font-medium" />
+              <label className="block text-sm sm:text-base font-bold text-black mb-1.5 sm:mb-2">Email address</label>
+              <input type="email" required defaultValue="admin@deepakart.com" className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-base font-medium" />
             </div>
             <div>
-              <label className="block text-base font-bold text-black mb-2">Password</label>
-              <input type="password" required defaultValue="password123" className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-lg font-medium" />
+              <label className="block text-sm sm:text-base font-bold text-black mb-1.5 sm:mb-2">Password</label>
+              <input type="password" required defaultValue="password123" className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0000FF] text-base font-medium" />
             </div>
             <div className="flex items-center">
-              <input type="checkbox" id="remember" className="w-5 h-5 text-[#0000FF] border-gray-300 rounded focus:ring-[#0000FF]" />
-              <label htmlFor="remember" className="ml-3 block text-base font-semibold text-black">Remember me</label>
+              <input type="checkbox" id="remember" className="w-4 h-4 sm:w-5 sm:h-5 text-[#0000FF] border-gray-300 rounded focus:ring-[#0000FF] cursor-pointer" />
+              <label htmlFor="remember" className="ml-2.5 sm:ml-3 block text-sm sm:text-base font-semibold text-black cursor-pointer">Remember me</label>
             </div>
-            <button type="submit" className="w-full py-4 bg-[#0000FF] text-white font-bold text-lg rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+            <button type="submit" className="w-full py-3.5 sm:py-4 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-base sm:text-lg rounded-xl shadow-md transition-colors cursor-pointer">
               Log in
             </button>
           </form>
@@ -1293,18 +952,18 @@ export default function App() {
     return (
       <button 
         onClick={() => navigate(path)}
-        className={`w-full flex items-center justify-between px-4 py-3 mb-2 rounded-lg transition-colors text-lg ${
+        className={`w-full flex items-center justify-between px-3.5 sm:px-4 py-2.5 sm:py-3 mb-1.5 sm:mb-2 rounded-xl transition-all text-base sm:text-lg cursor-pointer ${
           isActive 
-            ? "bg-[#0000FF] text-white font-bold border-l-4 border-yellow-400" 
+            ? "bg-[#0000FF] text-white font-bold border-l-4 border-yellow-400 shadow-xs" 
             : "text-black font-semibold hover:bg-gray-100 border-l-4 border-transparent"
         }`}
       >
-        <div className="flex items-center gap-4">
-          <Icon size={24} className={isActive ? "text-white" : "text-black"} />
-          <span>{label}</span>
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          <Icon size={22} className={`shrink-0 ${isActive ? "text-white" : "text-black"}`} />
+          <span className="truncate">{label}</span>
         </div>
         {badge && (
-          <span className={`px-2 py-0.5 text-sm font-bold rounded-full ${isActive ? "bg-white text-[#0000FF]" : "bg-gray-200 text-black"}`}>
+          <span className={`px-2 py-0.5 text-xs font-bold rounded-full shrink-0 ml-2 ${isActive ? "bg-white text-[#0000FF]" : "bg-gray-200 text-black"}`}>
             {badge}
           </span>
         )}
@@ -1313,34 +972,37 @@ export default function App() {
   };
 
   const Sidebar = () => (
-    <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-gray-200 transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-        <div className="flex items-center gap-3">
-          <img src="/logo-santhi.png" alt="Logo" className="w-12 h-12 object-contain rounded-xl shadow-xs" />
-          <div>
-            <h2 className="font-bold text-lg text-black leading-tight">Shanthi Sivakasi</h2>
-            <p className="text-sm font-semibold text-black">ADMIN</p>
+    <aside className={`fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] bg-white border-r border-gray-200 flex flex-col justify-between transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}>
+      <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-gray-100 shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <img src="/logo-santhi.png" alt="Logo" className="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-xl shadow-2xs shrink-0" />
+          <div className="min-w-0">
+            <h2 className="font-extrabold text-base sm:text-lg text-black leading-tight truncate">Shanthi Sivakasi</h2>
+            <p className="text-xs sm:text-sm font-bold text-blue-700 uppercase tracking-wider">ADMIN PANEL</p>
           </div>
         </div>
-        <button className="lg:hidden p-2 text-black cursor-pointer" onClick={() => setSidebarOpen(false)}>
-          <X size={24} />
+        <button 
+          className="lg:hidden p-2 text-black hover:bg-gray-100 rounded-lg cursor-pointer transition-colors" 
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Close sidebar"
+        >
+          <X size={22} />
         </button>
       </div>
       
-      <div className="p-6">
-        <p className="text-sm font-bold text-black uppercase tracking-wider mb-4">Workspace</p>
-        <nav>
+      <div className="p-4 sm:p-6 flex-1 overflow-y-auto admin-scroll">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Workspace</p>
+        <nav className="space-y-0.5">
           <NavItem icon={LayoutDashboard} label={t("Dashboard")} path="/admin" />
           <NavItem icon={Package} label={t("Products")} path="/admin/products" />
           <NavItem icon={ListTree} label={t("Categories")} path="/admin/categories" />
-          <NavItem icon={ShoppingCart} label={t("Orders")} path="/admin/orders" badge={24} />
           <NavItem icon={MessageSquare} label={t("Queries")} path="/admin/queries" badge={queriesList.length > 0 ? queriesList.length : undefined} />
         </nav>
       </div>
 
-      <div className="absolute bottom-0 w-full p-6 border-t border-gray-100 bg-white">
-        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-red-600 font-bold text-lg hover:bg-red-50 rounded-lg transition-colors cursor-pointer">
-          <LogOut size={24} />
+      <div className="p-4 sm:p-6 border-t border-gray-100 bg-white shrink-0">
+        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 text-red-600 font-bold text-base sm:text-lg hover:bg-red-50 rounded-xl transition-colors cursor-pointer">
+          <LogOut size={22} className="shrink-0" />
           <span>{t("Log out")}</span>
         </button>
       </div>
@@ -1348,36 +1010,40 @@ export default function App() {
   );
 
   const Header = ({ title, subtitle }: { title: string, subtitle?: string }) => (
-    <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between shadow-2xs">
-      <div className="flex items-center gap-4">
-        <button className="lg:hidden p-2 -ml-2 text-black hover:bg-slate-100 rounded-lg cursor-pointer" onClick={() => setSidebarOpen(true)}>
-          <Menu size={24} />
+    <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-3.5 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between shadow-2xs gap-2 min-w-0">
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+        <button 
+          className="lg:hidden p-2 -ml-1 text-black hover:bg-slate-100 rounded-xl cursor-pointer shrink-0 transition-colors" 
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open navigation menu"
+        >
+          <Menu size={22} />
         </button>
-        <div className="flex items-center gap-3">
-          <img src="/logo-santhi.png" alt="Logo" className="w-9 h-9 object-contain rounded-lg lg:hidden" />
-          <div>
-            <h1 className="text-xl font-extrabold text-black leading-tight">{t(title)}</h1>
-            {subtitle && <p className="text-xs font-medium text-black">{t(subtitle)}</p>}
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <img src="/logo-santhi.png" alt="Logo" className="w-8 h-8 object-contain rounded-lg lg:hidden shrink-0" />
+          <div className="min-w-0">
+            <h1 className="text-base sm:text-xl font-extrabold text-black leading-tight truncate">{t(title)}</h1>
+            {subtitle && <p className="text-[11px] sm:text-xs font-medium text-slate-500 truncate hidden xs:block">{t(subtitle)}</p>}
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {/* Language switch button */}
         <button
           type="button"
           onClick={toggleLanguage}
           id="admin-header-lang-btn"
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs transition-all shadow-2xs cursor-pointer"
+          className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs transition-all shadow-2xs cursor-pointer shrink-0"
           title={language === "en" ? "தமிழில் மாற்றவும்" : "Switch to English"}
         >
           <span className="text-sm">🌐</span>
-          <span>{language === "ta" ? "தமிழ்" : "English"}</span>
+          <span className="hidden sm:inline">{language === "ta" ? "தமிழ்" : "English"}</span>
           <span className="text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">
             {language === "ta" ? "TA" : "EN"}
           </span>
         </button>
-        <div className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-xl">
-          <img src="/logo-santhi.png" alt="Logo" className="w-6 h-6 object-contain" />
+        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-xl shrink-0">
+          <img src="/logo-santhi.png" alt="Logo" className="w-5 h-5 object-contain" />
           <span className="text-xs font-bold text-black">{t("Santhi Crackers Admin")}</span>
         </div>
       </div>
@@ -1389,108 +1055,56 @@ export default function App() {
   const renderDashboard = () => {
     const totalProductsCount = productsList.length;
     const activeProductsCount = productsList.filter(p => p.status === 'Active').length;
-    const totalOrdersCount = ordersList.length;
-    const pendingOrdersCount = ordersList.filter(o => o.status === 'Pending' || o.status === 'Processing').length;
-    const totalSalesRevenue = ordersList.filter(o => o.payment === 'Paid').reduce((sum, o) => sum + o.total, 0);
     const outOfStockCount = productsList.filter(p => p.stock === 0).length;
 
     return (
-      <div className="p-8 max-w-7xl mx-auto space-y-8">
+      <div className="p-3.5 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Executive Banner */}
-        <div className="bg-gradient-to-r from-blue-950 via-[#0000FF] to-blue-900 text-white p-8 rounded-2xl shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="space-y-2 max-w-2xl z-10">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xs text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/20">
+        <div className="bg-gradient-to-r from-blue-950 via-[#0000FF] to-blue-900 text-white p-5 sm:p-8 rounded-2xl shadow-md relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-5 sm:gap-6">
+          <div className="space-y-2 max-w-2xl z-10 min-w-0">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xs text-white text-[11px] sm:text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/20">
               <img src="/logo-santhi.png" alt="Logo" className="w-4 h-4 object-contain" />
-              <span>{t("Shanthi Sivakasi Crackers Panel")}</span>
+              <span className="truncate">{t("Shanthi Sivakasi Crackers Panel")}</span>
             </div>
-            <h2 className="text-3xl font-extrabold text-white">{t("Store Executive Overview")}</h2>
-            <p className="text-blue-100 text-base font-medium leading-relaxed">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">{t("Store Executive Overview")}</h2>
+            <p className="text-blue-100 text-sm sm:text-base font-medium leading-relaxed">
               {t("Real-time metrics, live inventory monitoring, and customer order management for Shanthi Sivakasi Crackers.")}
             </p>
           </div>
-          <div className="flex flex-wrap gap-3 z-10">
-            <button onClick={() => navigate("/admin/products")} className="px-5 py-2.5 bg-white text-[#0000FF] hover:bg-blue-50 font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2 cursor-pointer">
+          <div className="flex flex-wrap gap-3 z-10 w-full sm:w-auto">
+            <button 
+              onClick={() => navigate("/admin/products")} 
+              className="w-full sm:w-auto px-5 py-2.5 bg-white text-[#0000FF] hover:bg-blue-50 font-bold text-sm rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
               <Package size={18} />
               <span>{t("Manage Catalog")}</span>
-            </button>
-            <button onClick={() => navigate("/admin/orders")} className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2 cursor-pointer">
-              <ShoppingCart size={18} />
-              <span>{t("View Orders")}</span>
             </button>
           </div>
         </div>
         
         {/* Dynamic Stat Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
           {[
             { label: t("Total Products"), value: totalProductsCount.toString(), sub: t("In store catalog"), bg: "bg-white" },
             { label: t("Active Products"), value: activeProductsCount.toString(), sub: t("Visible to customers"), bg: "bg-white" },
-            { label: t("Total Orders"), value: totalOrdersCount.toString(), sub: t("All time orders"), bg: "bg-white" },
-            { label: t("Pending Orders"), value: pendingOrdersCount.toString(), sub: t("Requires processing"), bg: "bg-yellow-50 border-yellow-200" },
-            { label: t("Total Sales Revenue"), value: `₹${totalSalesRevenue.toLocaleString('en-IN')}`, sub: t("From paid orders"), bg: "bg-green-50 border-green-200" },
             { label: t("Out of Stock"), value: outOfStockCount.toString(), sub: t("Products need restocking"), bg: "bg-red-50 border-red-200" }
           ].map((stat, i) => (
-            <div key={i} className={`p-6 rounded-xl border border-gray-200 shadow-sm ${stat.bg}`}>
-              <p className="text-base font-bold text-black mb-2">{stat.label}</p>
-              <p className="text-4xl font-extrabold text-black mb-1">{stat.value}</p>
-              <p className="text-sm font-semibold text-black">{stat.sub}</p>
+            <div key={i} className={`p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-2xs ${stat.bg}`}>
+              <p className="text-sm sm:text-base font-bold text-black mb-1 sm:mb-2">{stat.label}</p>
+              <p className="text-3xl sm:text-4xl font-extrabold text-black mb-1">{stat.value}</p>
+              <p className="text-xs sm:text-sm font-semibold text-gray-600">{stat.sub}</p>
             </div>
           ))}
         </div>
 
-        {/* Live Recent Orders & Low Stock Tables */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Recent Orders */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h2 className="text-xl font-bold text-black">{t("Recent orders")}</h2>
-                <p className="text-base font-semibold text-black">{t("The latest activity from your store")}</p>
-              </div>
-              <button onClick={() => navigate("/admin/orders")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">{t("View all orders →")}</button>
+        {/* Low Stock Products */}
+        <div className="grid grid-cols-1 gap-6 sm:gap-8">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-2xs p-4 sm:p-6">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-black">{t("Low stock products")}</h2>
+              <button onClick={() => navigate("/admin/products")} className="text-[#0000FF] font-bold text-sm sm:text-base hover:underline cursor-pointer">{t("Manage →")}</button>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-gray-200 text-sm font-bold text-black uppercase">
-                    <th className="pb-3 px-2">{t("Order")}</th>
-                    <th className="pb-3 px-2">{t("Customer")}</th>
-                    <th className="pb-3 px-2">{t("Total")}</th>
-                    <th className="pb-3 px-2">{t("Status")}</th>
-                    <th className="pb-3 px-2">{t("Date")}</th>
-                    <th className="pb-3 px-2 text-right">{t("Action")}</th>
-                  </tr>
-                </thead>
-                <tbody className="text-base font-semibold text-black divide-y divide-gray-100">
-                  {ordersList.slice(0, 5).map((o) => (
-                    <tr key={o.id} onClick={() => setSelectedOrder(o)} className="hover:bg-gray-50 transition-colors cursor-pointer">
-                      <td className="py-4 px-2 font-bold">{o.id}</td>
-                      <td className="py-4 px-2">{o.customer}</td>
-                      <td className="py-4 px-2 font-bold">₹{o.total}</td>
-                      <td className="py-4 px-2">
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                          o.status === 'Processing' ? 'bg-yellow-50 text-yellow-800 border-yellow-200' :
-                          o.status === 'Pending' ? 'bg-orange-50 text-orange-800 border-orange-200' :
-                          o.status === 'Shipped' ? 'bg-blue-50 text-blue-800 border-blue-200' : 
-                          o.status === 'Delivered' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'
-                        }`}>{t(o.status)}</span>
-                      </td>
-                      <td className="py-4 px-2 text-black text-sm">{o.date}</td>
-                      <td className="py-4 px-2 text-right text-[#0000FF] font-bold text-sm">{t("View")} →</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Low Stock Products */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-black">{t("Low stock products")}</h2>
-              <button onClick={() => navigate("/admin/products")} className="text-[#0000FF] font-bold text-base hover:underline cursor-pointer">{t("Manage →")}</button>
-            </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {productsList.filter((p: Product) => p.stock < 10).length === 0 ? (
                 <div className="p-4 text-center text-black font-semibold text-sm">
                   {t("All products are well stocked!")}
@@ -1500,18 +1114,18 @@ export default function App() {
                   <div 
                     key={p.id} 
                     onClick={() => { setProductSearch(p.name); navigate("/admin/products"); }}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100 hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 hover:bg-gray-100 transition-colors cursor-pointer gap-3 min-w-0"
                   >
-                    <div>
-                      <p className="font-bold text-black text-base">{tProduct(p.code, p.name)}</p>
+                    <div className="min-w-0 pr-2">
+                      <p className="font-bold text-black text-sm sm:text-base truncate">{tProduct(p.code, p.name)}</p>
                       {isTamil && tProduct(p.code, p.name) !== p.name && (
-                        <p className="text-xs text-slate-500 font-normal">{p.name}</p>
+                        <p className="text-xs text-slate-500 font-normal truncate">{p.name}</p>
                       )}
-                      <p className="text-xs font-mono text-black">{p.code}</p>
+                      <p className="text-xs font-mono text-gray-500">{p.code}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-base text-black">{p.stock} pcs</p>
-                      <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${p.stock === 0 ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-800 border-yellow-200'}`}>
+                    <div className="text-right shrink-0">
+                      <p className="font-bold text-sm sm:text-base text-black">{p.stock} pcs</p>
+                      <span className={`text-[11px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full border ${p.stock === 0 ? 'bg-red-50 text-red-700 border-red-200' : 'bg-yellow-50 text-yellow-800 border-yellow-200'}`}>
                         {p.stock === 0 ? t('Out of Stock') : t('Low Stock')}
                       </span>
                     </div>
@@ -1526,10 +1140,10 @@ export default function App() {
   };
 
   const renderProducts = () => (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Product Notification Toast */}
       {prodNotification && (
-        <div className={`p-4 rounded-xl border flex items-center justify-between text-sm font-bold animate-in fade-in duration-200 ${
+        <div className={`p-3.5 sm:p-4 rounded-xl border flex items-center justify-between text-sm font-bold animate-in fade-in duration-200 ${
           prodNotification.type === "success" 
             ? "bg-emerald-50 border-emerald-200 text-emerald-800" 
             : "bg-red-50 border-red-200 text-red-800"
@@ -1547,20 +1161,20 @@ export default function App() {
       {/* Products Unified Single Card Container */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
         {/* Card Header & Filter Bar */}
-        <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <div className="p-3.5 sm:p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col gap-3 sm:gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">{t("Product Catalog")}</h2>
-              <p className="text-xs font-medium text-black">{t("Manage items, prices, inventory, and promotions")}</p>
+              <h2 className="text-base sm:text-lg font-extrabold text-black leading-tight">{t("Product Catalog")}</h2>
+              <p className="text-xs font-medium text-slate-500">{t("Manage items, prices, inventory, and promotions")}</p>
             </div>
-            <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
+            <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200 shrink-0">
               {filteredProducts.length} {t("items")}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
             {/* Live Search Input */}
-            <div className="relative flex-1 md:w-64 min-w-[200px]">
+            <div className="relative flex-1 min-w-0 sm:min-w-[180px]">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
               <input 
                 type="text" 
@@ -1570,14 +1184,14 @@ export default function App() {
                 className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
               />
               {productSearch && (
-                <button onClick={() => { setProductSearch(""); setProductCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
+                <button onClick={() => { setProductSearch(""); setProductCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black cursor-pointer">
                   <X size={14} />
                 </button>
               )}
             </div>
 
             {/* Dynamic Category Select */}
-            <div className="relative min-w-[140px]">
+            <div className="relative w-full sm:w-auto min-w-0 sm:min-w-[140px]">
               <select 
                 value={productCategoryFilter}
                 onChange={(e) => { setProductCategoryFilter(e.target.value); setProductCurrentPage(1); }}
@@ -1592,7 +1206,7 @@ export default function App() {
             </div>
 
             {/* Status Select */}
-            <div className="relative min-w-[120px]">
+            <div className="relative w-full sm:w-auto min-w-0 sm:min-w-[120px]">
               <select 
                 value={productStatusFilter}
                 onChange={(e) => { setProductStatusFilter(e.target.value); setProductCurrentPage(1); }}
@@ -1605,31 +1219,33 @@ export default function App() {
               <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
 
-            {/* Refresh from API Button */}
-            <button
-              onClick={loadProductsFromApi}
-              disabled={isProductsLoading}
-              title="Reload products from localhost:3007/api/products"
-              className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
-            >
-              <RefreshCw size={14} className={isProductsLoading ? "animate-spin text-blue-600" : ""} />
-              <span>{isProductsLoading ? "Syncing..." : "Refresh"}</span>
-            </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-stretch sm:justify-end">
+              {/* Refresh from API Button */}
+              <button
+                onClick={loadProductsFromApi}
+                disabled={isProductsLoading}
+                title="Reload products from localhost:3007/api/products"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
+              >
+                <RefreshCw size={14} className={isProductsLoading ? "animate-spin text-blue-600" : ""} />
+                <span>{isProductsLoading ? "Syncing..." : "Refresh"}</span>
+              </button>
 
-            {/* Add Product Button */}
-            <button 
-              onClick={handleOpenAddProduct} 
-              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap"
-            >
-              <Plus size={16} />
-              <span>{t("Add Product")}</span>
-            </button>
+              {/* Add Product Button */}
+              <button 
+                onClick={handleOpenAddProduct} 
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap"
+              >
+                <Plus size={16} />
+                <span>{t("Add Product")}</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Products Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto admin-scroll">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
                 <th className="py-3.5 px-5">{t("Product Details")}</th>
@@ -1790,11 +1406,11 @@ export default function App() {
 
         {/* Results Summary & Pagination Footer */}
         {filteredProducts.length > 0 && (
-          <div className="p-4 bg-slate-50/50 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+          <div className="p-3.5 sm:p-4 bg-slate-50/50 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
             <p className="text-xs font-semibold text-black">
               {t("Showing")} <span className="font-bold text-black">{(productCurrentPage - 1) * productsPerPage + 1}</span> {t("to")} <span className="font-bold text-black">{Math.min(productCurrentPage * productsPerPage, filteredProducts.length)}</span> {t("of")} <span className="font-bold text-black">{filteredProducts.length}</span> {t("products")}
             </p>
-            <div className="flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
               <button 
                 disabled={productCurrentPage === 1}
                 onClick={() => setProductCurrentPage(p => Math.max(p - 1, 1))}
@@ -2148,19 +1764,19 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-200 flex justify-end gap-3 shrink-0">
+              <div className="pt-4 border-t border-gray-200 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
                 <button 
                   type="button" 
                   disabled={prodIsSubmitting}
                   onClick={() => setIsAddProductOpen(false)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-xl transition-colors cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
                   disabled={prodIsSubmitting}
-                  className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-2"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-2"
                 >
                   {prodIsSubmitting ? (
                     <>
@@ -2489,19 +2105,19 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-200 flex justify-end gap-3 shrink-0">
+              <div className="pt-4 border-t border-gray-200 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
                 <button 
                   type="button" 
                   disabled={prodIsSubmitting}
                   onClick={() => setEditingProduct(null)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-xl transition-colors cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
                   disabled={prodIsSubmitting}
-                  className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-2"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-2"
                 >
                   {prodIsSubmitting ? (
                     <>
@@ -2520,29 +2136,29 @@ export default function App() {
 
       {/* ── View Product Details Modal ────────────────────────────────────────── */}
       {viewingProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            <div className="p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg max-h-[92vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="p-4 sm:p-6 bg-gray-50 border-b border-gray-200 flex items-center justify-between shrink-0">
+              <div className="min-w-0 pr-2">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-bold text-black">{viewingProduct.nameEng || viewingProduct.name}</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-black truncate">{viewingProduct.nameEng || viewingProduct.name}</h3>
                   {viewingProduct.featured && (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md">
+                    <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md shrink-0">
                       <Star size={10} className="fill-amber-500 text-amber-500" />
                       <span>Featured</span>
                     </span>
                   )}
                 </div>
                 {viewingProduct.nameTam && (
-                  <p className="text-sm font-semibold text-blue-800 mt-0.5">{viewingProduct.nameTam}</p>
+                  <p className="text-xs sm:text-sm font-semibold text-blue-800 mt-0.5 truncate">{viewingProduct.nameTam}</p>
                 )}
-                <p className="text-xs text-black font-mono mt-0.5">{viewingProduct.code}</p>
+                <p className="text-xs text-gray-500 font-mono mt-0.5">{viewingProduct.code}</p>
               </div>
-              <button onClick={() => setViewingProduct(null)} className="p-1 text-black hover:text-black rounded-lg cursor-pointer">
+              <button onClick={() => setViewingProduct(null)} className="p-1.5 text-black hover:bg-gray-200 rounded-lg cursor-pointer shrink-0">
                 <X size={20} />
               </button>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 admin-scroll">
               {viewingProduct.imageUrl ? (
                 <div className="w-full h-44 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 flex items-center justify-center">
                   <img 
@@ -2576,14 +2192,14 @@ export default function App() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
+              <div className="grid grid-cols-2 gap-3 bg-gray-50 p-3.5 sm:p-4 rounded-xl border border-gray-200">
                 <div>
                   <p className="text-xs font-bold text-black uppercase">Selling Price</p>
-                  <p className="text-xl font-extrabold text-black">₹{viewingProduct.sellingPrice}</p>
+                  <p className="text-lg sm:text-xl font-extrabold text-black">₹{viewingProduct.sellingPrice}</p>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-black uppercase">MRP (Actual Price)</p>
-                  <p className="text-lg font-bold text-black line-through">₹{viewingProduct.actualPrice}</p>
+                  <p className="text-base sm:text-lg font-bold text-black line-through">₹{viewingProduct.actualPrice}</p>
                 </div>
                 {viewingProduct.actualPrice > viewingProduct.sellingPrice && (
                   <div className="col-span-2 pt-2 border-t border-gray-200 flex justify-between text-xs font-bold text-green-700">
@@ -2593,7 +2209,7 @@ export default function App() {
                 )}
               </div>
 
-              <div className="space-y-2 text-sm font-semibold">
+              <div className="space-y-2 text-xs sm:text-sm font-semibold">
                 <div className="flex justify-between py-1 border-b border-gray-100">
                   <span className="text-black">Category:</span>
                   <span className="font-bold text-black">{tCategory(viewingProduct.categorySlug, viewingProduct.category)}</span>
@@ -2633,7 +2249,7 @@ export default function App() {
               <div className="pt-2 flex justify-end">
                 <button 
                   onClick={() => setViewingProduct(null)}
-                  className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-lg transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-xl transition-colors cursor-pointer"
                 >
                   Close Overview
                 </button>
@@ -2645,21 +2261,21 @@ export default function App() {
 
       {/* ── Delete Confirmation Modal ────────────────────────────────────────── */}
       {deletingProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200 p-6 space-y-4 text-center">
-            <div className="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
-              <Trash2 size={28} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200 p-5 sm:p-6 space-y-4 text-center">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
+              <Trash2 size={24} className="sm:w-7 sm:h-7" />
             </div>
-            <h3 className="text-xl font-bold text-black">Delete Product?</h3>
-            <p className="text-base text-black font-medium">
+            <h3 className="text-lg sm:text-xl font-bold text-black">Delete Product?</h3>
+            <p className="text-sm sm:text-base text-gray-700 font-medium">
               Are you sure you want to delete <span className="font-bold text-black">"{deletingProduct.name}"</span>? This will remove it from the catalog.
             </p>
-            <div className="pt-2 flex justify-center gap-3">
+            <div className="pt-2 flex flex-col-reverse sm:flex-row justify-center gap-2.5 sm:gap-3">
               <button 
                 type="button" 
                 disabled={prodIsSubmitting}
                 onClick={() => setDeletingProduct(null)}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-xl transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -2667,7 +2283,7 @@ export default function App() {
                 type="button" 
                 disabled={prodIsSubmitting}
                 onClick={handleConfirmDeleteProduct}
-                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-2"
+                className="w-full sm:w-auto px-6 py-2.5 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-bold text-sm rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-2"
               >
                 {prodIsSubmitting ? (
                   <>
@@ -2686,10 +2302,10 @@ export default function App() {
   );
 
   const renderCategories = () => (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Toast Notification */}
       {catNotification && (
-        <div className={`p-4 rounded-xl text-sm font-bold flex items-center justify-between shadow-md transition-all ${
+        <div className={`p-3.5 sm:p-4 rounded-xl text-sm font-bold flex items-center justify-between shadow-md transition-all ${
           catNotification.type === "success" 
             ? "bg-emerald-50 text-emerald-800 border border-emerald-300" 
             : "bg-red-50 text-red-800 border border-red-300"
@@ -2707,20 +2323,20 @@ export default function App() {
       {/* Categories Unified Single Card Container */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
         {/* Card Header & Filter Bar */}
-        <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <div className="p-3.5 sm:p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col gap-3 sm:gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">{t("Product Categories")}</h2>
-              <p className="text-xs font-medium text-black">{t("Organize fireworks catalog into structured store categories")}</p>
+              <h2 className="text-base sm:text-lg font-extrabold text-black leading-tight">{t("Product Categories")}</h2>
+              <p className="text-xs font-medium text-slate-500">{t("Organize fireworks catalog into structured store categories")}</p>
             </div>
-            <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
+            <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200 shrink-0">
               {categoriesList.length} {t("categories")}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
             {/* Live Search Input */}
-            <div className="relative flex-1 md:w-64 min-w-[200px]">
+            <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
               <input 
                 type="text" 
@@ -2730,37 +2346,39 @@ export default function App() {
                 className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
               />
               {categorySearch && (
-                <button onClick={() => setCategorySearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
+                <button onClick={() => setCategorySearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black cursor-pointer">
                   <X size={14} />
                 </button>
               )}
             </div>
 
-            {/* Refresh from API Button */}
-            <button
-              onClick={loadCategoriesFromApi}
-              disabled={isCategoriesLoading}
-              title="Reload categories from localhost:3007/api/categories"
-              className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
-            >
-              <RefreshCw size={14} className={isCategoriesLoading ? "animate-spin text-blue-600" : ""} />
-              <span>{isCategoriesLoading ? "Syncing..." : "Refresh"}</span>
-            </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-stretch sm:justify-end">
+              {/* Refresh from API Button */}
+              <button
+                onClick={loadCategoriesFromApi}
+                disabled={isCategoriesLoading}
+                title="Reload categories from localhost:3007/api/categories"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
+              >
+                <RefreshCw size={14} className={isCategoriesLoading ? "animate-spin text-blue-600" : ""} />
+                <span>{isCategoriesLoading ? "Syncing..." : "Refresh"}</span>
+              </button>
 
-            {/* Add Category Button */}
-            <button 
-              onClick={handleOpenAddCategory} 
-              className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap"
-            >
-              <Plus size={16} />
-              <span>{t("Add Category")}</span>
-            </button>
+              {/* Add Category Button */}
+              <button 
+                onClick={handleOpenAddCategory} 
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs hover:bg-blue-700 transition-all cursor-pointer whitespace-nowrap"
+              >
+                <Plus size={16} />
+                <span>{t("Add Category")}</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Categories Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto admin-scroll">
+          <table className="w-full text-left border-collapse min-w-[620px]">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
                 <th className="py-3.5 px-5">{t("Category Name")}</th>
@@ -2907,18 +2525,18 @@ export default function App() {
 
       {/* ── Add Category Modal ────────────────────────────────────────────────── */}
       {isAddCategoryOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            <div className="p-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg max-h-[92vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="p-4 sm:p-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between shrink-0">
               <div>
-                <h3 className="text-lg font-bold text-black">Add New Category</h3>
+                <h3 className="text-base sm:text-lg font-bold text-black">Add New Category</h3>
                 <p className="text-xs text-blue-600 font-mono mt-0.5">POST http://localhost:3007/api/categories</p>
               </div>
-              <button onClick={() => setIsAddCategoryOpen(false)} className="p-1 text-black hover:text-black rounded-lg cursor-pointer">
+              <button onClick={() => setIsAddCategoryOpen(false)} className="p-1.5 text-black hover:bg-gray-200 rounded-lg cursor-pointer">
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleSaveAddCategory} className="p-6 space-y-4">
+            <form onSubmit={handleSaveAddCategory} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 admin-scroll">
               {catError && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs font-bold flex items-center gap-2">
                   <span>⚠️</span>
@@ -3110,19 +2728,19 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-200 flex justify-end gap-3">
+              <div className="pt-4 border-t border-gray-200 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
                 <button 
                   type="button" 
                   disabled={catIsSubmitting}
                   onClick={() => setIsAddCategoryOpen(false)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-xl transition-colors cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
                   disabled={catIsSubmitting}
-                  className="px-6 py-2.5 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white font-bold text-sm rounded-lg shadow-sm transition-colors cursor-pointer flex items-center gap-2"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white font-bold text-sm rounded-xl shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-2"
                 >
                   {catIsSubmitting ? (
                     <>
@@ -3141,15 +2759,15 @@ export default function App() {
 
       {/* ── Edit Category Modal ────────────────────────────────────────────────── */}
       {editingCategory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-            <div className="p-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-black">Edit Category</h3>
-              <button onClick={() => setEditingCategory(null)} className="p-1 text-black hover:text-black rounded-lg cursor-pointer">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg max-h-[92vh] flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="p-4 sm:p-5 bg-gray-50 border-b border-gray-200 flex items-center justify-between shrink-0">
+              <h3 className="text-base sm:text-xl font-bold text-black">Edit Category</h3>
+              <button onClick={() => setEditingCategory(null)} className="p-1.5 text-black hover:bg-gray-200 rounded-lg cursor-pointer">
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleSaveEditCategory} className="p-6 space-y-4">
+            <form onSubmit={handleSaveEditCategory} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 admin-scroll">
               <div>
                 <label className="block text-sm font-bold text-black mb-1">Category Slug *</label>
                 <div className="relative flex items-center">
@@ -3335,17 +2953,17 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-200 flex justify-end gap-3">
+              <div className="pt-4 border-t border-gray-200 flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 shrink-0">
                 <button 
                   type="button" 
                   onClick={() => setEditingCategory(null)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-xl transition-colors cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-xs transition-colors cursor-pointer text-center"
                 >
                   Update Category
                 </button>
@@ -3357,25 +2975,25 @@ export default function App() {
 
       {/* ── Delete Confirmation Modal ────────────────────────────────────────── */}
       {deletingCategory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200 p-6 space-y-4 text-center">
-            <div className="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
-              <Trash2 size={28} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200 p-5 sm:p-6 space-y-4 text-center">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
+              <Trash2 size={24} className="sm:w-7 sm:h-7" />
             </div>
-            <h3 className="text-xl font-bold text-black">Delete Category?</h3>
-            <p className="text-base text-black font-medium">
+            <h3 className="text-lg sm:text-xl font-bold text-black">Delete Category?</h3>
+            <p className="text-sm sm:text-base text-gray-700 font-medium">
               Are you sure you want to delete <span className="font-bold text-black">"{deletingCategory.name}"</span>? This will remove it from category selections across your catalog.
             </p>
-            <div className="pt-2 flex justify-center gap-3">
+            <div className="pt-2 flex flex-col-reverse sm:flex-row justify-center gap-2.5 sm:gap-3">
               <button 
                 onClick={() => setDeletingCategory(null)}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-lg transition-colors"
+                className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-black font-bold text-sm rounded-xl transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleConfirmDeleteCategory}
-                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors"
+                className="w-full sm:w-auto px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
               >
                 Delete Category
               </button>
@@ -3386,435 +3004,29 @@ export default function App() {
     </div>
   );
 
-  const renderOrders = () => (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Orders Unified Single Card Container */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
-        {/* Card Header & Filter Bar */}
-        <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">{t("Order Management")}</h2>
-              <p className="text-xs font-medium text-black">{t("Track customer purchases, fulfillment status, and invoice summaries")}</p>
-            </div>
-            <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
-              {filteredOrders.length} {t("orders")}
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Live Search Input */}
-            <div className="relative flex-1 md:w-64 min-w-[200px]">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
-              <input 
-                type="text" 
-                value={orderSearch}
-                onChange={(e) => { setOrderSearch(e.target.value); setOrderCurrentPage(1); }}
-                placeholder={t("Search order, customer or phone...")} 
-                className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none transition-all text-black placeholder:text-black"
-              />
-              {orderSearch && (
-                <button onClick={() => { setOrderSearch(""); setOrderCurrentPage(1); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black hover:text-black">
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-
-            {/* Order Status Select */}
-            <div className="relative min-w-[150px]">
-              <select 
-                value={orderStatusFilter}
-                onChange={(e) => { setOrderStatusFilter(e.target.value); setOrderCurrentPage(1); }}
-                className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
-              >
-                <option value="All">{t("All Order Statuses")}</option>
-                <option value="Pending">{t("Pending")}</option>
-                <option value="Processing">{t("Processing")}</option>
-                <option value="Confirmed">{t("Confirmed")}</option>
-                <option value="Shipped">{t("Shipped")}</option>
-                <option value="Delivered">{t("Delivered")}</option>
-                <option value="Cancelled">{t("Cancelled")}</option>
-              </select>
-              <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
-            </div>
-
-            {/* Payment Status Select */}
-            <div className="relative min-w-[150px]">
-              <select 
-                value={paymentStatusFilter}
-                onChange={(e) => { setPaymentStatusFilter(e.target.value); setOrderCurrentPage(1); }}
-                className="w-full appearance-none pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-black focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 outline-none cursor-pointer transition-all"
-              >
-                <option value="All">{t("All Payment Statuses")}</option>
-                <option value="Paid">{t("Paid")}</option>
-                <option value="Pending">{t("Pending")}</option>
-                <option value="Failed">{t("Failed")}</option>
-                <option value="Refunded">{t("Refunded")}</option>
-              </select>
-              <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
-            </div>
-          </div>
-        </div>
-
-        {/* Orders Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50/80 border-b border-slate-200/80">
-              <tr className="text-[11px] font-extrabold text-black uppercase tracking-wider">
-                <th className="py-3.5 px-5">{t("Order")} ID</th>
-                <th className="py-3.5 px-5">{t("Customer")}</th>
-                <th className="py-3.5 px-5 text-center">{t("items")}</th>
-                <th className="py-3.5 px-5">{t("Total")}</th>
-                <th className="py-3.5 px-5">{t("Payment Method")}</th>
-                <th className="py-3.5 px-5">{t("Status")}</th>
-                <th className="py-3.5 px-5">{t("Date")}</th>
-                <th className="py-3.5 px-5 text-right">{t("Actions")}</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm font-semibold text-black divide-y divide-slate-100">
-              {paginatedOrders.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="py-12 text-center">
-                    <div className="max-w-md mx-auto space-y-2">
-                      <ShoppingCart size={40} className="mx-auto text-black" />
-                      <h3 className="text-base font-bold text-black">No orders found</h3>
-                      <p className="text-xs text-black">
-                        No orders match your filter criteria or search. Try clearing filters or searching for another customer name.
-                      </p>
-                      <button 
-                        onClick={() => { setOrderSearch(""); setOrderStatusFilter("All"); setPaymentStatusFilter("All"); setOrderCurrentPage(1); }}
-                        className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-lg transition-colors inline-block cursor-pointer"
-                      >
-                        Clear Order Filters
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                paginatedOrders.map((o) => (
-                  <tr key={o.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="py-3.5 px-5 font-mono font-extrabold text-xs text-blue-600">{o.id}</td>
-                    <td className="py-3.5 px-5">
-                      <p className="font-extrabold text-sm text-black leading-tight">{o.customer}</p>
-                      <p className="text-[11px] text-black font-mono mt-0.5">{o.phone}</p>
-                    </td>
-                    <td className="py-3.5 px-5 text-center">
-                      <span className="px-2 py-0.5 bg-slate-100 text-black text-xs font-bold rounded-full border border-slate-200">
-                        {o.count}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-5 font-extrabold text-sm text-black">₹{o.total}</td>
-                    <td className="py-3.5 px-5">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
-                        o.payment === 'Paid' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
-                        o.payment === 'Failed' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200'
-                      }`}>
-                        {t(o.payment)}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-5">
-                      <div className="relative inline-block">
-                        <select 
-                          value={o.status}
-                          onChange={(e) => handleUpdateOrderStatus(o.id, e.target.value as Order["status"])}
-                          className={`appearance-none pl-3 pr-7 py-1 rounded-full text-xs font-bold border cursor-pointer focus:outline-none transition-all ${
-                            o.status === 'Processing' ? 'bg-amber-50 text-amber-800 border-amber-200' :
-                            o.status === 'Pending' ? 'bg-orange-50 text-orange-800 border-orange-200' :
-                            o.status === 'Shipped' ? 'bg-blue-50 text-blue-800 border-blue-200' : 
-                            o.status === 'Delivered' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
-                            o.status === 'Cancelled' ? 'bg-rose-50 text-rose-800 border-rose-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                          }`}
-                        >
-                          <option value="Pending">{t("Pending")}</option>
-                          <option value="Processing">{t("Processing")}</option>
-                          <option value="Confirmed">{t("Confirmed")}</option>
-                          <option value="Shipped">{t("Shipped")}</option>
-                          <option value="Delivered">{t("Delivered")}</option>
-                          <option value="Cancelled">{t("Cancelled")}</option>
-                        </select>
-                        <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-current opacity-70" />
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-5 text-black text-xs font-medium">{o.date}</td>
-                    <td className="py-3.5 px-5 text-right">
-                      <button 
-                        onClick={() => setSelectedOrder(o)}
-                        className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold text-xs rounded-xl border border-blue-200 transition-all cursor-pointer inline-flex items-center gap-1"
-                      >
-                        <span>{t("View Details")}</span>
-                        <ChevronRight size={14} />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Results Counter & Pagination Footer */}
-        {filteredOrders.length > 0 && (
-          <div className="p-4 bg-gray-50 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm font-bold text-black">
-              {t("Showing")} <span className="text-black">{(orderCurrentPage - 1) * ordersPerPage + 1}</span> {t("to")} <span className="text-black">{Math.min(orderCurrentPage * ordersPerPage, filteredOrders.length)}</span> {t("of")} <span className="text-black">{filteredOrders.length}</span> {t("orders")}
-            </p>
-            <div className="flex items-center gap-2">
-              <button 
-                disabled={orderCurrentPage === 1}
-                onClick={() => setOrderCurrentPage(p => Math.max(p - 1, 1))}
-                className="p-2 border border-gray-300 rounded-lg text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-colors flex items-center gap-1 text-black"
-              >
-                <ChevronLeft size={16} />
-                <span>{t("Prev")}</span>
-              </button>
-              {Array.from({ length: totalOrderPages }, (_, i) => i + 1).map(page => (
-                <button
-                  key={page}
-                  onClick={() => setOrderCurrentPage(page)}
-                  className={`w-9 h-9 rounded-lg font-bold text-sm transition-colors ${orderCurrentPage === page ? "bg-[#0000FF] text-white shadow-xs" : "border border-gray-300 bg-white hover:bg-gray-100 text-black"}`}
-                >
-                  {page}
-                </button>
-              ))}
-              <button 
-                disabled={orderCurrentPage === totalOrderPages}
-                onClick={() => setOrderCurrentPage(p => Math.min(p + 1, totalOrderPages))}
-                className="p-2 border border-gray-300 rounded-lg text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white transition-colors flex items-center gap-1 text-black"
-              >
-                <span>{t("Next")}</span>
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ── Order Details Modal ────────────────────────────────────────────────── */}
-      {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200">
-            {/* Modal Header */}
-            <div className="p-6 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-3 mb-1">
-                  <h3 className="text-2xl font-extrabold text-black">Order #{selectedOrder.id}</h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                    selectedOrder.status === 'Processing' ? 'bg-yellow-50 text-yellow-800 border-yellow-200' :
-                    selectedOrder.status === 'Pending' ? 'bg-orange-50 text-orange-800 border-orange-200' :
-                    selectedOrder.status === 'Shipped' ? 'bg-blue-50 text-blue-800 border-blue-200' : 
-                    selectedOrder.status === 'Delivered' ? 'bg-green-50 text-green-800 border-green-200' :
-                    selectedOrder.status === 'Cancelled' ? 'bg-red-50 text-red-800 border-red-200' : 'bg-green-50 text-green-800 border-green-200'
-                  }`}>
-                    {selectedOrder.status}
-                  </span>
-                </div>
-                <p className="text-sm font-semibold text-black">Placed on {selectedOrder.date} • Last updated: {selectedOrder.updatedAt}</p>
-              </div>
-
-              <div className="flex items-center gap-3">
-                {/* PDF Extract Button */}
-                <button 
-                  onClick={() => handleExportPDF(selectedOrder)}
-                  className="px-4 py-2.5 bg-[#0000FF] hover:bg-blue-700 text-white font-bold text-sm rounded-lg shadow-sm transition-colors flex items-center gap-2"
-                >
-                  <Printer size={18} />
-                  <span>Download Summary PDF</span>
-                </button>
-                <button 
-                  onClick={() => setSelectedOrder(null)}
-                  className="p-2 text-black hover:text-black rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Content Scrollable */}
-            <div className="p-6 overflow-y-auto space-y-6 admin-scroll flex-1">
-              {/* Quick Status Update Bar */}
-              <div className="bg-blue-50/70 border border-blue-100 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#0000FF] text-white rounded-lg">
-                    <Truck size={20} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-black">Update Order & Payment Status</p>
-                    <p className="text-xs text-black font-medium">Changes take effect live across the dashboard</p>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  {/* Change Order Status */}
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs font-bold text-black uppercase">Status:</label>
-                    <select 
-                      value={selectedOrder.status}
-                      onChange={(e) => handleUpdateOrderStatus(selectedOrder.id, e.target.value as Order["status"])}
-                      className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] outline-none cursor-pointer"
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
-                      <option value="Confirmed">Confirmed</option>
-                      <option value="Shipped">Shipped</option>
-                      <option value="Delivered">Delivered</option>
-                      <option value="Cancelled">Cancelled</option>
-                    </select>
-                  </div>
-
-                  {/* Change Payment Status */}
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs font-bold text-black uppercase">Payment:</label>
-                    <select 
-                      value={selectedOrder.payment}
-                      onChange={(e) => handleUpdatePaymentStatus(selectedOrder.id, e.target.value as Order["payment"])}
-                      className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm font-bold text-black focus:ring-2 focus:ring-[#0000FF] outline-none cursor-pointer"
-                    >
-                      <option value="Paid">Paid</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Failed">Failed</option>
-                      <option value="Refunded">Refunded</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Customer & Address Details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
-                  <div className="flex items-center gap-2 text-[#0000FF] font-bold text-sm uppercase tracking-wider">
-                    <User size={18} />
-                    <span>{t("Customer Information")}</span>
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-black">{selectedOrder.customer}</p>
-                    <p className="text-sm font-semibold text-black flex items-center gap-2 mt-1">
-                      <Phone size={14} />
-                      <span>{selectedOrder.phone}</span>
-                    </p>
-                    <p className="text-sm font-semibold text-black flex items-center gap-2 mt-1">
-                      <FileText size={14} />
-                      <span>{selectedOrder.email}</span>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-3">
-                  <div className="flex items-center gap-2 text-[#0000FF] font-bold text-sm uppercase tracking-wider">
-                    <MapPin size={18} />
-                    <span>Delivery Address</span>
-                  </div>
-                  <p className="text-base font-semibold text-black leading-relaxed">
-                    {selectedOrder.address}<br/>
-                    {selectedOrder.city}, {selectedOrder.state} - <span className="font-bold">{selectedOrder.pincode}</span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Ordered Items Breakdown */}
-              <div className="space-y-3">
-                <h4 className="text-lg font-bold text-black">Ordered Crackers Breakdown</h4>
-                <div className="border border-gray-200 rounded-xl overflow-hidden">
-                  <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b border-gray-200 text-xs font-bold text-black uppercase">
-                      <tr>
-                        <th className="py-3 px-4">#</th>
-                        <th className="py-3 px-4">Item Code & Name</th>
-                        <th className="py-3 px-4 text-center">Qty</th>
-                        <th className="py-3 px-4 text-right">Unit Price</th>
-                        <th className="py-3 px-4 text-right">Total Price</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 text-sm font-semibold text-black">
-                      {selectedOrder.items.map((item, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="py-3 px-4 text-black font-bold">{index + 1}</td>
-                          <td className="py-3 px-4">
-                            <p className="font-bold text-black">{tProduct(item.code, item.name)}</p>
-                            {isTamil && tProduct(item.code, item.name) !== item.name && (
-                              <p className="text-xs text-slate-500 font-normal">{item.name}</p>
-                            )}
-                            <p className="text-xs text-black font-mono">{item.code}</p>
-                          </td>
-                          <td className="py-3 px-4 text-center font-bold">{item.qty}</td>
-                          <td className="py-3 px-4 text-right text-black">₹{item.unitPrice}</td>
-                          <td className="py-3 px-4 text-right font-bold text-black">₹{item.total}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Financial & Payment Summary */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-3">
-                  <CreditCard size={24} className="text-[#0000FF]" />
-                  <div>
-                    <p className="text-xs font-bold text-black uppercase">{t("Payment Method")}</p>
-                    <p className="text-base font-bold text-black">{selectedOrder.paymentMethod}</p>
-                  </div>
-                </div>
-
-                <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-2">
-                  <div className="flex justify-between text-sm font-semibold text-black">
-                    <span>{t("Items Subtotal")}</span>
-                    <span className="text-black font-bold">₹{selectedOrder.subtotal}</span>
-                  </div>
-                  {selectedOrder.discount > 0 && (
-                    <div className="flex justify-between text-sm font-semibold text-green-600">
-                      <span>{t("Discount Applied")}</span>
-                      <span className="font-bold">-₹{selectedOrder.discount}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-sm font-semibold text-black">
-                    <span>{t("Delivery Charges")}</span>
-                    <span className="text-black font-bold">₹{selectedOrder.deliveryFee}</span>
-                  </div>
-                  <div className="pt-3 border-t border-gray-300 flex justify-between items-center text-lg font-extrabold text-black">
-                    <span>{t("Grand Total")}</span>
-                    <span className="text-2xl text-[#0000FF]">₹{selectedOrder.total}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end">
-              <button 
-                onClick={() => setSelectedOrder(null)}
-                className="px-6 py-2.5 bg-black hover:bg-gray-800 text-white font-bold text-sm rounded-lg transition-colors"
-              >
-                Close Window
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 
   // ── Customer Queries View ───────────────────────────────────────────────────
   const renderQueries = () => (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Queries Unified Single Card Container */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
         {/* Card Header & Filter Bar */}
-        <div className="p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <div className="p-3.5 sm:p-5 bg-slate-50/50 border-b border-slate-200/80 flex flex-col gap-3 sm:gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 className="text-lg font-extrabold text-black leading-tight">{t("Customer Queries")}</h2>
+              <h2 className="text-base sm:text-lg font-extrabold text-black leading-tight">{t("Customer Queries")}</h2>
               <p className="text-xs font-medium text-slate-500">
                 {t("Review customer inquiries and messages submitted from the store website")}
               </p>
             </div>
-            <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">
+            <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200 shrink-0">
               {queriesList.length} {t("Queries")}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
             {/* Live Search Input */}
-            <div className="relative flex-1 md:w-72 min-w-[200px]">
+            <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
@@ -3841,7 +3053,7 @@ export default function App() {
               onClick={loadQueriesFromApi}
               disabled={isQueriesLoading}
               title="Reload queries from API"
-              className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
+              className="flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-black font-bold text-xs rounded-xl transition-all cursor-pointer whitespace-nowrap disabled:opacity-50"
             >
               <RefreshCw size={14} className={isQueriesLoading ? "animate-spin text-blue-600" : ""} />
               <span>{isQueriesLoading ? "Syncing..." : "Refresh"}</span>
@@ -3850,8 +3062,8 @@ export default function App() {
         </div>
 
         {/* Queries Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+        <div className="overflow-x-auto admin-scroll">
+          <table className="w-full text-left border-collapse text-xs min-w-[640px]">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200/80 text-black font-extrabold uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 px-4">#</th>
@@ -3947,7 +3159,7 @@ export default function App() {
 
         {/* Pagination */}
         {totalQueryPages > 1 && (
-          <div className="p-4 bg-slate-50/50 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
+          <div className="p-3.5 sm:p-4 bg-slate-50/50 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-600 text-center sm:text-left">
             <span>
               Showing page <strong>{queriesCurrentPage}</strong> of <strong>{totalQueryPages}</strong> ({filteredQueries.length} total)
             </span>
@@ -3973,9 +3185,9 @@ export default function App() {
 
       {/* Selected Query Details Modal */}
       {selectedQuery && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
               <div className="flex items-center gap-2">
                 <MessageSquare size={18} className="text-blue-600" />
                 <h3 className="font-extrabold text-base text-slate-900">{t("Customer Query Details")}</h3>
@@ -3988,27 +3200,29 @@ export default function App() {
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
+            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 admin-scroll">
               <div>
                 <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
                   {t("Mobile Number")}
                 </label>
-                <div className="flex items-center gap-3">
-                  <span className="text-lg font-bold text-slate-900">{selectedQuery.mobileNumber}</span>
-                  <a
-                    href={`tel:${selectedQuery.mobileNumber}`}
-                    className="px-2.5 py-1 rounded bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 hover:bg-blue-100 flex items-center gap-1 cursor-pointer"
-                  >
-                    <Phone size={12} /> Call
-                  </a>
-                  <a
-                    href={`https://wa.me/91${selectedQuery.mobileNumber.replace(/\D/g, '')}?text=${encodeURIComponent("வணக்கம்! சாந்தி சிவகாசி பட்டாசுகள் சார்பாக உங்களைத் தொடர்பு கொள்கிறோம்.")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 hover:bg-emerald-100 flex items-center gap-1 cursor-pointer"
-                  >
-                    <MessageSquare size={12} /> WhatsApp
-                  </a>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <span className="text-base sm:text-lg font-bold text-slate-900">{selectedQuery.mobileNumber}</span>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`tel:${selectedQuery.mobileNumber}`}
+                      className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 hover:bg-blue-100 flex items-center gap-1 cursor-pointer"
+                    >
+                      <Phone size={12} /> Call
+                    </a>
+                    <a
+                      href={`https://wa.me/91${selectedQuery.mobileNumber.replace(/\D/g, '')}?text=${encodeURIComponent("வணக்கம்! சாந்தி சிவகாசி பட்டாசுகள் சார்பாக உங்களைத் தொடர்பு கொள்கிறோம்.")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 hover:bg-emerald-100 flex items-center gap-1 cursor-pointer"
+                    >
+                      <MessageSquare size={12} /> WhatsApp
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -4031,16 +3245,16 @@ export default function App() {
                 <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
                   {t("Inquiry Message") || "Message"}
                 </label>
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-medium">
+                <div className="p-3.5 sm:p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-medium">
                   {selectedQuery.message}
                 </div>
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2">
+            <div className="p-3.5 sm:p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2 shrink-0">
               <button
                 onClick={() => setSelectedQuery(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl cursor-pointer transition-colors"
+                className="w-full sm:w-auto px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl cursor-pointer transition-colors"
               >
                 Close
               </button>
@@ -4057,7 +3271,6 @@ export default function App() {
       case "/admin": return renderDashboard();
       case "/admin/products": return renderProducts();
       case "/admin/categories": return renderCategories();
-      case "/admin/orders": return renderOrders();
       case "/admin/queries": return renderQueries();
       default: return (
         <div className="flex items-center justify-center h-96">
@@ -4074,7 +3287,6 @@ export default function App() {
     if (currentRoute === "/admin") return { title: "Dashboard", sub: "Dashboard" };
     if (currentRoute === "/admin/products") return { title: "Products", sub: "Admin / Products" };
     if (currentRoute === "/admin/categories") return { title: "Categories", sub: "Admin / Categories" };
-    if (currentRoute === "/admin/orders") return { title: "Orders", sub: "Admin / Orders" };
     if (currentRoute === "/admin/queries") return { title: "Customer Queries", sub: "Admin / Queries" };
     return { title: "Admin Portal", sub: "Admin" };
   };
@@ -4084,15 +3296,19 @@ export default function App() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#FAF8F4] font-manrope">
       <Sidebar />
-      <div className={`flex-1 flex flex-col transition-all duration-300 lg:ml-72`}>
+      <div className="flex-1 flex flex-col min-w-0 transition-all duration-300 lg:ml-72">
         <Header title={headers.title} subtitle={headers.sub} />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden admin-scroll">
           {renderContent()}
         </main>
       </div>
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)}></div>
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-xs z-30 lg:hidden transition-opacity" 
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
       )}
     </div>
   );
