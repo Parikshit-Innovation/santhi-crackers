@@ -70,9 +70,37 @@ const formatProduct = (product: ProductWithCategory) => {
   };
 };
 
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+let catalogProductsCache: CacheEntry<any> | null = null;
+let categoriesListCache: CacheEntry<any> | null = null;
+const CACHE_TTL_MS = 60_000; // 1 minute in-memory cache
+
+export const invalidateCatalogCache = () => {
+  catalogProductsCache = null;
+  categoriesListCache = null;
+};
+
 export const getCrackersData = async (request: Request, response: Response): Promise<void> => {
   try {
     const { search, category, slug, code } = request.query;
+
+    response.setHeader(
+      "Cache-Control",
+      "public, max-age=30, s-maxage=60, stale-while-revalidate=300",
+    );
+
+    const isDefaultQuery = !search && !category && !slug && !code;
+    if (
+      isDefaultQuery &&
+      catalogProductsCache &&
+      Date.now() - catalogProductsCache.timestamp < CACHE_TTL_MS
+    ) {
+      response.json(catalogProductsCache.data);
+      return;
+    }
 
     const where: Prisma.ProductWhereInput = {};
 
@@ -126,7 +154,11 @@ export const getCrackersData = async (request: Request, response: Response): Pro
       },
     });
 
-    response.json({ items: items.map(formatProduct) });
+    const result = { items: items.map(formatProduct) };
+    if (isDefaultQuery) {
+      catalogProductsCache = { data: result, timestamp: Date.now() };
+    }
+    response.json(result);
   } catch (error) {
     console.error("Failed to retrieve items:", error);
     response.status(500).json({
@@ -232,6 +264,7 @@ export const createProduct = async (
       },
     });
 
+    invalidateCatalogCache();
     response.status(201).json({
       status: true,
       message: "Product created Sucessfully",
@@ -409,6 +442,7 @@ export const updateProduct = async (
       },
     });
 
+    invalidateCatalogCache();
     response.status(200).json({
       status: true,
       message: "Product updated successfully",
@@ -942,6 +976,18 @@ export const getCategories = async (
   response: Response,
 ): Promise<void> => {
   try {
+    response.setHeader(
+      "Cache-Control",
+      "public, max-age=60, s-maxage=120, stale-while-revalidate=600",
+    );
+
+    if (
+      categoriesListCache &&
+      Date.now() - categoriesListCache.timestamp < CACHE_TTL_MS
+    ) {
+      response.status(200).json(categoriesListCache.data);
+      return;
+    }
     const categories = await db.category.findMany({
       where: { isActive: true },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
@@ -972,6 +1018,7 @@ export const getCategories = async (
     );
 
     const responseBody: GetCategoriesResponse = { categories: result };
+    categoriesListCache = { data: responseBody, timestamp: Date.now() };
     response.status(200).json(responseBody);
   } catch (error) {
     console.error("Failed to retrieve categories:", error);
