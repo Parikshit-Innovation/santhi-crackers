@@ -78,9 +78,31 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
     [language],
   );
 
-  const [items, setItems] = useState<ComboItem[]>([]);
-  const [categoriesList, setCategoriesList] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const CATALOG_CACHE_KEY = "shanthi_catalog_cache_v2";
+
+const loadCachedCatalog = (): { items: ComboItem[]; categoriesList: string[] } => {
+  if (typeof window === "undefined") return { items: [], categoriesList: [] };
+  try {
+    const raw = localStorage.getItem(CATALOG_CACHE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed.items) && parsed.items.length > 0) {
+        return {
+          items: parsed.items,
+          categoriesList: Array.isArray(parsed.categoriesList) ? parsed.categoriesList : [],
+        };
+      }
+    }
+  } catch {
+    // Ignore storage/JSON errors
+  }
+  return { items: [], categoriesList: [] };
+};
+
+  const cachedData = useMemo(() => loadCachedCatalog(), []);
+  const [items, setItems] = useState<ComboItem[]>(cachedData.items);
+  const [categoriesList, setCategoriesList] = useState<string[]>(cachedData.categoriesList);
+  const [isLoading, setIsLoading] = useState<boolean>(cachedData.items.length === 0);
   const [localQuantities, setLocalQuantities] = useState<Record<string, number>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -109,7 +131,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
   // Load catalog
   const loadCatalog = useCallback(() => {
     let isMounted = true;
-    setIsLoading(true);
+    setIsLoading((prev) => (items.length === 0 ? true : false));
 
     Promise.allSettled([fetchBackendProducts(), fetchBackendCategories()])
       .then(([productsRes, categoriesRes]) => {
@@ -145,20 +167,23 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
           const productCategories = Array.from(
             new Set(mapped.map((it) => it.category).filter(Boolean)),
           );
-          setCategoriesList(
-            Array.from(new Set([...fetchedCatNames, ...productCategories])),
+          const fullCategories = Array.from(
+            new Set([...fetchedCatNames, ...productCategories]),
           );
-        } else {
-          setItems([]);
-          setCategoriesList([]);
+          setCategoriesList(fullCategories);
+
+          try {
+            localStorage.setItem(
+              CATALOG_CACHE_KEY,
+              JSON.stringify({ items: mapped, categoriesList: fullCategories }),
+            );
+          } catch {
+            // Ignore storage quota error
+          }
         }
       })
       .catch((err) => {
         console.warn("Failed to fetch backend products:", err);
-        if (isMounted) {
-          setItems([]);
-          setCategoriesList([]);
-        }
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -167,7 +192,7 @@ export const ComboPackTable: React.FC<ComboPackTableProps> = ({
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [items.length]);
 
   useEffect(() => {
     return loadCatalog();

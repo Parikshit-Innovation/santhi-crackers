@@ -42,8 +42,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
 
           <div className="about-hero-image-wrap">
             <img
-              src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80"
-              alt={t("Happy Indian family celebrating Diwali with sparklers")}
+              src="/about/about-1.jpeg"
+              alt={t("Santhi Crackers Sivakasi Fireworks")}
               className="about-rounded-image"
               loading="eager"
             />
@@ -146,8 +146,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
         <div className="about-story-container">
           <div className="about-story-image-wrap">
             <img
-              src="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=80"
-              alt="Diwali crackers special gift packaging and traditional diyas"
+              src="/about/about-2.jpeg"
+              alt={t("Santhi Crackers wide collection of quality crackers")}
               className="about-rounded-image"
               loading="lazy"
             />
@@ -323,8 +323,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onExploreProducts })
 
           <div className="about-mission-image-wrap">
             <img
-              src="https://images.unsplash.com/photo-1519751138087-5bf79df62d5b?auto=format&fit=crop&w=1200&q=80"
-              alt={t("Hands holding sparkling golden sparklers against night sky")}
+              src="/about/about-3.jpeg"
+              alt={t("Santhi Crackers retail store in Sivakasi")}
               className="about-rounded-image"
               loading="lazy"
             />
